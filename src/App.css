@@ -1,0 +1,491 @@
+.login-container {
+  margin-top: 100px;
+  background-color: #ccc;
+  padding: 50px;
+  border-radius: 50px;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 30px 43px 30px 30px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  justify-content: center;
+}
+
+.form-container div {
+  margin-bottom: 12px;
+}
+
+input, select {
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+label {
+  font-weight: 700;
+  padding-left: 10px;
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: #031529;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 4px;
+  width: auto;            
+  display: inline-block;  
+  text-align: center;
+}
+
+button:hover {
+  background-color: #05223f;
+}
+
+.button_InputDetailPackage {
+  display: flex;
+  justify-content: center;
+  gap: 45px;
+  padding-top: 20px;
+}
+
+.shipping-code_InputDetailPackage {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  width: 400px;
+}
+
+option {
+  display: flex;
+  flex-direction: column;
+  color: #ccc;
+  background-color: #031529;
+  justify-content: center;
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+select {
+  border: none;
+}
+
+.cancel-btn_InputDetailPackage {
+  background: #ccc;
+  color: #031529;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.password-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.form-group {
+  padding: 20px;
+}
+
+.submit-btn {
+  margin-left: 20px;
+  width: 400px;
+}
+
+.routing {
+  margin-left: 20px;
+}
+
+
+/* Display Detail Package & Detail Package Modal*/
+.ddp-container,
+.financial_statement-container,
+.invoice-container,
+.delivery-container,
+.invoice-detail-container,
+.batch_selection-container,
+.finance_selection-container,
+.delivery_selection-container,
+.detail_batch-container,
+.ddp_batch-container,
+.package_in_karung-container {
+  margin: 20px 20px 500px 20px;
+}
+
+.delivery_selection-container, .header {
+  display: flex;
+  flex-direction: row;
+}
+
+.ddp-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.select-toggle-button {
+  display: inline-block;
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: auto;
+  text-align: center;
+}
+
+.select-toggle-button.active {
+  background-color: #1e40af;
+}
+
+.cards-container {
+  @apply
+  flex
+  flex-row
+  flex-wrap
+  gap-2
+}
+
+.card {
+  @apply 
+    border
+    rounded-xl
+    p-16
+    bg-white
+    shadow-sm
+    text-left
+    m-8
+    cursor-pointer
+    duration-1000
+    max-w-52
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: left;
+  margin: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 170px;
+}
+
+.package-card h4, h3, h2 {
+  width: 100%;    
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+
+
+.package-card:hover {
+  background: #f9f9f9;
+}
+
+.card.selected {
+  border: 2px solid darkblue;
+  background: #e0e7ff;
+}
+
+.package-card.disabled {
+  background: #f1f1f1;
+  color: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.disabled-note {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.invoice-actions {
+  margin-top: 16px;
+}
+
+.package-card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.package-card h3 {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.package-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+}
+
+.modal-subtitle {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.modal-text {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.modal-button {
+  margin-top: 16px;
+  padding: 10px 16px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.update_status_batch_modal-button,
+.update_active_pengantaran_modal-button,
+.update_archive_pengantaran_modal-button {
+  display: block;
+  margin: 50px 150px 0px 150px;
+}
+
+.modal-button:hover {
+  background-color: #1e40af;
+}
+
+.package-card.disabled {
+  background: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+  border: 1px solid #ddd;
+}
+
+.invoiced-label {
+  font-size: 12px;
+  color: green;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-left img {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+.navbar-left span {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #031529; /* biru */
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.user-info p {
+  margin: 0;
+}
+
+.user-info .name {
+  font-weight: 500;
+}
+
+.user-info .role {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+/* Batch Selection Page */
+
+.batch_selection-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+html, body, #root {
+  @apply h-full w-full;
+}
+
+/* ===== Root Layout ===== */
+.app-root {
+  @apply flex w-full min-h-screen bg-gray-50 overflow-hidden;
+}
+
+/* ===== Sidebar Styling ===== */
+.sidebar {
+  @apply fixed md:static top-0 left-0 h-screen w-60 bg-slate-800 text-white z-50 
+         transform transition-transform duration-300 ease-in-out;
+}
+
+/* Mobile: sembunyi / tampil */
+.sidebar--open {
+  @apply translate-x-0;
+}
+
+.sidebar--closed {
+  @apply -translate-x-full md:translate-x-0;
+}
+
+/* Bagian header */
+.sidebar__header {
+  @apply flex justify-between items-center p-5 border-b border-slate-700;
+}
+
+.sidebar__title {
+  @apply text-lg font-bold text-center w-full;
+}
+
+.sidebar__close-btn {
+  @apply md:hidden p-1 bg-slate-700 rounded;
+}
+
+/* Menu list */
+.sidebar__menu {
+  @apply mt-5 list-none p-0 m-0;
+}
+
+.sidebar__item {
+  @apply mb-3;
+}
+
+.sidebar__link {
+  @apply flex py-2 px-3 rounded transition-colors duration-200;
+}
+
+.sidebar__link--active {
+  @apply bg-sky-500;
+}
+
+.sidebar__link--inactive {
+  @apply hover:bg-slate-700;
+}
+
+/* ===== Mobile Overlay ===== */
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300;
+}
+
+.sidebar-overlay--visible {
+  @apply opacity-100 visible;
+}
+
+.sidebar-overlay--hidden {
+  @apply opacity-0 invisible;
+}
+
+/* === NAVBAR STYLING === */
+.navbar {
+  @apply  
+  w-full
+  flex 
+  justify-between 
+  items-center 
+  px-4 py-3 
+  border-b 
+  border-gray-200 
+  bg-transparent;
+}
+
+.navbar-left {
+  @apply flex items-center gap-3;
+}
+
+.back-btn {
+  @apply hidden md:inline-block text-xl font-bold text-gray-700 hover:text-black transition;
+}
+
+.burger-btn {
+  @apply p-2 text-black hover:text-gray-700 transition md:hidden w-full;
+}
+
+.navbar-right {
+  @apply flex items-center gap-5;
+}
+
+.user-info {
+  @apply text-right;
+}
+
+/* Tombol logout ikon */
+.logout-icon-btn {
+  @apply text-black rounded-none transition size-6 p-0;
+}
+
+.logout-icon-btn svg {
+  @apply w-6 h-6;
+}
+
+/* Default: main-content full width */
+.main-content {
+  @apply flex-1 flex flex-col min-h-screen w-full transition-all duration-300;
+}
+
+/* Jika parent punya class .with-sidebar → desktop margin */
+.with-sidebar .main-content {
+  @apply md:ml-64;
+}
+
+main {
+  @apply flex-1 w-full mt-16;
+}
