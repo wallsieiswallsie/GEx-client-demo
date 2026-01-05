@@ -7,7 +7,7 @@ function ProtectedRoute({ children, allowedRoles }) {
 
   if (initializing) return <div>Loading...</div>;
 
-  if (!user) return <Navigate to="/register" replace />;
+  if (!user) return <Navigate to="/login-customer" replace />;
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <ForbiddenPage />;

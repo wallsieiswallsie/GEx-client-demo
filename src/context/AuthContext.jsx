@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const storedUser = localStorage.getItem(USER_KEY);
     if (storedUser) {
-      setUser(JSON.parse(storedUser)); // ✅ restore dulu tanpa nunggu refresh
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
