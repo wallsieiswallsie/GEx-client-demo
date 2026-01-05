@@ -10,7 +10,7 @@ export default function LoginPageCustomer() {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // ✅ Ambil function login dari context
+  const { login } = useAuth();
 
   const validate = () => {
     const newErrors = {};
