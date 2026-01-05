@@ -121,7 +121,7 @@ function App() {
             <Route
               path="/register"
               element={
-                <ProtectedRoute allowedRoles={["Manager Main Warehouse"]}>
+                <ProtectedRoute allowedRoles={[""]}>
                   <RegisterPage />
                 </ProtectedRoute>
               }
