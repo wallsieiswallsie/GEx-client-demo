@@ -81,6 +81,10 @@ function ArchivePackages() {
       return cabang === cabangFilter;
     });
 
+  const limitedPackages =
+    filter === "" ? filteredPackages.slice(0, 30) : filteredPackages;
+
+
   return (
     <div className="ddp-container">
       <h2 className="text-2xl font-bold text-[#3e146d] mb-4">Arsip Paket</h2>
@@ -106,7 +110,7 @@ function ArchivePackages() {
       {error && <p className="text-red-500">{error}</p>}
 
       <div className="w-full mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredPackages.map((pkg) => {
+        {limitedPackages.map((pkg) => {
           const isSelected = selectedPackages.some((p) => p.id === pkg.id);
           const latestStatus = latestStatuses[pkg.id];
           const statusLabel = getStatusLabel(latestStatus);
