@@ -48,36 +48,35 @@ function InputDetailPackageForm({
 
     const codeReader = new BrowserMultiFormatReader();
 
+    const constraints = {
+      video: {
+        facingMode: { ideal: "environment" }, // kamera belakang
+      },
+    };
+
     codeReader
-      .listVideoInputDevices()
-      .then((devices) => {
-        const deviceId = devices[0]?.deviceId;
+      .decodeFromConstraints(constraints, videoRef.current, (result, err) => {
+        if (result) {
+          const text = result.getText();
 
-        codeReader.decodeFromVideoDevice(
-          deviceId,
-          videoRef.current,
-          (result, err) => {
-            if (result) {
-              const text = result.getText();
+          // ✅ isi ke input
+          handleChange({
+            target: { name: "resi", value: text },
+          });
 
-              // isi input
-              handleChange({
-                target: { name: "resi", value: text },
-              });
+          // ✅ stop scanner
+          codeReader.reset();
+          setShowScanner(false);
 
-              // stop scanner
-              codeReader.reset();
-              setShowScanner(false);
-
-              // fokus ke input
-              setTimeout(() => {
-                resiInputRef.current?.focus();
-              }, 200);
-            }
-          }
-        );
+          // ✅ fokus balik ke input
+          setTimeout(() => {
+            resiInputRef.current?.focus();
+          }, 200);
+        }
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Scanner error:", err);
+      });
 
     return () => {
       codeReader.reset();
