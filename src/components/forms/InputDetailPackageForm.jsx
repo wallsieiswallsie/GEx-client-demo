@@ -12,7 +12,7 @@ import {
   ScanLine,
   X,
 } from "lucide-react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 function InputDetailPackageForm({
   formData,
@@ -46,32 +46,41 @@ function InputDetailPackageForm({
   useEffect(() => {
     if (!showScanner) return;
 
-    const scanner = new Html5Qrcode("qr-reader");
+    const scanner = new Html5QrcodeScanner(
+      "qr-reader",
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 150 },
+        aspectRatio: 1.777,
+        rememberLastUsedCamera: true,
+        supportedScanTypes: [0], // camera only
+      },
+      false
+    );
 
-    scanner
-      .start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          handleChange({
-            target: { name: "resi", value: decodedText },
-          });
+    scanner.render(
+      (decodedText) => {
+        // ✅ isi ke input
+        handleChange({
+          target: { name: "resi", value: decodedText },
+        });
 
-          scanner.stop();
-          setShowScanner(false);
+        // ✅ stop scanner
+        scanner.clear();
+        setShowScanner(false);
 
-          // ✅ fokus balik ke input biar bisa edit manual
-          setTimeout(() => {
-            resiInputRef.current?.focus();
-          }, 200);
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      });
+        // ✅ fokus balik ke input
+        setTimeout(() => {
+          resiInputRef.current?.focus();
+        }, 200);
+      },
+      (error) => {
+        // ignore error biar tidak spam console
+      }
+    );
 
     return () => {
-      scanner.stop().catch(() => {});
+      scanner.clear().catch(() => {});
     };
   }, [showScanner]);
 
