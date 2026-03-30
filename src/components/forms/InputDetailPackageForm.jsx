@@ -47,31 +47,36 @@ function InputDetailPackageForm({
     if (!showScanner) return;
 
     const codeReader = new BrowserMultiFormatReader();
+    let isScanned = false; // ✅ lock supaya hanya 1x scan
 
     const constraints = {
       video: {
-        facingMode: { ideal: "environment" }, // kamera belakang
+        facingMode: "environment",
       },
     };
 
     codeReader
       .decodeFromConstraints(constraints, videoRef.current, (result, err) => {
-        if (result) {
+        if (result && !isScanned) {
+          isScanned = true;
+
           const text = result.getText();
 
-          // ✅ isi ke input
+          // ✅ isi input DULU (penting)
           handleChange({
             target: { name: "resi", value: text },
           });
 
-          // ✅ stop scanner
-          codeReader.reset();
-          setShowScanner(false);
-
-          // ✅ fokus balik ke input
+          // ✅ delay kecil biar state ke-set dulu
           setTimeout(() => {
-            resiInputRef.current?.focus();
-          }, 200);
+            codeReader.reset();       // stop camera
+            setShowScanner(false);    // tutup modal
+
+            // fokus balik ke input
+            setTimeout(() => {
+              resiInputRef.current?.focus();
+            }, 100);
+          }, 150);
         }
       })
       .catch((err) => {
