@@ -11,7 +11,7 @@ import {
   Upload,
   ScanLine,
 } from "lucide-react";
-import { BrowserMultiFormatReader } from "@zxing/browser";
+import ScannerModal from "../scanner/ScannerModal";
 
 function InputDetailPackageForm({
   formData,
@@ -24,7 +24,6 @@ function InputDetailPackageForm({
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const resiInputRef = useRef(null);
-  const videoRef = useRef(null);
 
   const [statusPaket, setStatusPaket] = useState("Sesuai");
   const [showScanner, setShowScanner] = useState(false);
@@ -41,67 +40,6 @@ function InputDetailPackageForm({
       });
     }
   }, [statusPaket]);
-
-  // 🔥 ZXING SCANNER SUPER RESPONSIVE
-  useEffect(() => {
-    if (!showScanner) return;
-
-    // ⚡ BOOST PERFORMANCE
-    const codeReader = new BrowserMultiFormatReader(undefined, {
-      delayBetweenScanAttempts: 50,
-    });
-
-    let isScanned = false;
-
-    const constraints = {
-      video: {
-        facingMode: "environment",
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-      },
-    };
-
-    codeReader
-      .decodeFromConstraints(
-        constraints,
-        videoRef.current,
-        (result, err) => {
-          if (result && !isScanned) {
-            isScanned = true;
-
-            const text = result.getText();
-
-            // ✅ isi input
-            handleChange({
-              target: { name: "resi", value: text },
-            });
-
-            // 🔥 langsung stop + close
-            setTimeout(() => {
-              try {
-                codeReader.reset();
-              } catch (e) {}
-
-              setShowScanner(false);
-
-              // fokus balik ke input
-              setTimeout(() => {
-                resiInputRef.current?.focus();
-              }, 100);
-            }, 120); // lebih cepat
-          }
-        }
-      )
-      .catch((err) => {
-        console.error("Scanner error:", err);
-      });
-
-    return () => {
-      try {
-        codeReader.reset();
-      } catch (e) {}
-    };
-  }, [showScanner]);
 
   const onSave = async (e) => {
     e.preventDefault();
@@ -199,7 +137,7 @@ function InputDetailPackageForm({
               <button
                 type="button"
                 onClick={() => setShowScanner(true)}
-                className="mt-1 px-3 bg-purple-600 text-white rounded-lg"
+                className="mt-1 px-3 bg-purple-600 text-white rounded-lg flex items-center justify-center"
               >
                 <ScanLine size={18} />
               </button>
@@ -250,6 +188,7 @@ function InputDetailPackageForm({
             </div>
 
             <div className="flex gap-2 mt-2">
+              {/* GALERI */}
               <input
                 type="file"
                 accept="image/*"
@@ -258,6 +197,7 @@ function InputDetailPackageForm({
                 hidden
               />
 
+              {/* CAMERA */}
               <input
                 type="file"
                 accept="image/*"
@@ -357,33 +297,20 @@ function InputDetailPackageForm({
         </form>
       </div>
 
-      {/* SCANNER */}
-      {showScanner && (
-        <div className="fixed inset-0 bg-black z-50 flex flex-col">
-          <div className="p-4 text-white">Scan Resi</div>
+      {/* 🔥 REUSABLE SCANNER */}
+      <ScannerModal
+        open={showScanner}
+        onClose={() => setShowScanner(false)}
+        onResult={(text) => {
+          handleChange({
+            target: { name: "resi", value: text },
+          });
 
-          <div className="flex-1 relative">
-            <video ref={videoRef} className="w-full h-full object-cover" />
-
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-72 h-40 border-2 border-red-500 rounded-lg relative overflow-hidden">
-                <div className="absolute w-full h-[2px] bg-orange-400 animate-pulse top-1/2" />
-              </div>
-            </div>
-
-            <p className="absolute bottom-10 w-full text-center text-white text-sm">
-              Scan the waybill barcode
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowScanner(false)}
-            className="p-4 bg-red-600 text-white"
-          >
-            Tutup
-          </button>
-        </div>
-      )}
+          setTimeout(() => {
+            resiInputRef.current?.focus();
+          }, 100);
+        }}
+      />
     </div>
   );
 }
