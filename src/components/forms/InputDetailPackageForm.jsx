@@ -10,9 +10,8 @@ import {
   Camera,
   Upload,
   ScanLine,
-  X,
 } from "lucide-react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { BrowserMultiFormatReader } from "@zxing/browser";
 
 function InputDetailPackageForm({
   formData,
@@ -25,6 +24,7 @@ function InputDetailPackageForm({
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const resiInputRef = useRef(null);
+  const videoRef = useRef(null);
 
   const [statusPaket, setStatusPaket] = useState("Sesuai");
   const [showScanner, setShowScanner] = useState(false);
@@ -42,45 +42,45 @@ function InputDetailPackageForm({
     }
   }, [statusPaket]);
 
-  // QR SCANNER INIT
+  // ZXING SCANNER
   useEffect(() => {
     if (!showScanner) return;
 
-    const scanner = new Html5QrcodeScanner(
-      "qr-reader",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 150 },
-        aspectRatio: 1.777,
-        rememberLastUsedCamera: true,
-        supportedScanTypes: [0], // camera only
-      },
-      false
-    );
+    const codeReader = new BrowserMultiFormatReader();
 
-    scanner.render(
-      (decodedText) => {
-        // ✅ isi ke input
-        handleChange({
-          target: { name: "resi", value: decodedText },
-        });
+    codeReader
+      .listVideoInputDevices()
+      .then((devices) => {
+        const deviceId = devices[0]?.deviceId;
 
-        // ✅ stop scanner
-        scanner.clear();
-        setShowScanner(false);
+        codeReader.decodeFromVideoDevice(
+          deviceId,
+          videoRef.current,
+          (result, err) => {
+            if (result) {
+              const text = result.getText();
 
-        // ✅ fokus balik ke input
-        setTimeout(() => {
-          resiInputRef.current?.focus();
-        }, 200);
-      },
-      (error) => {
-        // ignore error biar tidak spam console
-      }
-    );
+              // isi input
+              handleChange({
+                target: { name: "resi", value: text },
+              });
+
+              // stop scanner
+              codeReader.reset();
+              setShowScanner(false);
+
+              // fokus ke input
+              setTimeout(() => {
+                resiInputRef.current?.focus();
+              }, 200);
+            }
+          }
+        );
+      })
+      .catch(console.error);
 
     return () => {
-      scanner.clear().catch(() => {});
+      codeReader.reset();
     };
   }, [showScanner]);
 
@@ -160,7 +160,7 @@ function InputDetailPackageForm({
 
         <form onSubmit={onSave} className="flex flex-col gap-4">
 
-          {/* RESI + SCAN */}
+          {/* RESI */}
           <div>
             <label className="text-sm font-medium flex items-center gap-2">
               <Hash size={16} /> Nomor Resi
@@ -231,7 +231,6 @@ function InputDetailPackageForm({
             </div>
 
             <div className="flex gap-2 mt-2">
-              {/* GALERI */}
               <input
                 type="file"
                 accept="image/*"
@@ -240,7 +239,6 @@ function InputDetailPackageForm({
                 hidden
               />
 
-              {/* CAMERA */}
               <input
                 type="file"
                 accept="image/*"
@@ -277,8 +275,8 @@ function InputDetailPackageForm({
 
           {/* TANGGAL */}
           <div>
-            <label className="text-sm font-medium">
-              Tanggal Tiba Gudang
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Calendar size={16} /> Tanggal Tiba Gudang
             </label>
             <input
               type="date"
@@ -291,7 +289,9 @@ function InputDetailPackageForm({
 
           {/* EKSPEDISI */}
           <div>
-            <label className="text-sm font-medium">Ekspedisi</label>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Truck size={16} /> Ekspedisi
+            </label>
             <select
               name="ekspedisi"
               value={formData.ekspedisi}
@@ -307,7 +307,9 @@ function InputDetailPackageForm({
 
           {/* BERAT */}
           <div>
-            <label className="text-sm font-medium">Berat (Kg)</label>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Weight size={16} /> Berat (Kg)
+            </label>
             <input
               type="number"
               name="berat"
@@ -319,11 +321,13 @@ function InputDetailPackageForm({
 
           {/* DIMENSI */}
           <div>
-            <label className="text-sm font-medium">Dimensi</label>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Ruler size={16} /> Dimensi Paket (cm)
+            </label>
             <div className="grid grid-cols-3 gap-2">
-              <input name="panjang" placeholder="Panjang" onChange={handleChange} className="border p-2 rounded-lg"/>
-              <input name="lebar" placeholder="Lebar" onChange={handleChange} className="border p-2 rounded-lg"/>
-              <input name="tinggi" placeholder="Tinggi" onChange={handleChange} className="border p-2 rounded-lg"/>
+              <input name="panjang" value={formData.panjang} onChange={handleChange} placeholder="Panjang" className="border p-2 rounded-lg"/>
+              <input name="lebar" value={formData.lebar} onChange={handleChange} placeholder="Lebar" className="border p-2 rounded-lg"/>
+              <input name="tinggi" value={formData.tinggi} onChange={handleChange} placeholder="Tinggi" className="border p-2 rounded-lg"/>
             </div>
           </div>
 
@@ -333,16 +337,30 @@ function InputDetailPackageForm({
         </form>
       </div>
 
-      {/* MODAL SCANNER */}
+      {/* SCANNER */}
       {showScanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50">
-          <div id="qr-reader" className="w-72" />
+        <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          <div className="p-4 text-white">Scan Resi</div>
+
+          <div className="flex-1 relative">
+            <video ref={videoRef} className="w-full h-full object-cover" />
+
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-72 h-40 border-2 border-red-500 rounded-lg relative overflow-hidden">
+                <div className="absolute w-full h-[2px] bg-orange-400 animate-pulse top-1/2" />
+              </div>
+            </div>
+
+            <p className="absolute bottom-10 w-full text-center text-white text-sm">
+              Scan the waybill barcode
+            </p>
+          </div>
 
           <button
             onClick={() => setShowScanner(false)}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="p-4 bg-red-600 text-white"
           >
-            <X size={16} /> Tutup
+            Tutup
           </button>
         </div>
       )}

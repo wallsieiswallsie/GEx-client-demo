@@ -11,8 +11,8 @@
     "start": "serve -s dist"
   },
   "dependencies": {
+    "@zxing/browser": "^0.1.5",
     "browser-image-compression": "^2.0.2",
-    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
