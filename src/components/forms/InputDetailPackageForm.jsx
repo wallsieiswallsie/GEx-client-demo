@@ -26,6 +26,9 @@ function InputDetailPackageForm({
   const resiInputRef = useRef(null);
   const videoRef = useRef(null);
 
+  const codeReaderRef = useRef(null);
+  const controlsRef = useRef(null);
+
   const [statusPaket, setStatusPaket] = useState("Sesuai");
   const [showScanner, setShowScanner] = useState(false);
 
@@ -42,12 +45,14 @@ function InputDetailPackageForm({
     }
   }, [statusPaket]);
 
-  // ZXING SCANNER
+  // 🔥 ZXING SCANNER (FINAL FIX)
   useEffect(() => {
     if (!showScanner) return;
 
     const codeReader = new BrowserMultiFormatReader();
-    let isScanned = false; // ✅ lock supaya hanya 1x scan
+    codeReaderRef.current = codeReader;
+
+    let isScanned = false;
 
     const constraints = {
       video: {
@@ -56,35 +61,41 @@ function InputDetailPackageForm({
     };
 
     codeReader
-      .decodeFromConstraints(constraints, videoRef.current, (result, err) => {
-        if (result && !isScanned) {
-          isScanned = true;
+      .decodeFromConstraints(constraints, videoRef.current)
+      .then((controls) => {
+        controlsRef.current = controls;
 
-          const text = result.getText();
+        controls.decode((result, err) => {
+          if (result && !isScanned) {
+            isScanned = true;
 
-          // ✅ isi input DULU (penting)
-          handleChange({
-            target: { name: "resi", value: text },
-          });
+            const text = result.getText();
 
-          // ✅ delay kecil biar state ke-set dulu
-          setTimeout(() => {
-            codeReader.reset();       // stop camera
-            setShowScanner(false);    // tutup modal
+            // isi input
+            handleChange({
+              target: { name: "resi", value: text },
+            });
 
-            // fokus balik ke input
+            // STOP kamera (fix iOS)
             setTimeout(() => {
-              resiInputRef.current?.focus();
-            }, 100);
-          }, 150);
-        }
+              controls.stop();
+              setShowScanner(false);
+
+              setTimeout(() => {
+                resiInputRef.current?.focus();
+              }, 100);
+            }, 150);
+          }
+        });
       })
       .catch((err) => {
         console.error("Scanner error:", err);
       });
 
     return () => {
-      codeReader.reset();
+      try {
+        controlsRef.current?.stop();
+      } catch (e) {}
     };
   }, [showScanner]);
 
@@ -272,6 +283,7 @@ function InputDetailPackageForm({
             {formData.preview && (
               <img
                 src={formData.preview}
+                alt="preview"
                 className="mt-2 w-full rounded-lg"
               />
             )}
