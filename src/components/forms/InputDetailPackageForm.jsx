@@ -1,4 +1,18 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import {
+  Package,
+  Hash,
+  Calendar,
+  Truck,
+  Weight,
+  Ruler,
+  Image as ImageIcon,
+  Camera,
+  Upload,
+  ScanLine,
+  X,
+} from "lucide-react";
+import { Html5Qrcode } from "html5-qrcode";
 
 function InputDetailPackageForm({
   formData,
@@ -9,266 +23,320 @@ function InputDetailPackageForm({
   handleFileChange,
 }) {
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const resiInputRef = useRef(null);
+
+  const [statusPaket, setStatusPaket] = useState("Sesuai");
+  const [showScanner, setShowScanner] = useState(false);
+
+  // AUTO SET KODE
+  useEffect(() => {
+    if (statusPaket === "Bermasalah") {
+      handleChange({
+        target: { name: "kode", value: "Bermasalah" },
+      });
+    } else {
+      handleChange({
+        target: { name: "kode", value: "" },
+      });
+    }
+  }, [statusPaket]);
+
+  // QR SCANNER INIT
+  useEffect(() => {
+    if (!showScanner) return;
+
+    const scanner = new Html5Qrcode("qr-reader");
+
+    scanner
+      .start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          handleChange({
+            target: { name: "resi", value: decodedText },
+          });
+
+          scanner.stop();
+          setShowScanner(false);
+
+          // ✅ fokus balik ke input biar bisa edit manual
+          setTimeout(() => {
+            resiInputRef.current?.focus();
+          }, 200);
+        }
+      )
+      .catch((err) => {
+        console.error(err);
+      });
+
+    return () => {
+      scanner.stop().catch(() => {});
+    };
+  }, [showScanner]);
 
   const onSave = async (e) => {
     e.preventDefault();
-    
-  if (!formData.ekspedisi) {
-    alert("Silakan pilih ekspedisi terlebih dahulu!");
-    return;
-  }
 
-  if (!formData.tanggal_tiba) {
-    alert("Silakan isi tanggal tiba terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.preview) {
-    alert("Silakan tambahkan foto terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.nama) {
-    alert("Silakan isi nama terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.panjang) {
-    alert("Silakan isi data panjang terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.lebar) {
-    alert("Silakan isi data lebar terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.tinggi) {
-    alert("Silakan isi data tinggi terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.berat) {
-    alert("Silakan isi data berat terlebih dahulu!");
-    return;
-  }
-
-  if (!formData.kode) {
-    alert("Silakan isi data kode terlebih dahulu!");
-    return;
-  }
+    if (!formData.ekspedisi) return alert("Pilih ekspedisi!");
+    if (!formData.tanggal_tiba) return alert("Isi tanggal!");
+    if (!formData.preview) return alert("Upload foto!");
+    if (!formData.nama) return alert("Isi nama!");
+    if (!formData.panjang) return alert("Isi panjang!");
+    if (!formData.lebar) return alert("Isi lebar!");
+    if (!formData.tinggi) return alert("Isi tinggi!");
+    if (!formData.berat) return alert("Isi berat!");
+    if (!formData.kode) return alert("Kode kosong!");
 
     await handleSave(e);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-    }
+    if (fileInputRef.current) fileInputRef.current.value = null;
+    if (cameraInputRef.current) cameraInputRef.current.value = null;
   };
 
   const ekspedisiOptions = [
-    { value: "J&T Express", color: "bg-pink-200" },
-    { value: "Shopee Express", color: "bg-orange-200" },
-    { value: "JNE", color: "bg-blue-200" },
-    { value: "LEX", color: "bg-green-200" },
-    { value: "POS", color: "bg-yellow-200" },
-    { value: "TIKI", color: "bg-purple-200" },
-    { value: "Wahana", color: "bg-red-200" },
-    { value: "Indah Cargo", color: "bg-teal-200" },
-    { value: "SiCepat", color: "bg-rose-200" },
-    { value: "Anteraja", color: "bg-fuchsia-200" },
-    { value: "SAPX", color: "bg-lime-200" },
-    { value: "Grab", color: "bg-emerald-200" },
-    { value: "Gojek", color: "bg-indigo-200" },
-    { value: "Lainnya", color: "bg-gray-200" },
+    "J&T Express",
+    "Shopee Express",
+    "JNE",
+    "LEX",
+    "POS",
+    "TIKI",
+    "Wahana",
+    "Indah Cargo",
+    "SiCepat",
+    "Anteraja",
+    "SAPX",
+    "Grab",
+    "Gojek",
+    "Lainnya",
   ];
 
   return (
-    <div className="min-h-screen flex justify-center items-start px-4 py-10 bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 border border-[#3e146d]/20">
-        <h2 className="text-2xl font-bold text-center text-[#3e146d] mb-6">
-          {formData.id ? "Edit Paket" : "Tambah Paket"}
-        </h2>
+    <div className="min-h-screen bg-gray-100 px-4 py-6">
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-5">
+
+        <h1 className="text-lg font-semibold mb-4">
+          Input Paket Gudang Asal
+        </h1>
+
+        {/* STATUS */}
+        <div className="mb-4">
+          <p className="text-sm mb-2 font-medium">Status Paket</p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setStatusPaket("Sesuai")}
+              className={`flex-1 py-2 rounded-xl border ${
+                statusPaket === "Sesuai"
+                  ? "bg-green-100 border-green-500 text-green-700"
+                  : ""
+              }`}
+            >
+              Sesuai
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusPaket("Bermasalah")}
+              className={`flex-1 py-2 rounded-xl border ${
+                statusPaket === "Bermasalah"
+                  ? "bg-gray-200 border-gray-500"
+                  : ""
+              }`}
+            >
+              Bermasalah
+            </button>
+          </div>
+        </div>
 
         <form onSubmit={onSave} className="flex flex-col gap-4">
 
-          {/* ====== NAMA ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">Nama</label>
+          {/* RESI + SCAN */}
+          <div>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Hash size={16} /> Nomor Resi
+            </label>
+
+            <div className="flex gap-2">
+              <input
+                ref={resiInputRef}
+                type="text"
+                name="resi"
+                value={formData.resi}
+                onChange={handleChange}
+                placeholder="Scan / input manual"
+                className="w-full mt-1 px-4 py-2 border rounded-lg"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowScanner(true)}
+                className="mt-1 px-3 bg-purple-600 text-white rounded-lg"
+              >
+                <ScanLine size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* NAMA */}
+          <div>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Package size={16} /> Nama Paket
+            </label>
             <input
               type="text"
               name="nama"
               value={formData.nama}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
-            {errors.nama && (
-              <p className="text-red-500 text-sm">{errors.nama}</p>
+          </div>
+
+          {/* KODE */}
+          {statusPaket === "Sesuai" && (
+            <div>
+              <label className="text-sm font-medium">Kode Rute</label>
+              <select
+                name="kode"
+                value={formData.kode}
+                onChange={handleChange}
+                className="w-full mt-1 px-4 py-2 border rounded-lg"
+              >
+                <option value="">Pilih Kode</option>
+                <option value="JKSOQA">JKSOQA</option>
+                <option value="JKSOQB">JKSOQB</option>
+                <option value="JPSOQA">JPSOQA</option>
+                <option value="JPSOQB">JPSOQB</option>
+              </select>
+            </div>
+          )}
+
+          {/* FOTO */}
+          <div>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <ImageIcon size={16} /> Foto Paket
+            </label>
+
+            <div className="border-2 border-dashed rounded-xl p-6 text-center text-gray-400">
+              PNG, JPG, GIF up to 10MB
+            </div>
+
+            <div className="flex gap-2 mt-2">
+              {/* GALERI */}
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                hidden
+              />
+
+              {/* CAMERA */}
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                ref={cameraInputRef}
+                onChange={handleFileChange}
+                hidden
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="flex-1 bg-gray-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+              >
+                <Upload size={16} /> Upload File
+              </button>
+
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current.click()}
+                className="flex-1 bg-purple-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+              >
+                <Camera size={16} /> Ambil Foto
+              </button>
+            </div>
+
+            {formData.preview && (
+              <img
+                src={formData.preview}
+                className="mt-2 w-full rounded-lg"
+              />
             )}
           </div>
 
-          {/* ====== RESI ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">Resi</label>
-            <input
-              type="text"
-              name="resi"
-              value={formData.resi}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-            />
-            {errors.resi && (
-              <p className="text-red-500 text-sm">{errors.resi}</p>
-            )}
-          </div>
-
-          {/* ====== DIMENSI ====== */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="font-medium text-gray-700">Panjang</label>
-              <input
-                type="number"
-                name="panjang"
-                value={formData.panjang}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-medium text-gray-700">Lebar</label>
-              <input
-                type="number"
-                name="lebar"
-                value={formData.lebar}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-medium text-gray-700">Tinggi</label>
-              <input
-                type="number"
-                name="tinggi"
-                value={formData.tinggi}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-              />
-            </div>
-          </div>
-
-          {/* ====== BERAT ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">Berat</label>
-            <input
-              type="number"
-              name="berat"
-              value={formData.berat}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-            />
-          </div>
-
-          {/* ====== TANGGAL TIBA ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">
-              Tanggal Tiba Tangerang
+          {/* TANGGAL */}
+          <div>
+            <label className="text-sm font-medium">
+              Tanggal Tiba Gudang
             </label>
             <input
               type="date"
               name="tanggal_tiba"
               value={formData.tanggal_tiba}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
 
-          {/* ====== EKSPEDISI ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">Ekspedisi</label>
-
+          {/* EKSPEDISI */}
+          <div>
+            <label className="text-sm font-medium">Ekspedisi</label>
             <select
               name="ekspedisi"
               value={formData.ekspedisi}
               onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]`}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
             >
-              <option value="" disabled hidden>
-                Pilih Ekspedisi
-              </option>
-
+              <option value="">Pilih Ekspedisi</option>
               {ekspedisiOptions.map((opt) => (
-                <option
-                  key={opt.value}
-                  value={opt.value}
-                  className={`${opt.color} text-gray-700`}
-                >
-                  {opt.value}
-                </option>
+                <option key={opt}>{opt}</option>
               ))}
             </select>
           </div>
 
-          {/* ====== FOTO ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">Foto Paket</label>
+          {/* BERAT */}
+          <div>
+            <label className="text-sm font-medium">Berat (Kg)</label>
             <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="w-full text-sm text-gray-500"
-            />
-            {formData.preview && (
-              <img
-                src={formData.preview}
-                alt="Preview paket"
-                className="w-32 h-32 object-cover rounded-lg mt-2"
-              />
-            )}
-          </div>
-
-          {/* ====== KODE ====== */}
-          <div className="flex flex-col gap-1">
-            <label className="font-medium text-gray-700">
-              Kode Pengiriman
-            </label>
-            <select
-              name="kode"
-              value={formData.kode}
+              type="number"
+              name="berat"
+              value={formData.berat}
               onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3e146d]"
-            >
-              <option value="" disabled hidden></option>
-              <option value="JKSOQA">JKSOQA</option>
-              <option value="JKSOQB">JKSOQB</option>
-              <option value="JPSOQA">JPSOQA</option>
-              <option value="JPSOQB">JPSOQB</option>
-              <option value="Bermasalah">Bermasalah</option>
-            </select>
-            {errors.kode && (
-              <p className="text-red-500 text-sm">{errors.kode}</p>
-            )}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
           </div>
 
-          {/* ====== BUTTON ====== */}
-          <div className="flex gap-3 mt-4">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex-1 py-2 bg-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-400 transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 py-2 bg-[#3e146d] text-white font-semibold rounded-lg shadow-md hover:opacity-90 transition"
-            >
-              Save
-            </button>
+          {/* DIMENSI */}
+          <div>
+            <label className="text-sm font-medium">Dimensi</label>
+            <div className="grid grid-cols-3 gap-2">
+              <input name="panjang" placeholder="Panjang" onChange={handleChange} className="border p-2 rounded-lg"/>
+              <input name="lebar" placeholder="Lebar" onChange={handleChange} className="border p-2 rounded-lg"/>
+              <input name="tinggi" placeholder="Tinggi" onChange={handleChange} className="border p-2 rounded-lg"/>
+            </div>
           </div>
+
+          <button className="mt-4 bg-red-600 text-white py-3 rounded-xl">
+            Submit Data Paket
+          </button>
         </form>
       </div>
+
+      {/* MODAL SCANNER */}
+      {showScanner && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50">
+          <div id="qr-reader" className="w-72" />
+
+          <button
+            onClick={() => setShowScanner(false)}
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <X size={16} /> Tutup
+          </button>
+        </div>
+      )}
     </div>
   );
 }
