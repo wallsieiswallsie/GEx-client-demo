@@ -26,9 +26,6 @@ function InputDetailPackageForm({
   const resiInputRef = useRef(null);
   const videoRef = useRef(null);
 
-  const codeReaderRef = useRef(null);
-  const controlsRef = useRef(null);
-
   const [statusPaket, setStatusPaket] = useState("Sesuai");
   const [showScanner, setShowScanner] = useState(false);
 
@@ -45,56 +42,63 @@ function InputDetailPackageForm({
     }
   }, [statusPaket]);
 
-  // 🔥 ZXING SCANNER (FINAL FIX)
+  // 🔥 ZXING SCANNER SUPER RESPONSIVE
   useEffect(() => {
     if (!showScanner) return;
 
-    const codeReader = new BrowserMultiFormatReader();
-    codeReaderRef.current = codeReader;
+    // ⚡ BOOST PERFORMANCE
+    const codeReader = new BrowserMultiFormatReader(undefined, {
+      delayBetweenScanAttempts: 50,
+    });
 
     let isScanned = false;
 
     const constraints = {
       video: {
         facingMode: "environment",
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
       },
     };
 
     codeReader
-      .decodeFromConstraints(constraints, videoRef.current)
-      .then((controls) => {
-        controlsRef.current = controls;
-
-        controls.decode((result, err) => {
+      .decodeFromConstraints(
+        constraints,
+        videoRef.current,
+        (result, err) => {
           if (result && !isScanned) {
             isScanned = true;
 
             const text = result.getText();
 
-            // isi input
+            // ✅ isi input
             handleChange({
               target: { name: "resi", value: text },
             });
 
-            // STOP kamera (fix iOS)
+            // 🔥 langsung stop + close
             setTimeout(() => {
-              controls.stop();
+              try {
+                codeReader.reset();
+              } catch (e) {}
+
               setShowScanner(false);
 
+              // fokus balik ke input
               setTimeout(() => {
                 resiInputRef.current?.focus();
               }, 100);
-            }, 150);
+            }, 120); // lebih cepat
           }
-        });
-      })
+        }
+      )
       .catch((err) => {
         console.error("Scanner error:", err);
       });
 
     return () => {
       try {
-        controlsRef.current?.stop();
+        codeReader.reset();
       } catch (e) {}
     };
   }, [showScanner]);
