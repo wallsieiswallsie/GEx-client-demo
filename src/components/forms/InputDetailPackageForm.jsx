@@ -11,7 +11,7 @@ import {
   Upload,
   ScanLine,
 } from "lucide-react";
-import ScannerModal from "../scanner/ScannerModal";
+import ScannerModal from "../modals/scanner/ScannerModal";
 
 function InputDetailPackageForm({
   formData,
