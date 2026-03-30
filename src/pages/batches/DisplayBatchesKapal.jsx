@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { fetchBatchesKapalApi, createBatchesKapalApi } from "../../utils/api";
+import { fetchBatchesKapalApi } from "../../utils/api";
 import UpdateStatusBatchModal from "../../components/modals/batches/UpdateStatusBatchModal";
-import { Ship, Plane, Plus } from "lucide-react";
+import { Ship, Plane, Plus, Calendar, Anchor, Weight } from "lucide-react";
 
 export default function DisplayBatchesKapal() {
   const { user } = useAuth();
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    namaKapal: "",
-    tanggalClosing: "",
-    tanggalBerangkat: "",
-    namaVendor: "",
-  });
   const [selectedBatch, setSelectedBatch] = useState(null);
 
   const navigate = useNavigate();
@@ -36,8 +29,7 @@ export default function DisplayBatchesKapal() {
     fetchData();
   }, []);
 
-  if (loading)
-    return <p className="text-center mt-10">Loading...</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-4">
@@ -46,7 +38,7 @@ export default function DisplayBatchesKapal() {
       <h1 className="text-xl font-bold">Kloter Pengiriman</h1>
 
       {/* TOGGLE */}
-      <div className="flex bg-gray-100 rounded-xl p-1">
+      <div className="flex bg-gray-100 rounded-xl p-1 shadow-sm">
         <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-2 rounded-xl">
           <Ship size={18} /> Kapal Pelni
         </button>
@@ -62,32 +54,40 @@ export default function DisplayBatchesKapal() {
       {batches.map((batch) => (
         <div
           key={batch.id}
-          className="bg-white rounded-2xl shadow p-4 flex flex-col gap-2"
+          className="bg-white rounded-2xl shadow p-4 flex gap-4 items-start"
         >
-          <h2 className="font-bold text-lg">
-            KM. {batch.nama_kapal}
-          </h2>
+          {/* ICON */}
+          <div className="bg-blue-100 text-blue-600 p-3 rounded-full">
+            <Ship size={20} />
+          </div>
 
-          <p className="text-sm text-gray-500">
-            Closing: {batch.tanggal_closing.split("T")[0]}
-          </p>
+          {/* CONTENT */}
+          <div className="flex flex-col gap-1 w-full">
+            <h2 className="font-bold text-lg">
+              KM. {batch.nama_kapal}
+            </h2>
 
-          <p className="text-sm text-gray-500">
-            Berangkat: {batch.tanggal_berangkat.split("T")[0]}
-          </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Calendar size={14} />
+              Closing: {batch.tanggal_closing.split("T")[0]}
+            </div>
 
-          <p className="text-sm">
-            {batch.total_berat || 0} Kg
-          </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Anchor size={14} />
+              Berangkat: {batch.tanggal_berangkat.split("T")[0]}
+            </div>
+
+            <div className="flex items-center gap-2 text-sm mt-1">
+              <Weight size={14} />
+              {batch.total_berat || 0} Kg
+            </div>
+          </div>
         </div>
       ))}
 
       {/* FLOAT BUTTON */}
-      {(user?.role === "Manager Main Warehouse") && (
-        <button
-          onClick={() => setShowForm(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg"
-        >
+      {user?.role === "Manager Main Warehouse" && (
+        <button className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg">
           <Plus />
         </button>
       )}

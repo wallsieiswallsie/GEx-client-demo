@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { fetchBatchesPesawatApi, createBatchesPesawatApi } from "../../utils/api";
+import { fetchBatchesPesawatApi } from "../../utils/api";
 import UpdateStatusBatchPesawatModal from "../../components/modals/batches/UpdateStatusBatchPesawatModal";
-import { Ship, Plane, Plus, AlertTriangle } from "lucide-react";
+import { Ship, Plane, Plus, Calendar, Weight, User, AlertTriangle } from "lucide-react";
 
 export default function DisplayBatchesPesawat() {
   const { user } = useAuth();
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
   const [selectedBatch, setSelectedBatch] = useState(null);
 
   const navigate = useNavigate();
@@ -30,8 +29,7 @@ export default function DisplayBatchesPesawat() {
     fetchData();
   }, []);
 
-  if (loading)
-    return <p className="text-center mt-10">Loading...</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-4">
@@ -40,7 +38,7 @@ export default function DisplayBatchesPesawat() {
       <h1 className="text-xl font-bold">Kloter Pengiriman</h1>
 
       {/* TOGGLE */}
-      <div className="flex bg-gray-100 rounded-xl p-1">
+      <div className="flex bg-gray-100 rounded-xl p-1 shadow-sm">
         <button
           onClick={() => navigate("/batches/kapal")}
           className="flex-1 flex items-center justify-center gap-2 text-gray-500"
@@ -52,7 +50,7 @@ export default function DisplayBatchesPesawat() {
         </button>
       </div>
 
-      {/* ALERT XRAY */}
+      {/* ALERT */}
       <div className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-3 rounded-xl">
         <AlertTriangle size={18} />
         Paket Tidak Lolos X-Ray
@@ -62,33 +60,39 @@ export default function DisplayBatchesPesawat() {
       {batches.map((batch) => (
         <div
           key={batch.id}
-          className="bg-white rounded-2xl shadow p-4 flex flex-col gap-2"
+          className="bg-white rounded-2xl shadow p-4 flex gap-4 items-start"
         >
-          <h2 className="font-bold text-lg">
-            {batch.pic}
-          </h2>
+          {/* ICON */}
+          <div className="bg-blue-100 text-blue-600 p-3 rounded-full">
+            <Plane size={20} />
+          </div>
 
-          <p className="text-sm text-gray-500">
-            {batch.vendor}
-          </p>
+          {/* CONTENT */}
+          <div className="flex flex-col gap-1 w-full">
+            <h2 className="font-bold text-lg">{batch.pic}</h2>
 
-          <p className="text-sm text-gray-500">
-            Kirim: {batch.tanggal_kirim.split("T")[0]}
-          </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <User size={14} />
+              {batch.vendor}
+            </div>
 
-          <p className="text-sm">
-            {batch.total_berat || 0} Kg
-          </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Calendar size={14} />
+              Kirim: {batch.tanggal_kirim.split("T")[0]}
+            </div>
+
+            <div className="flex items-center gap-2 text-sm mt-1">
+              <Weight size={14} />
+              {batch.total_berat || 0} Kg
+            </div>
+          </div>
         </div>
       ))}
 
       {/* FLOAT BUTTON */}
       {(user?.role === "Manager Main Warehouse" ||
         user?.role === "Staff Main Warehouse") && (
-        <button
-          onClick={() => setShowForm(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg"
-        >
+        <button className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg">
           <Plus />
         </button>
       )}
