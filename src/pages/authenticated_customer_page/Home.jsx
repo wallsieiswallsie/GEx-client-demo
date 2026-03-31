@@ -112,15 +112,15 @@ export default function Home() {
         <h3 className="font-semibold mb-2">Layanan</h3>
 
         <div className="grid grid-cols-4 gap-4">
-          <Menu icon={<Search />} label="Cek Ongkir" />
-          <Menu icon={<Map />} label="Lacak Paket" />
-          <Menu icon={<Box />} label="Daftarkan Paket" />
-          <Menu icon={<Store />} label="Lokasi Gerai" />
-          <Menu icon={<Handshake />} label="Kemitraan" />
-          <Menu icon={<DollarSign />} label="COD" />
-          <Menu icon={<Video />} label="Unboxing" />
-          <Menu icon={<HelpCircle />} label="Bantuan" />
-          <Menu icon={<Ship />} label="Jadwal Kapal" />
+            <Menu icon={<Search />} label="Cek Ongkir" color="text-orange-500" />
+            <Menu icon={<Map />} label="Lacak Paket" color="text-red-500" />
+            <Menu icon={<Box />} label="Daftarkan Paket" color="text-orange-600" />
+            <Menu icon={<Store />} label="Lokasi Gerai" color="text-blue-500" />
+            <Menu icon={<Handshake />} label="Kemitraan" color="text-green-500" />
+            <Menu icon={<DollarSign />} label="COD" color="text-emerald-500" />
+            <Menu icon={<Video />} label="Unboxing" color="text-purple-500" />
+            <Menu icon={<HelpCircle />} label="Bantuan" color="text-blue-400" />
+            <Menu icon={<Ship />} label="Jadwal Kapal" color="text-cyan-600" />
         </div>
       </div>
 
@@ -184,10 +184,12 @@ function StatusCard({ title, value, icon, danger, highlight, bgColor, color }) {
   );
 }
 
-function Menu({ icon, label }) {
+function Menu({ icon, label, color }) {
   return (
     <div className="flex flex-col items-center gap-1 text-center">
-      <div className="w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center text-orange-500">
+      <div
+        className={`w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center ${color}`}
+      >
         {icon}
       </div>
       <p className="text-xs">{label}</p>
