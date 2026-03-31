@@ -1,4 +1,12 @@
-import { Search, Package, Map, Box, Store, Handshake, DollarSign, Video, HelpCircle, Ship } from "lucide-react";
+import {
+  Clock,
+  XCircle,
+  Warehouse,
+  Box,
+  Truck,
+  MapPin,
+  CheckCircle,
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -43,15 +51,20 @@ export default function Home() {
       </div>
 
       {/* STATUS */}
-      <div className="px-4 mt-4">
+        <div className="px-4 mt-4">
         <h3 className="font-semibold mb-2">Status Paketmu</h3>
 
-        <div className="grid grid-cols-3 gap-3">
-          <StatusCard title="Menunggu Tiba" value="0" />
-          <StatusCard title="Tidak Valid" value="0" danger />
-          <StatusCard title="Tiba Gudang" value="0" highlight />
+        <div className="flex gap-3 overflow-x-auto pb-2">
+            <StatusCard title="Menunggu Tiba" value="0" icon="clock" />
+            <StatusCard title="Tidak Valid" value="0" icon="x-circle" danger />
+            <StatusCard title="Tiba Gudang" value="0" icon="warehouse" highlight />
+            <StatusCard title="Dipacking" value="0" icon="box" />
+            <StatusCard title="Dalam Pengiriman" value="0" icon="truck" />
+            <StatusCard title="Tiba Tujuan" value="0" icon="map-pin" />
+            <StatusCard title="Siap Diambil" value="0" icon="box-check" />
+            <StatusCard title="Selesai" value="0" icon="check-circle" highlight />
         </div>
-      </div>
+        </div>
 
       {/* JADWAL KAPAL */}
       <div className="px-4 mt-4">
@@ -118,16 +131,47 @@ export default function Home() {
 
 /* ================= COMPONENT ================= */
 
-function StatusCard({ title, value, danger, highlight }) {
+function StatusCard({ title, value, icon, danger, highlight }) {
+  const getIcon = () => {
+    switch (icon) {
+      case "clock":
+        return <Clock size={18} />;
+      case "x-circle":
+        return <XCircle size={18} />;
+      case "warehouse":
+        return <Warehouse size={18} />;
+      case "box":
+        return <Box size={18} />;
+      case "truck":
+        return <Truck size={18} />;
+      case "map-pin":
+        return <MapPin size={18} />;
+      case "check-circle":
+        return <CheckCircle size={18} />;
+      case "box-check":
+        return (
+          <div className="relative">
+            <Box size={18} />
+            <CheckCircle
+              size={10}
+              className="absolute -bottom-1 -right-1 bg-white rounded-full"
+            />
+          </div>
+        );
+      default:
+        return <Clock size={18} />;
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl p-3 shadow-sm text-center">
+    <div className="min-w-[110px] bg-white rounded-xl p-3 shadow-sm text-center flex-shrink-0">
       <div
-        className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1
+        className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center mb-1
         ${danger ? "bg-red-100 text-red-500" : ""}
-        ${highlight ? "bg-red-100 text-red-600" : ""}
+        ${highlight ? "bg-green-100 text-green-600" : ""}
         ${!danger && !highlight ? "bg-gray-100 text-gray-600" : ""}`}
       >
-        ●
+        {getIcon()}
       </div>
 
       <p className="font-bold">{value}</p>
