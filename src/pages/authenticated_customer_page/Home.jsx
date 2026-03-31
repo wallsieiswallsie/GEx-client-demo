@@ -64,15 +64,15 @@ export default function Home() {
         <h3 className="font-semibold mb-2">Status Paketmu</h3>
 
         <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-            <StatusCard title="Menunggu Tiba" value="0" icon="clock" />
-            <StatusCard title="Tidak Valid" value="0" icon="x-circle" danger />
-            <StatusCard title="Tiba Gudang" value="0" icon="warehouse" highlight />
-            <StatusCard title="Dipacking" value="0" icon="box" />
-            <StatusCard title="Dalam Pengiriman" value="0" icon="truck" />
-            <StatusCard title="Tiba Tujuan" value="0" icon="map-pin" />
-            <StatusCard title="Siap Diambil" value="0" icon="box-check" />
-            <StatusCard title="Selesai" value="0" icon="check-circle" highlight />
-        </div>
+            <StatusCard title="Menunggu Tiba" value="0" icon="clock" color="text-blue-600" bgColor="bg-blue-100" />
+            <StatusCard title="Tidak Valid" value="0" icon="x-circle" color="text-red-600" bgColor="bg-red-100" />
+            <StatusCard title="Tiba Gudang" value="0" icon="warehouse" color="text-green-600" bgColor="bg-green-100" />
+            <StatusCard title="Dipacking" value="0" icon="box" color="text-orange-600" bgColor="bg-orange-100" />
+            <StatusCard title="Dalam Pengiriman" value="0" icon="truck" color="text-indigo-600" bgColor="bg-indigo-100" />
+            <StatusCard title="Tiba Tujuan" value="0" icon="map-pin" color="text-pink-600" bgColor="bg-pink-100" />
+            <StatusCard title="Siap Diambil" value="0" icon="box-check" color="text-teal-600" bgColor="bg-teal-100" />
+            <StatusCard title="Selesai" value="0" icon="check-circle" color="text-emerald-600" bgColor="bg-emerald-100" />
+            </div>
         </div>
 
       {/* JADWAL KAPAL */}
@@ -174,12 +174,7 @@ function StatusCard({ title, value, icon, danger, highlight }) {
 
   return (
     <div className="min-w-[110px] bg-white rounded-xl p-3 shadow-sm text-center flex-shrink-0">
-      <div
-        className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center mb-1
-        ${danger ? "bg-red-100 text-red-500" : ""}
-        ${highlight ? "bg-green-100 text-green-600" : ""}
-        ${!danger && !highlight ? "bg-gray-100 text-gray-600" : ""}`}
-      >
+      <div className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center mb-1 ${bgColor} ${color}`}>
         {getIcon()}
       </div>
 
