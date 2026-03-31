@@ -60,10 +60,10 @@ export default function Home() {
       </div>
 
       {/* STATUS */}
-        <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+        <div className="px-4 mt-4">
         <h3 className="font-semibold mb-2">Status Paketmu</h3>
 
-        <div className="flex gap-3 overflow-x-auto pb-2">
+        <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
             <StatusCard title="Menunggu Tiba" value="0" icon="clock" />
             <StatusCard title="Tidak Valid" value="0" icon="x-circle" danger />
             <StatusCard title="Tiba Gudang" value="0" icon="warehouse" highlight />
