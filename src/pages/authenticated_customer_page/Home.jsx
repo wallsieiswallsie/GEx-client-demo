@@ -140,7 +140,7 @@ export default function Home() {
 
 /* ================= COMPONENT ================= */
 
-function StatusCard({ title, value, icon, danger, highlight }) {
+function StatusCard({ title, value, icon, danger, highlight, bgColor }) {
   const getIcon = () => {
     switch (icon) {
       case "clock":
