@@ -61,6 +61,8 @@ import { useAuth } from "./context/AuthContext";
 import { getRedirectPathByRole } from "./utils/routes";
 import "./App.css";
 
+import Home from "./pages/authenticated_customer_page/Home";
+
 function App() {
   const { user, logout } = useAuth();
   const location = useLocation();
@@ -100,6 +102,7 @@ function App() {
 
             <Route path="/login-customer" element={<LoginPageCustomer />} />
             <Route path="/register-customer" element={<RegisterPageCustomer />} />
+            <Route path="/home" element={<Home />} />
             <Route
               path="/lacak_paket"
               element={
