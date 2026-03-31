@@ -1,3 +1,4 @@
+import { Search, Package, Map, Box, Store, Handshake, DollarSign, Video, HelpCircle, Ship } from "lucide-react";
 import {
   Clock,
   XCircle,
@@ -7,6 +8,7 @@ import {
   MapPin,
   CheckCircle,
 } from "lucide-react";
+
 
 export default function Home() {
   return (
