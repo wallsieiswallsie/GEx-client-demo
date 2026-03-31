@@ -60,7 +60,7 @@ export default function Home() {
       </div>
 
       {/* STATUS */}
-        <div className="px-4 mt-4">
+        <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
         <h3 className="font-semibold mb-2">Status Paketmu</h3>
 
         <div className="flex gap-3 overflow-x-auto pb-2">
