@@ -1,15 +1,21 @@
-import { Search, Package, Map, Box, Store, Handshake, DollarSign, Video, HelpCircle, Ship } from "lucide-react";
 import {
+  Search,
+  Package,
+  Map,
+  Box,
+  Store,
+  Handshake,
+  DollarSign,
+  Video,
+  HelpCircle,
+  Ship,
   Clock,
   XCircle,
   Warehouse,
-  Box,
   Truck,
   MapPin,
   CheckCircle,
 } from "lucide-react";
-
-//trigger redeploy
 
 export default function Home() {
   return (
