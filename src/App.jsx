@@ -62,6 +62,7 @@ import { getRedirectPathByRole } from "./utils/routes";
 import "./App.css";
 
 import Home from "./pages/authenticated_customer_page/Home";
+import ClaimedPackages from "./pages/authenticated_customer_page/ClaimedPackages";
 
 function App() {
   const { user, logout } = useAuth();
@@ -103,6 +104,8 @@ function App() {
             <Route path="/login-customer" element={<LoginPageCustomer />} />
             <Route path="/register-customer" element={<RegisterPageCustomer />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/claim_package" element={<ClaimedPackages />} />
+
             <Route
               path="/lacak_paket"
               element={

@@ -17,7 +17,11 @@ import {
   CheckCircle,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-gray-100 min-h-screen pb-6">
       {/* HEADER */}
@@ -48,7 +52,9 @@ export default function Home() {
           />
           <div className="absolute inset-0 bg-black/30 p-4 flex flex-col justify-end text-white">
             <h2 className="font-bold text-lg">Promo Spesial</h2>
-            <p className="text-sm">Diskon pengiriman ke seluruh Indonesia!</p>
+            <p className="text-sm">
+              Diskon pengiriman ke seluruh Indonesia!
+            </p>
           </div>
         </div>
 
@@ -60,20 +66,20 @@ export default function Home() {
       </div>
 
       {/* STATUS */}
-        <div className="px-4 mt-4">
+      <div className="px-4 mt-4">
         <h3 className="font-semibold mb-2">Status Paketmu</h3>
 
         <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-            <StatusCard title="Menunggu Tiba" value="0" icon="clock" color="text-blue-600" bgColor="bg-blue-100" />
-            <StatusCard title="Tidak Valid" value="0" icon="x-circle" color="text-red-600" bgColor="bg-red-100" />
-            <StatusCard title="Tiba Gudang" value="0" icon="warehouse" color="text-green-600" bgColor="bg-green-100" />
-            <StatusCard title="Dipacking" value="0" icon="box" color="text-orange-600" bgColor="bg-orange-100" />
-            <StatusCard title="Dalam Pengiriman" value="0" icon="truck" color="text-indigo-600" bgColor="bg-indigo-100" />
-            <StatusCard title="Tiba Tujuan" value="0" icon="map-pin" color="text-pink-600" bgColor="bg-pink-100" />
-            <StatusCard title="Siap Diambil" value="0" icon="box-check" color="text-teal-600" bgColor="bg-teal-100" />
-            <StatusCard title="Selesai" value="0" icon="check-circle" color="text-emerald-600" bgColor="bg-emerald-100" />
-            </div>
+          <StatusCard title="Menunggu Tiba" value="0" icon="clock" color="text-blue-600" bgColor="bg-blue-100" />
+          <StatusCard title="Tidak Valid" value="0" icon="x-circle" color="text-red-600" bgColor="bg-red-100" />
+          <StatusCard title="Tiba Gudang" value="0" icon="warehouse" color="text-green-600" bgColor="bg-green-100" />
+          <StatusCard title="Dipacking" value="0" icon="box" color="text-orange-600" bgColor="bg-orange-100" />
+          <StatusCard title="Dalam Pengiriman" value="0" icon="truck" color="text-indigo-600" bgColor="bg-indigo-100" />
+          <StatusCard title="Tiba Tujuan" value="0" icon="map-pin" color="text-pink-600" bgColor="bg-pink-100" />
+          <StatusCard title="Siap Diambil" value="0" icon="box-check" color="text-teal-600" bgColor="bg-teal-100" />
+          <StatusCard title="Selesai" value="0" icon="check-circle" color="text-emerald-600" bgColor="bg-emerald-100" />
         </div>
+      </div>
 
       {/* JADWAL KAPAL */}
       <div className="px-4 mt-4">
@@ -112,15 +118,23 @@ export default function Home() {
         <h3 className="font-semibold mb-2">Layanan</h3>
 
         <div className="grid grid-cols-4 gap-4">
-            <Menu icon={<Search />} label="Cek Ongkir" color="text-orange-500" />
-            <Menu icon={<Map />} label="Lacak Paket" color="text-red-500" />
-            <Menu icon={<Box />} label="Daftarkan Paket" color="text-orange-600" />
-            <Menu icon={<Store />} label="Lokasi Gerai" color="text-blue-500" />
-            <Menu icon={<Handshake />} label="Kemitraan" color="text-green-500" />
-            <Menu icon={<DollarSign />} label="COD" color="text-emerald-500" />
-            <Menu icon={<Video />} label="Unboxing" color="text-purple-500" />
-            <Menu icon={<HelpCircle />} label="Bantuan" color="text-blue-400" />
-            <Menu icon={<Ship />} label="Jadwal Kapal" color="text-cyan-600" />
+          <Menu icon={<Search />} label="Cek Ongkir" color="text-orange-500" />
+          <Menu icon={<Map />} label="Lacak Paket" color="text-red-500" />
+
+          {/* ✅ SUDAH AKTIF */}
+          <Menu
+            icon={<Box />}
+            label="Daftarkan Paket"
+            color="text-orange-600"
+            onClick={() => navigate("/claim_package")}
+          />
+
+          <Menu icon={<Store />} label="Lokasi Gerai" color="text-blue-500" />
+          <Menu icon={<Handshake />} label="Kemitraan" color="text-green-500" />
+          <Menu icon={<DollarSign />} label="COD" color="text-emerald-500" />
+          <Menu icon={<Video />} label="Unboxing" color="text-purple-500" />
+          <Menu icon={<HelpCircle />} label="Bantuan" color="text-blue-400" />
+          <Menu icon={<Ship />} label="Jadwal Kapal" color="text-cyan-600" />
         </div>
       </div>
 
@@ -140,7 +154,7 @@ export default function Home() {
 
 /* ================= COMPONENT ================= */
 
-function StatusCard({ title, value, icon, danger, highlight, bgColor, color }) {
+function StatusCard({ title, value, icon, bgColor, color }) {
   const getIcon = () => {
     switch (icon) {
       case "clock":
@@ -177,16 +191,18 @@ function StatusCard({ title, value, icon, danger, highlight, bgColor, color }) {
       <div className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center mb-1 ${bgColor} ${color}`}>
         {getIcon()}
       </div>
-
       <p className="font-bold">{value}</p>
       <p className="text-xs text-gray-500">{title}</p>
     </div>
   );
 }
 
-function Menu({ icon, label, color }) {
+function Menu({ icon, label, color, onClick }) {
   return (
-    <div className="flex flex-col items-center gap-1 text-center">
+    <div
+      onClick={onClick}
+      className="flex flex-col items-center gap-1 text-center cursor-pointer active:scale-95 transition"
+    >
       <div
         className={`w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center ${color}`}
       >
