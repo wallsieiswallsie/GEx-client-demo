@@ -10,21 +10,39 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const [showOtpModal, setShowOtpModal] = useState(false);
 
+  const ADMIN_WHATSAPP = import.meta.env.VITE_ADMIN_WA || "6281234567890"; // Ganti default dengan no sebenarnya
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
       const res = await authApi.requestOtp(formData.whatsapp_number);
+      // Di klien kita tak perlu peduli berhasil dikirim via WA Provider / Error. 
+      // Kalau berhasil ke generate, kita asumsikan server sedang Push, dan kita Pop Window:
       if (res.status === 'success') {
+        const pesanTrigger = encodeURIComponent(`Halo admin GEX, saya ingin mendaftar dan memicu pengiriman kode akses OTP untuk akun saya.`);
+        const waUrl = `https://wa.me/${ADMIN_WHATSAPP}?text=${pesanTrigger}`;
+        window.open(waUrl, '_blank'); // Buka link WA otomatis
+
         setShowOtpModal(true);
       } else {
         setError(res.message);
       }
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat meminta OTP.');
+      setError(err.message || 'Terjadi kesalahan saat meminta OTP. Pastikan backend hidup.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await authApi.requestOtp(formData.whatsapp_number);
+      const pesanTrigger = encodeURIComponent(`Halo admin GEX, mohon kirim ulang kode akses OTP saya.`);
+      window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${pesanTrigger}`, '_blank');
+    } catch (err) {
+      setError(err.message || 'Terjadi kesalahan resend OTP.');
     }
   };
 
@@ -118,7 +136,7 @@ export default function RegisterPage() {
         onClose={() => setShowOtpModal(false)} 
         whatsappNumber={formData.whatsapp_number} 
         onVerify={handleVerifyOtp} 
-        onResend={() => authApi.requestOtp(formData.whatsapp_number)} 
+        onResend={handleResendOtp} 
       />
     </>
   );
