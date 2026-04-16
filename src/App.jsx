@@ -12,6 +12,8 @@ import { homeRoutes } from "./routes/homeRoutes";
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import FormDaftarPaket from "./pages/FormDaftarPaket";
+
 const GlobalLoadingBoundary = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center">
     <div className="flex flex-col items-center gap-3">
@@ -55,7 +57,16 @@ export default function App() {
                 </Route>
               ))}
 
-              {/* === LEGACY DASHBOARD (sementara) === */}
+              <Route
+                path="/daftar-paket"
+                element={
+                  <ProtectedRoute>
+                    <FormDaftarPaket />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* === LEGACY DASHBOARD === */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -66,7 +77,7 @@ export default function App() {
                 </ProtectedRoute>
               } />
 
-              {/* === FALLBACK / REDIRECT === */}
+              {/* === REDIRECT === */}
               <Route path="/" element={<Navigate to="/home" replace />} />
               <Route path="*" element={<Navigate to="/home" replace />} />
 
