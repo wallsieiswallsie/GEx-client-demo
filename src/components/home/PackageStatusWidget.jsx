@@ -27,49 +27,49 @@ const STATUS_CONFIG = {
   menunggu_tiba: {
     label: 'MENUNGGU\nTIBA',
     color: 'text-blue-600',
-    bg: 'bg-blue-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: Clock,
   },
   tidak_valid: {
     label: 'TIDAK\nVALID',
     color: 'text-red-500',
-    bg: 'bg-red-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: AlertCircle,
   },
   tiba_gudang: {
     label: 'TIBA\nGUDANG',
     color: 'text-gray-700',
-    bg: 'bg-gray-100',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: Warehouse,
   },
   dipacking: {
     label: 'DIPACKING',
     color: 'text-purple-600',
-    bg: 'bg-purple-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: PackageCheck,
   },
   dalam_pengiriman: {
     label: 'DALAM\nPENGIRIMAN',
     color: 'text-amber-600',
-    bg: 'bg-amber-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: Truck,
   },
   tiba_tujuan: {
     label: 'TIBA\nTUJUAN',
     color: 'text-green-600',
-    bg: 'bg-green-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: MapPin,
   },
   siap_diambil: {
     label: 'SIAP\nDIAMBIL',
     color: 'text-blue-700',
-    bg: 'bg-blue-50',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: Inbox,
   },
   selesai: {
     label: 'SELESAI',
     color: 'text-gray-600',
-    bg: 'bg-gray-100',
+    bg: 'bg-gray-100 border border-gray-200',
     icon: CheckCircle,
   },
 };
@@ -78,10 +78,18 @@ function StatusChip({ count, config }) {
   const Icon = config.icon;
 
   return (
-    <div className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-3 min-w-[90px] ${config.bg}`}>
-      <Icon className={`w-5 h-5 mb-1 ${config.color}`} />
-      <span className={`text-xl font-bold ${config.color}`}>{count}</span>
-      <span className="text-[10px] text-gray-500 text-center whitespace-pre-line leading-tight">
+    <div className="flex-shrink-0 flex flex-col justify-between rounded-xl p-3 min-w-[110px] bg-gray-100">
+
+      {/* Row: icon + angka */}
+      <div className="flex items-center justify-between">
+        <Icon className={`w-5 h-5 ${config.color}`} />
+        <span className={`text-xl font-bold ${config.color}`}>
+          {count}
+        </span>
+      </div>
+
+      {/* Label */}
+      <span className="text-[10px] text-gray-500 mt-2 whitespace-pre-line leading-tight">
         {config.label}
       </span>
     </div>
