@@ -1,66 +1,106 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Clock,
+  AlertCircle,
+  Warehouse,
+  PackageCheck,
+  Truck,
+  MapPin,
+  Inbox,
+  CheckCircle
+} from 'lucide-react';
 import { SkeletonCard, SkeletonText } from './SkeletonCard';
 
+const STATUS_ORDER = [
+  'menunggu_tiba',
+  'tidak_valid',
+  'tiba_gudang',
+  'dipacking',
+  'dalam_pengiriman',
+  'tiba_tujuan',
+  'siap_diambil',
+  'selesai',
+];
+
 const STATUS_CONFIG = {
-  dalam_proses: {
+  menunggu_tiba: {
     label: 'MENUNGGU\nTIBA',
-    color: 'text-violet-600',
-    bg: 'bg-violet-50',
-    iconColor: 'text-violet-500',
-    icon: '🕐',
+    color: 'text-blue-600',
+    bg: 'bg-blue-50',
+    icon: Clock,
   },
-  tagihan_belum_bayar: {
+  tidak_valid: {
     label: 'TIDAK\nVALID',
     color: 'text-red-500',
     bg: 'bg-red-50',
-    iconColor: 'text-red-400',
-    icon: '⚠️',
+    icon: AlertCircle,
   },
-  diambil: {
-    label: 'SUDAH\nDIAMBIL',
+  tiba_gudang: {
+    label: 'TIBA\nGUDANG',
+    color: 'text-gray-700',
+    bg: 'bg-gray-100',
+    icon: Warehouse,
+  },
+  dipacking: {
+    label: 'DIPACKING',
+    color: 'text-purple-600',
+    bg: 'bg-purple-50',
+    icon: PackageCheck,
+  },
+  dalam_pengiriman: {
+    label: 'DALAM\nPENGIRIMAN',
+    color: 'text-amber-600',
+    bg: 'bg-amber-50',
+    icon: Truck,
+  },
+  tiba_tujuan: {
+    label: 'TIBA\nTUJUAN',
     color: 'text-green-600',
     bg: 'bg-green-50',
-    iconColor: 'text-green-500',
-    icon: '✓',
+    icon: MapPin,
+  },
+  siap_diambil: {
+    label: 'SIAP\nDIAMBIL',
+    color: 'text-blue-700',
+    bg: 'bg-blue-50',
+    icon: Inbox,
   },
   selesai: {
     label: 'SELESAI',
-    color: 'text-blue-600',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-500',
-    icon: '📦',
+    color: 'text-gray-600',
+    bg: 'bg-gray-100',
+    icon: CheckCircle,
   },
 };
 
 function StatusChip({ count, config }) {
+  const Icon = config.icon;
+
   return (
-    <div className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-3 min-w-[80px] ${config.bg} border border-gray-100`}>
-      <span className={`text-2xl font-bold ${config.color}`}>{count}</span>
-      <span className={`text-[10px] font-semibold mt-1 text-center leading-tight text-gray-500 whitespace-pre-line`}>
+    <div className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-3 min-w-[90px] ${config.bg}`}>
+      <Icon className={`w-5 h-5 mb-1 ${config.color}`} />
+      <span className={`text-xl font-bold ${config.color}`}>{count}</span>
+      <span className="text-[10px] text-gray-500 text-center whitespace-pre-line leading-tight">
         {config.label}
       </span>
     </div>
   );
 }
 
-/**
- * PackageStatusWidget — widget "Status Paketmu" dengan horizontal scroll chips.
- * Data diterima dari parent (CustomerHome) yang menggunakan useHomeSummary hook.
- */
 export default function PackageStatusWidget({ summary, isLoading }) {
   const navigate = useNavigate();
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl mx-4 p-4 shadow-sm border border-gray-100">
-        <div className="flex justify-between items-center mb-3">
+      <div className="bg-white rounded-2xl mx-4 p-4 shadow-sm border">
+        <div className="flex justify-between mb-3">
           <SkeletonText width="120px" />
           <SkeletonText width="60px" />
         </div>
-        <div className="flex gap-3 overflow-hidden">
-          {[1, 2, 3].map((i) => (
-            <SkeletonCard key={i} height="80px" className="min-w-[80px]" />
+        <div className="flex gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <SkeletonCard key={i} height="90px" className="min-w-[90px]" />
           ))}
         </div>
       </div>
@@ -69,34 +109,25 @@ export default function PackageStatusWidget({ summary, isLoading }) {
 
   if (!summary) return null;
 
-  const items = Object.entries(STATUS_CONFIG).map(([key, config]) => ({
-    key,
-    count: summary[key] ?? 0,
-    config,
-  }));
-
   return (
-    <div className="bg-white rounded-2xl mx-4 p-4 shadow-sm border border-gray-100">
-      <div className="flex justify-between items-center mb-3">
+    <div className="bg-white rounded-2xl mx-4 p-4 shadow-sm border">
+      <div className="flex justify-between mb-3">
         <h2 className="text-sm font-bold text-gray-800">Status Paketmu</h2>
         <button
           onClick={() => navigate('/paketku')}
-          className="text-xs text-violet-600 font-semibold hover:underline"
-          aria-label="Lihat detail semua paket"
+          className="text-xs text-violet-600 font-semibold"
         >
           Lihat Detail
         </button>
       </div>
 
-      <div
-        className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide"
-        role="list"
-        aria-label="Status paket"
-      >
-        {items.map(({ key, count, config }) => (
-          <div key={key} role="listitem">
-            <StatusChip count={count} config={config} />
-          </div>
+      <div className="flex gap-3 overflow-x-auto pb-1">
+        {STATUS_ORDER.map((key) => (
+          <StatusChip
+            key={key}
+            count={summary[key] ?? 0}
+            config={STATUS_CONFIG[key]}
+          />
         ))}
       </div>
     </div>
