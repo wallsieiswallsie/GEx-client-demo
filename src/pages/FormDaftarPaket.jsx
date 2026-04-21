@@ -40,7 +40,7 @@ export default function FormDaftarPaket() {
     <div
       className="min-h-screen bg-gray-50 flex justify-center bg-no-repeat bg-center bg-contain"
       style={{
-        backgroundImage: "url('/images/empty-package.png')",
+        backgroundImage: "url('./public/images/empty-package.png')",
       }}
     >
       <div className="w-full max-w-md px-4 py-6 flex flex-col">
