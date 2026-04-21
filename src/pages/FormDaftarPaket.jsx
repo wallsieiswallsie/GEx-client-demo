@@ -2,9 +2,13 @@ import { useState } from "react";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { createClaimedPackage } from "../api/claimedPackages";
+
 export default function FormDaftarPaket() {
   const navigate = useNavigate();
   const [fields, setFields] = useState([""]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (index, value) => {
     if (value.length > 20) return;
@@ -29,9 +33,35 @@ export default function FormDaftarPaket() {
     }
   };
 
-  const handleSubmit = () => {
-    const filtered = fields.filter((f) => f.trim() !== "");
-    console.log("Submit:", filtered);
+  const handleSubmit = async () => {
+    const receipts = fields.filter((f) => f.trim() !== "");
+
+    if (receipts.length === 0) return;
+
+    try {
+      setLoading(true);
+      setError("");
+
+      // parallel request (lebih cepat)
+      await Promise.all(
+        receipts.map((receipt) =>
+          createClaimedPackage(receipt)
+        )
+      );
+
+      alert("Semua paket berhasil didaftarkan.");
+
+      // reset form
+      setFields([""]);
+
+    } catch (err) {
+      console.error(err);
+
+      setError(err.message || "Gagal mendaftarkan paket");
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isAnyFilled = fields.some((f) => f.trim() !== "");
@@ -64,6 +94,12 @@ export default function FormDaftarPaket() {
           <label className="text-gray-800 font-medium mb-2 block">
             Nomor Resi
           </label>
+
+          {error && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
+              {error}
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             {fields.map((field, index) => (
@@ -104,16 +140,15 @@ export default function FormDaftarPaket() {
           {/* SUBMIT */}
           <button
             onClick={handleSubmit}
-            disabled={!isAnyFilled}
+            disabled={!isAnyFilled || loading}
             className={`w-full py-3 rounded-2xl font-semibold text-white shadow-md transition
-              ${
-                isAnyFilled
-                  ? "bg-gradient-to-r from-blue-900 to-red-700 hover:opacity-90"
-                  : "bg-gray-300 cursor-not-allowed"
+    ${isAnyFilled && !loading
+                ? "bg-gradient-to-r from-blue-900 to-red-700 hover:opacity-90"
+                : "bg-gray-300 cursor-not-allowed"
               }
-            `}
+  `}
           >
-            Daftarkan Paket
+            {loading ? "Loading..." : "Daftarkan Paket"}
           </button>
         </div>
       </div>
