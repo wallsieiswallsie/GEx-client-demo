@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { createClaimedPackage } from "../services/api/claimedPackages";
+import { createClaimedPackage, getMyClaimedPackages } from "../services/api/claimedPackages";
 
 export default function FormDaftarPaket() {
   const navigate = useNavigate();
+
   const [fields, setFields] = useState([""]);
+  const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // 🔥 FETCH DATA SAAT LOAD
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const data = await getMyClaimedPackages();
+      setPackages(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleChange = (index, value) => {
     if (value.length > 20) return;
@@ -24,25 +40,17 @@ export default function FormDaftarPaket() {
 
   const handleRemoveField = (index) => {
     const newFields = fields.filter((_, i) => i !== index);
-
-    // minimal 1 field biar UX aman
-    if (newFields.length === 0) {
-      setFields([""]);
-    } else {
-      setFields(newFields);
-    }
+    setFields(newFields.length === 0 ? [""] : newFields);
   };
 
   const handleSubmit = async () => {
     const receipts = fields.filter((f) => f.trim() !== "");
-
     if (receipts.length === 0) return;
 
     try {
       setLoading(true);
       setError("");
 
-      // parallel request (lebih cepat)
       await Promise.all(
         receipts.map((receipt) =>
           createClaimedPackage(receipt)
@@ -51,14 +59,14 @@ export default function FormDaftarPaket() {
 
       alert("Semua paket berhasil didaftarkan.");
 
-      // reset form
       setFields([""]);
+
+      // 🔥 REFRESH LIST
+      fetchPackages();
 
     } catch (err) {
       console.error(err);
-
       setError(err.message || "Gagal mendaftarkan paket");
-
     } finally {
       setLoading(false);
     }
@@ -66,12 +74,18 @@ export default function FormDaftarPaket() {
 
   const isAnyFilled = fields.some((f) => f.trim() !== "");
 
+  const hasPackages = packages.length > 0;
+
   return (
     <div
-      className="min-h-screen bg-gray-50 flex justify-center bg-no-repeat bg-center bg-contain"
-      style={{
-        backgroundImage: "url('/images/empty-package.png')",
-      }}
+      className={`min-h-screen flex justify-center bg-no-repeat bg-center 
+        ${hasPackages ? "bg-gray-50" : "bg-gray-50 bg-contain"}
+      `}
+      style={
+        !hasPackages
+          ? { backgroundImage: "url('/images/empty-package.png')" }
+          : {}
+      }
     >
       <div className="w-full max-w-md px-4 py-6 flex flex-col">
 
@@ -88,7 +102,7 @@ export default function FormDaftarPaket() {
           </h1>
         </div>
 
-        {/* FORM CARD */}
+        {/* FORM */}
         <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-lg border border-gray-100 p-4">
 
           <label className="text-gray-800 font-medium mb-2 block">
@@ -114,7 +128,6 @@ export default function FormDaftarPaket() {
                   transition bg-gray-50"
                 />
 
-                {/* DELETE BUTTON */}
                 <button
                   onClick={() => handleRemoveField(index)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 
@@ -126,7 +139,6 @@ export default function FormDaftarPaket() {
             ))}
           </div>
 
-          {/* ADD FIELD */}
           <button
             onClick={handleAddField}
             className="flex items-center gap-2 text-blue-900 mt-4 text-sm font-medium hover:opacity-80 transition"
@@ -137,20 +149,46 @@ export default function FormDaftarPaket() {
 
           <hr className="my-4 border-gray-100" />
 
-          {/* SUBMIT */}
           <button
             onClick={handleSubmit}
             disabled={!isAnyFilled || loading}
             className={`w-full py-3 rounded-2xl font-semibold text-white shadow-md transition
-    ${isAnyFilled && !loading
+              ${isAnyFilled && !loading
                 ? "bg-gradient-to-r from-blue-900 to-red-700 hover:opacity-90"
                 : "bg-gray-300 cursor-not-allowed"
               }
-  `}
+            `}
           >
             {loading ? "Loading..." : "Daftarkan Paket"}
           </button>
         </div>
+
+        {/* 🔥 LIST PAKET */}
+        {hasPackages && (
+          <div className="mt-6 space-y-3">
+            <h2 className="text-md font-semibold text-gray-800">
+              Paket Saya
+            </h2>
+
+            {packages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="bg-white p-4 rounded-2xl shadow border border-gray-100"
+              >
+                <p className="font-medium">{pkg.receipt}</p>
+
+                <p className="text-sm text-gray-500">
+                  {pkg.is_confirmed ? "Terkonfirmasi" : "Menunggu"}
+                </p>
+
+                <p className="text-xs text-gray-400">
+                  {pkg.claimed_at}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );
