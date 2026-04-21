@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { createClaimedPackage } from "../api/claimedPackages";
+import { createClaimedPackage } from "../services/api/claimedPackages";
 
 export default function FormDaftarPaket() {
   const navigate = useNavigate();
