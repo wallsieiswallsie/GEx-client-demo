@@ -12,6 +12,11 @@ import NewsBanner from '../../components/home/NewsBanner';
 import BottomNav from '../../components/home/BottomNav';
 import { SkeletonCard } from '../../components/home/SkeletonCard';
 
+import { getUnconfirmedCount } from '../../services/api/claimedPackages';
+
+import { Play } from 'lucide-react';
+
+
 // GEX Logo — inline SVG (mereplikasi logo dari gambar: G ungu + Ex merah)
 function GexLogo({ size = 40 }) {
   return (
@@ -120,7 +125,7 @@ function PromoBanner({ banner, isLoading }) {
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/40
           flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
-          <span className="text-white text-2xl ml-1">▶</span>
+          <Play className="w-6 h-6 text-white ml-1" fill="white" />
         </div>
       </div>
 
@@ -147,6 +152,24 @@ export default function CustomerHome() {
   // Data isolation via custom hooks — komponen tidak fetch langsung
   const { data: summaryData, isLoading: summaryLoading } = useHomeSummary();
   const { schedules, isLoading: schedulesLoading } = useShipSchedules();
+
+  //  state untuk claimed_packages
+  const [unconfirmedCount, setUnconfirmedCount] = useState(0);
+
+  //  fetch jumlah paket menunggu
+  useEffect(() => {
+    const fetchUnconfirmed = async () => {
+      try {
+        const total = await getUnconfirmedCount();
+        setUnconfirmedCount(total);
+      } catch (err) {
+        console.error("Gagal ambil unconfirmed:", err);
+      }
+    };
+
+    fetchUnconfirmed();
+  }, []);
+
 
   const handleLogout = () => {
     logout();
@@ -180,6 +203,7 @@ export default function CustomerHome() {
           <PackageStatusWidget
             summary={summaryData?.package_summary}
             isLoading={summaryLoading}
+            unconfirmedCount={unconfirmedCount}
           />
 
           {/* 4. Jadwal Kapal */}

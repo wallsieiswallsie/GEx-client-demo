@@ -22,3 +22,14 @@ export const getMyClaimedPackages = async () => {
 
   return res.data;
 };
+
+/**
+ * Get count claimed packages unconfirmed (milik user login)
+ */
+export const getUnconfirmedCount = async () => {
+  const res = await apiFetch("/claimed-packages/count/unconfirmed", {
+    method: "GET",
+  });
+
+  return res.data.total;
+};
