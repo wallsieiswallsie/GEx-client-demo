@@ -96,7 +96,7 @@ function StatusChip({ count, config }) {
   );
 }
 
-export default function PackageStatusWidget({ summary, isLoading }) {
+export default function PackageStatusWidget({ summary, isLoading, unconfirmedCount = 0 }) {
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -133,7 +133,11 @@ export default function PackageStatusWidget({ summary, isLoading }) {
         {STATUS_ORDER.map((key) => (
           <StatusChip
             key={key}
-            count={summary[key] ?? 0}
+            count={
+              key === "menunggu_tiba"
+                ? unconfirmedCount
+                : summary[key] ?? 0
+            }
             config={STATUS_CONFIG[key]}
           />
         ))}
