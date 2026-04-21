@@ -1,10 +1,12 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import CustomerHome from './CustomerHome';
+import GeneralManagerHome from './GeneralManagerHome';
+import BranchManagerHome from './BranchManagerHome';
+import BranchStaffHome from './BranchStaffHome';
+import SuperAdminHome from './SuperAdminHome';
 
 // Scaffold cepat untuk role lain — akan dikembangkan di sprint berikutnya
-const AdminHome = React.lazy(() => import('./AdminHome'));
-const WarehouseHome = React.lazy(() => import('./WarehouseHome'));
 const CourierHome = React.lazy(() => import('./CourierHome'));
 
 /**
@@ -33,17 +35,17 @@ export default function HomeContainer() {
     case 'customer':
       return <CustomerHome />;
 
-    case 'admin':
+    case 'general_manager':
       return (
         <React.Suspense fallback={<RoleFallback />}>
-          <AdminHome />
+          <GeneralManagerHome />
         </React.Suspense>
       );
 
-    case 'warehouse':
+    case 'branch_manager':
       return (
         <React.Suspense fallback={<RoleFallback />}>
-          <WarehouseHome />
+          <BranchManagerHome />
         </React.Suspense>
       );
 
@@ -51,6 +53,20 @@ export default function HomeContainer() {
       return (
         <React.Suspense fallback={<RoleFallback />}>
           <CourierHome />
+        </React.Suspense>
+      );
+
+    case 'branch_staff':
+      return (
+        <React.Suspense fallback={<RoleFallback />}>
+          <BranchStaffHome />
+        </React.Suspense>
+      );
+
+    case 'super_admin':
+      return (
+        <React.Suspense fallback={<RoleFallback />}>
+          <SuperAdminHome />
         </React.Suspense>
       );
 
