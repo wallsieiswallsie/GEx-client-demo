@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Package, Calendar, Clock } from "lucide-react";
 
 import { createClaimedPackage, getMyClaimedPackages } from "../services/api/claimedPackages";
 
@@ -174,8 +175,14 @@ export default function FormDaftarPaket() {
             {packages
               .filter((pkg) => !pkg.is_confirmed)
               .map((pkg) => {
-                const claimedDate = pkg.claimed_at?.split("T")[0];
-                const validDate = pkg.valid_until?.split("T")[0];
+
+                const formatDate = (date) => {
+                  return new Date(date).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  });
+                };
 
                 return (
                   <div
@@ -184,31 +191,42 @@ export default function FormDaftarPaket() {
                   >
 
                     {/* HEADER */}
-                    <div className="flex justify-between items-start mb-2">
-                      <p className="font-semibold text-gray-900 tracking-wide">
-                        {pkg.receipt.toUpperCase()}
-                      </p>
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-2">
+                        <Package size={18} className="text-blue-700" />
+                        <p className="font-semibold text-gray-900 tracking-wide">
+                          {pkg.receipt.toUpperCase()}
+                        </p>
+                      </div>
 
                       <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
                         Menunggu
                       </span>
                     </div>
 
-                    {/* INFO */}
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p>
-                        <span className="font-medium text-gray-700">Diklaim:</span>{" "}
-                        {claimedDate}
-                      </p>
+                    {/* INFO GRID */}
+                    <div className="grid grid-cols-[140px_10px_1fr] text-sm text-gray-600 gap-y-2">
 
-                      <p>
-                        <span className="font-medium text-gray-700">Berlaku sampai:</span>{" "}
-                        {validDate}
-                      </p>
+                      {/* Diklaim */}
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Calendar size={16} />
+                        <span>Diklaim pada</span>
+                      </div>
+                      <div>:</div>
+                      <div>{formatDate(pkg.claimed_at)}</div>
+
+                      {/* Valid Until */}
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Clock size={16} />
+                        <span>Berlaku sampai</span>
+                      </div>
+                      <div>:</div>
+                      <div>{formatDate(pkg.valid_until)}</div>
+
                     </div>
 
-                    {/* PROGRESS BAR MINI */}
-                    <div className="mt-3 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    {/* PROGRESS BAR */}
+                    <div className="mt-4 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
                       <div className="h-full w-1/3 bg-yellow-400 animate-pulse"></div>
                     </div>
 
@@ -217,7 +235,6 @@ export default function FormDaftarPaket() {
               })}
           </div>
         )}
-
       </div>
     </div>
   );
