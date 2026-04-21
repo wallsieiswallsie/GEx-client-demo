@@ -164,28 +164,57 @@ export default function FormDaftarPaket() {
         </div>
 
         {/* 🔥 LIST PAKET */}
-        {hasPackages && (
-          <div className="mt-6 space-y-3">
+        {packages.filter(p => !p.is_confirmed).length > 0 && (
+          <div className="mt-6 space-y-4">
+
             <h2 className="text-md font-semibold text-gray-800">
-              Paket Saya
+              Paket Menunggu
             </h2>
 
-            {packages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="bg-white p-4 rounded-2xl shadow border border-gray-100"
-              >
-                <p className="font-medium">{pkg.receipt}</p>
+            {packages
+              .filter((pkg) => !pkg.is_confirmed)
+              .map((pkg) => {
+                const claimedDate = pkg.claimed_at?.split("T")[0];
+                const validDate = pkg.valid_until?.split("T")[0];
 
-                <p className="text-sm text-gray-500">
-                  {pkg.is_confirmed ? "Terkonfirmasi" : "Menunggu"}
-                </p>
+                return (
+                  <div
+                    key={pkg.id}
+                    className="bg-white p-4 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition"
+                  >
 
-                <p className="text-xs text-gray-400">
-                  {pkg.claimed_at}
-                </p>
-              </div>
-            ))}
+                    {/* HEADER */}
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="font-semibold text-gray-900 tracking-wide">
+                        {pkg.receipt.toUpperCase()}
+                      </p>
+
+                      <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                        Menunggu
+                      </span>
+                    </div>
+
+                    {/* INFO */}
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>
+                        <span className="font-medium text-gray-700">Diklaim:</span>{" "}
+                        {claimedDate}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-gray-700">Berlaku sampai:</span>{" "}
+                        {validDate}
+                      </p>
+                    </div>
+
+                    {/* PROGRESS BAR MINI */}
+                    <div className="mt-3 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full w-1/3 bg-yellow-400 animate-pulse"></div>
+                    </div>
+
+                  </div>
+                );
+              })}
           </div>
         )}
 
