@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    Clock,
+    Home,
     Truck,
     MapPin,
     PackageCheck,
@@ -157,15 +157,30 @@ export default function GeneralManagerHome() {
                     <section className="mx-4">
                         <Section title="Fitur" />
 
-                        <div className="grid grid-cols-4 gap-3">
+                        <div className="grid grid-cols-4 gap-4">
                             {FEATURES.map((f) => (
                                 <button
                                     key={f.label}
                                     onClick={() => navigate(f.path)}
-                                    className="bg-white p-3 rounded-xl shadow-sm flex flex-col items-center text-center text-[10px]"
+                                    className="flex flex-col items-center text-center"
                                 >
-                                    <f.icon className="w-5 h-5 text-violet-600 mb-1" />
-                                    {f.label}
+                                    {/* ICON BOX */}
+                                    <div
+                                        className={`
+                                            w-14 h-14 
+                                            flex items-center justify-center
+                                            rounded-2xl 
+                                            shadow-sm
+                                            ${f.color}
+                                        `}
+                                    >
+                                        <f.icon className="w-6 h-6" />
+                                    </div>
+
+                                    {/* LABEL */}
+                                    <span className="mt-2 text-[11px] font-medium text-gray-600 leading-tight">
+                                        {f.label}
+                                    </span>
                                 </button>
                             ))}
                         </div>
@@ -186,21 +201,21 @@ export default function GeneralManagerHome() {
    FEATURES LIST
 ========================= */
 const FEATURES = [
-    { label: "Input Paket", path: "/input", icon: PackageCheck },
-    { label: "Belum Packing", path: "/belum-packing", icon: Clock },
-    { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle },
-    { label: "Database Paket", path: "/database", icon: Database },
-    { label: "Manage User", path: "/users", icon: Users },
-    { label: "Manage Gudang", path: "/gudang", icon: MapPin },
-    { label: "Rute & Ongkir", path: "/rute", icon: Truck },
-    { label: "Informasi", path: "/info", icon: FileText },
-    { label: "Kloter", path: "/kloter", icon: Truck },
-    { label: "Ekspedisi", path: "/ekspedisi", icon: Truck },
-    { label: "Konten", path: "/konten", icon: FileText },
-    { label: "Invoice", path: "/invoice", icon: FileText },
-    { label: "Kontak", path: "/kontak", icon: Users },
-    { label: "Kemitraan", path: "/mitra", icon: Users },
-    { label: "Setoran", path: "/setoran", icon: Wallet },
+    { label: "Input Paket", path: "/input", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
+    { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
+    { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
+    { label: "Database Paket", path: "/database", icon: Database, color: "bg-blue-100 text-blue-600" },
+    { label: "Manage User", path: "/users", icon: Users, color: "bg-indigo-100 text-indigo-600" },
+    { label: "Manage Gudang", path: "/gudang", icon: MapPin, color: "bg-green-100 text-green-600" },
+    { label: "Rute & Ongkir", path: "/rute", icon: Truck, color: "bg-orange-100 text-orange-600" },
+    { label: "Informasi", path: "/info", icon: FileText, color: "bg-sky-100 text-sky-600" },
+    { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
+    { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
+    { label: "Konten", path: "/konten", icon: FileText, color: "bg-cyan-100 text-cyan-600" },
+    { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
+    { label: "Kontak", path: "/kontak", icon: Users, color: "bg-teal-100 text-teal-600" },
+    { label: "Kemitraan", path: "/mitra", icon: Users, color: "bg-rose-100 text-rose-600" },
+    { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
 ];
 
 /* =========================
@@ -211,7 +226,7 @@ function GM_BottomNav() {
 
     return (
         <nav className="sticky bottom-0 bg-white border-t shadow-lg grid grid-cols-5 text-[10px]">
-            <NavItem icon={Clock} label="Beranda" onClick={() => navigate("/gm")} />
+            <NavItem icon={Home} label="Beranda" onClick={() => navigate("/gm")} />
             <NavItem icon={Database} label="Database" onClick={() => navigate("/database")} />
             <NavItem icon={Truck} label="Pengiriman" onClick={() => navigate("/laporan-pengiriman")} />
             <NavItem icon={Wallet} label="Keuangan" onClick={() => navigate("/laporan-keuangan")} />
