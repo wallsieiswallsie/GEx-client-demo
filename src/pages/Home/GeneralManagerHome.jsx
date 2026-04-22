@@ -144,36 +144,39 @@ export default function GeneralManagerHome() {
                     </section>
 
                     {/* =========================
-             FITUR
-          ========================= */}
+                        FITUR
+                    ========================= */}
                     <section className="mx-4">
                         <Section title="Fitur" />
 
                         <div className="grid grid-cols-4 gap-4">
-                            {FEATURES.map((f) => (
-                                <button
-                                    key={f.label}
-                                    onClick={() => navigate(f.path)}
-                                    className="flex flex-col items-center text-center"
-                                >
-                                    {/* ICON BOX */}
-                                    <div
-                                        className={`
-                                            w-14 h-14 
-                                            flex items-center justify-center
-                                            rounded-2xl 
-                                            shadow-sm
-                                            ${f.color}
-                                        `}
-                                    >
-                                        <f.icon className="w-6 h-6" />
-                                    </div>
+                            {FEATURE_GROUPS.map((group) => (
+                                <div key={group.title} className="mb-4">
 
-                                    {/* LABEL */}
-                                    <span className="mt-2 text-[11px] font-medium text-gray-600 leading-tight">
-                                        {f.label}
-                                    </span>
-                                </button>
+                                    {/* TITLE */}
+                                    <h3 className="text-xs font-semibold text-gray-400 mb-2 px-1">
+                                        {group.title}
+                                    </h3>
+
+                                    {/* ITEMS */}
+                                    <div className="grid grid-cols-4 gap-4">
+                                        {group.items.map((f) => (
+                                            <button
+                                                key={f.label}
+                                                onClick={() => navigate(f.path)}
+                                                className="flex flex-col items-center text-center"
+                                            >
+                                                <div className={`w-14 h-14 flex items-center justify-center rounded-2xl shadow-sm ${f.color}`}>
+                                                    <f.icon className="w-6 h-6" />
+                                                </div>
+
+                                                <span className="mt-2 text-[11px] font-medium text-gray-600 leading-tight">
+                                                    {f.label}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </section>
@@ -192,22 +195,48 @@ export default function GeneralManagerHome() {
 /* =========================
    FEATURES LIST
 ========================= */
-const FEATURES = [
-    { label: "Input Paket", path: "/input", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
-    { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
-    { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
-    { label: "Database Paket", path: "/database", icon: Database, color: "bg-blue-100 text-blue-600" },
-    { label: "Manage User", path: "/users", icon: Users, color: "bg-indigo-100 text-indigo-600" },
-    { label: "Manage Gudang", path: "/gudang", icon: MapPin, color: "bg-green-100 text-green-600" },
-    { label: "Rute & Ongkir", path: "/rute", icon: Truck, color: "bg-orange-100 text-orange-600" },
-    { label: "Informasi", path: "/info", icon: FileText, color: "bg-sky-100 text-sky-600" },
-    { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
-    { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
-    { label: "Konten", path: "/konten", icon: FileText, color: "bg-cyan-100 text-cyan-600" },
-    { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
-    { label: "Kontak", path: "/kontak", icon: Users, color: "bg-teal-100 text-teal-600" },
-    { label: "Kemitraan", path: "/mitra", icon: Users, color: "bg-rose-100 text-rose-600" },
-    { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
+const FEATURE_GROUPS = [
+    {
+        title: "Operasional Paket",
+        items: [
+            { label: "Input Paket", path: "/input", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
+            { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
+            { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
+            { label: "Database Paket", path: "/database", icon: Database, color: "bg-blue-100 text-blue-600" },
+            { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
+        ]
+    },
+    {
+        title: "Logistik & Distribusi",
+        items: [
+            { label: "Gudang", path: "/gudang", icon: MapPin, color: "bg-green-100 text-green-600" },
+            { label: "Rute & Ongkir", path: "/rute", icon: Truck, color: "bg-orange-100 text-orange-600" },
+            { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
+            { label: "Item List", path: "/item-list", icon: PackageCheck, color: "bg-gray-100 text-gray-600" },
+        ]
+    },
+    {
+        title: "Keuangan",
+        items: [
+            { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
+            { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
+        ]
+    },
+    {
+        title: "Pengguna & Relasi",
+        items: [
+            { label: "User", path: "/users", icon: Users, color: "bg-indigo-100 text-indigo-600" },
+            { label: "Kontak", path: "/kontak", icon: Users, color: "bg-teal-100 text-teal-600" },
+            { label: "Kemitraan", path: "/mitra", icon: Users, color: "bg-rose-100 text-rose-600" },
+        ]
+    },
+    {
+        title: "Konten & CMS",
+        items: [
+            { label: "Informasi", path: "/info", icon: FileText, color: "bg-sky-100 text-sky-600" },
+            { label: "Konten", path: "/konten", icon: FileText, color: "bg-cyan-100 text-cyan-600" },
+        ]
+    }
 ];
 
 /* =========================
