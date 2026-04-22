@@ -195,7 +195,7 @@ export default function GeneralManagerHome() {
 /* =========================
    FEATURES LIST
 ========================= */
-const FEATURES = [
+const FEATURE_GROUPS = [
     { label: "Operasional", path: "/operasional", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
     { label: "Logistik", path: "/logistik", icon: Truck, color: "bg-orange-100 text-orange-600" },
     { label: "Keuangan", path: "/keuangan", icon: Wallet, color: "bg-lime-100 text-lime-600" },
