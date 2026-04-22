@@ -1,7 +1,7 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
 
-import EkspedisiPage from "../pages/ekspedisi/EkspedisiPage";
+import EkspedisiPage from "../pages/logistik/EkspedisiPage";
 
 export const logistikRoutes = [
     {
