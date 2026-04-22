@@ -195,48 +195,12 @@ export default function GeneralManagerHome() {
 /* =========================
    FEATURES LIST
 ========================= */
-const FEATURE_GROUPS = [
-    {
-        title: "Operasional Paket",
-        items: [
-            { label: "Input Paket", path: "/input", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
-            { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
-            { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
-            { label: "Database Paket", path: "/database", icon: Database, color: "bg-blue-100 text-blue-600" },
-            { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
-        ]
-    },
-    {
-        title: "Logistik & Distribusi",
-        items: [
-            { label: "Gudang", path: "/gudang", icon: MapPin, color: "bg-green-100 text-green-600" },
-            { label: "Rute & Ongkir", path: "/rute", icon: Truck, color: "bg-orange-100 text-orange-600" },
-            { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
-            { label: "Item List", path: "/item-list", icon: PackageCheck, color: "bg-gray-100 text-gray-600" },
-        ]
-    },
-    {
-        title: "Keuangan",
-        items: [
-            { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
-            { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
-        ]
-    },
-    {
-        title: "Pengguna & Relasi",
-        items: [
-            { label: "User", path: "/users", icon: Users, color: "bg-indigo-100 text-indigo-600" },
-            { label: "Kontak", path: "/kontak", icon: Users, color: "bg-teal-100 text-teal-600" },
-            { label: "Kemitraan", path: "/mitra", icon: Users, color: "bg-rose-100 text-rose-600" },
-        ]
-    },
-    {
-        title: "Konten & CMS",
-        items: [
-            { label: "Informasi", path: "/info", icon: FileText, color: "bg-sky-100 text-sky-600" },
-            { label: "Konten", path: "/konten", icon: FileText, color: "bg-cyan-100 text-cyan-600" },
-        ]
-    }
+const FEATURES = [
+    { label: "Operasional", path: "/operasional", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
+    { label: "Logistik", path: "/logistik", icon: Truck, color: "bg-orange-100 text-orange-600" },
+    { label: "Keuangan", path: "/keuangan", icon: Wallet, color: "bg-lime-100 text-lime-600" },
+    { label: "Relasi", path: "/relasi", icon: Users, color: "bg-indigo-100 text-indigo-600" },
+    { label: "Konten", path: "/cms", icon: FileText, color: "bg-sky-100 text-sky-600" },
 ];
 
 /* =========================
