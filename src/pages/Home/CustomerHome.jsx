@@ -11,55 +11,12 @@ import ServiceMenuGrid from '../../components/home/ServiceMenuGrid';
 import NewsBanner from '../../components/home/NewsBanner';
 import BottomNav from '../../components/home/BottomNav';
 import { SkeletonCard } from '../../components/home/SkeletonCard';
+import Header from '../../components/home/Header';
 
 import { getUnconfirmedCount } from '../../services/api/claimedPackages';
 
 import { Play } from 'lucide-react';
 
-
-// GEX Logo — inline SVG (mereplikasi logo dari gambar: G ungu + Ex merah)
-function GexLogo({ size = 40 }) {
-  return (
-    <img
-      src="/images/logo_gex.png"
-      alt="GEX Logo"
-      style={{ height: size * 0.6 }}
-      className="object-contain"
-    />
-  );
-}
-
-// Header — Logo GEX + user greeting + logout button
-function HomeHeader({ user, onLogout }) {
-  const initial = user?.name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || 'U';
-
-  return (
-    <header className="flex items-center justify-between px-4 pt-5 pb-3 bg-white sticky top-0 z-40 border-b border-gray-50">
-      <GexLogo size={48} />
-      <div className="flex items-center gap-2">
-        {/* Avatar lingkaran */}
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-red-500 flex items-center justify-center shadow-sm">
-          <span className="text-white text-sm font-bold">{initial}</span>
-        </div>
-        {/* Logout */}
-        <button
-          id="btn-logout"
-          onClick={onLogout}
-          className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-          aria-label="Keluar dari akun"
-          title="Logout"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-            fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-        </button>
-      </div>
-    </header>
-  );
-}
 
 // Search bar "Lacak Paket"
 function SearchBar({ onSearch }) {
@@ -186,7 +143,17 @@ export default function CustomerHome() {
   return (
     <div className="flex flex-col min-h-dvh bg-gray-50">
       {/* === HEADER === */}
-      <HomeHeader user={summaryData?.user || user} onLogout={handleLogout} />
+      <Header
+        initial={
+          (summaryData?.user?.name?.[0] ||
+            summaryData?.user?.username?.[0] ||
+            user?.name?.[0] ||
+            user?.username?.[0] ||
+            'U'
+          ).toUpperCase()
+        }
+        onLogout={handleLogout}
+      />
 
       {/* === SCROLLABLE CONTENT === */}
       <main className="flex-1 overflow-y-auto pb-20" aria-label="Konten utama homepage">

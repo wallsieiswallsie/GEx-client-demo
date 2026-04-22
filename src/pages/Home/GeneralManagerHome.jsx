@@ -14,33 +14,29 @@ import {
     User,
     Clock
 } from "lucide-react";
+import Header from "../../components/home/Header";
+
+import { useAuth } from '../../context/AuthContext';
+
+const { user, logout } = useAuth();
+
+const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+};
 
 /* =========================
    HEADER
 ========================= */
-function GexLogo({ size = 40 }) {
-    return (
-        <img
-            src="/images/logo_gex.png"
-            alt="GEX"
-            style={{ height: size * 0.6 }}
-        />
-    );
-}
-
-function Header() {
-    return (
-        <header className="flex justify-between items-center px-4 pt-5 pb-3 bg-white border-b">
-            <GexLogo size={48} />
-
-            <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-red-500 flex items-center justify-center text-white font-bold">
-                    G
-                </div>
-            </div>
-        </header>
-    );
-}
+<Header
+    initial={
+        (user?.name?.[0] ||
+            user?.username?.[0] ||
+            "U"
+        ).toUpperCase()
+    }
+    onLogout={handleLogout}
+/>
 
 /* =========================
    COMPONENT KECIL
