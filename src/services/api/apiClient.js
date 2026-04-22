@@ -1,6 +1,9 @@
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export const ACCESS_TOKEN_KEY = "accessToken";
 
+let isRefreshing = false;
+let refreshPromise = null;
+
 export const apiFetch = async (path, options = {}) => {
   const url = path.startsWith("http") ? path : `${API_URL}${path}`;
   let token = localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -18,51 +21,52 @@ export const apiFetch = async (path, options = {}) => {
     return { res, data };
   };
 
-  // Request pertama
   let { res, data } = await makeRequest(token);
 
-  // Kalau token expired → refresh
-  if (res.status === 401) {
+  // kalau unauthorized → refresh
+  if (res.status === 401 && path !== "/refresh") {
     const refreshToken = localStorage.getItem("refreshToken");
 
     if (!refreshToken) {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      window.location.href = "/login";
+      logout();
       throw new Error("Session habis, silakan login ulang");
     }
 
     try {
-      const refreshRes = await fetch(`${API_URL}/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
+      if (!isRefreshing) {
+        isRefreshing = true;
 
-      const refreshData = await refreshRes.json();
+        refreshPromise = fetch(`${API_URL}/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (!res?.data) throw new Error("Refresh gagal");
 
-      if (!refreshRes.ok) {
-        throw new Error("Refresh token gagal");
+            const { accessToken, refreshToken: newRefreshToken } = res.data;
+
+            localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+            localStorage.setItem("refreshToken", newRefreshToken);
+
+            return accessToken;
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
       }
 
-      const newAccessToken = refreshData.data.accessToken;
+      const newAccessToken = await refreshPromise;
 
-      // simpan token baru
-      localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
-
-      // retry request lama
       ({ res, data } = await makeRequest(newAccessToken));
 
     } catch (err) {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      logout();
       throw err;
     }
   }
 
-  //  handle error biasa
   if (!res.ok || data.status === "fail" || data.status === "error") {
     const err = new Error(data.message || "Terjadi kesalahan");
     err.status = res.status;
@@ -70,4 +74,11 @@ export const apiFetch = async (path, options = {}) => {
   }
 
   return data;
+};
+
+// helper biar clean
+const logout = () => {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem("refreshToken");
+  window.location.replace("/login");
 };
