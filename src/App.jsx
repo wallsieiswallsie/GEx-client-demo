@@ -8,6 +8,7 @@ import { ErrorsProvider } from "./context/ErrorsContext";
 // Modular Routes
 import { authRoutes } from "./routes/authRoutes";
 import { homeRoutes } from "./routes/homeRoutes";
+import { logistikRoutes } from "./routes/logistikRoutes";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -47,6 +48,18 @@ export default function App() {
               {/* === PRIVATE HOME ROUTES === */}
               {homeRoutes.map((route, index) => (
                 <Route key={`home-${index}`} element={route.element}>
+                  {route.children.map((child, childIndex) => (
+                    <Route
+                      key={childIndex}
+                      path={child.path}
+                      element={child.element}
+                    />
+                  ))}
+                </Route>
+              ))}
+
+              {logistikRoutes.map((route, index) => (
+                <Route key={`logistik-${index}`} element={route.element}>
                   {route.children.map((child, childIndex) => (
                     <Route
                       key={childIndex}
