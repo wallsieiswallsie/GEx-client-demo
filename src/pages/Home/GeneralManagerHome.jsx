@@ -149,36 +149,35 @@ export default function GeneralManagerHome() {
                     <section className="mx-4">
                         <Section title="Fitur" />
 
-                        <div className="grid grid-cols-4 gap-4">
-                            {FEATURE_GROUPS.map((group) => (
-                                <div key={group.title} className="mb-4">
+                        {FEATURE_GROUPS.map((group) => (
+                            <div key={group.title} className="mb-4">
 
-                                    {/* TITLE */}
-                                    <h3 className="text-xs font-semibold text-gray-400 mb-2 px-1">
-                                        {group.title}
-                                    </h3>
+                                {/* TITLE */}
+                                <h3 className="text-xs font-semibold text-gray-400 mb-2 px-1">
+                                    {group.title}
+                                </h3>
 
-                                    {/* ITEMS */}
-                                    <div className="grid grid-cols-4 gap-4">
-                                        {group.items.map((f) => (
-                                            <button
-                                                key={f.label}
-                                                onClick={() => navigate(f.path)}
-                                                className="flex flex-col items-center text-center"
-                                            >
-                                                <div className={`w-14 h-14 flex items-center justify-center rounded-2xl shadow-sm ${f.color}`}>
-                                                    <f.icon className="w-6 h-6" />
-                                                </div>
+                                {/* GRID ITEMS */}
+                                <div className="grid grid-cols-4 gap-4">
+                                    {group.items.map((f) => (
+                                        <button
+                                            key={f.label}
+                                            onClick={() => navigate(f.path)}
+                                            className="flex flex-col items-center text-center"
+                                        >
+                                            <div className={`w-14 h-14 flex items-center justify-center rounded-2xl shadow-sm ${f.color}`}>
+                                                <f.icon className="w-6 h-6" />
+                                            </div>
 
-                                                <span className="mt-2 text-[11px] font-medium text-gray-600 leading-tight">
-                                                    {f.label}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
+                                            <span className="mt-2 text-[11px] font-medium text-gray-600 leading-tight">
+                                                {f.label}
+                                            </span>
+                                        </button>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+
+                            </div>
+                        ))}
                     </section>
 
                 </div>
