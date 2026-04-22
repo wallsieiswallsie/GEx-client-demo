@@ -18,26 +18,6 @@ import Header from "../../components/home/Header";
 
 import { useAuth } from '../../context/AuthContext';
 
-const { user, logout } = useAuth();
-
-const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-};
-
-/* =========================
-   HEADER
-========================= */
-<Header
-    initial={
-        (user?.name?.[0] ||
-            user?.username?.[0] ||
-            "U"
-        ).toUpperCase()
-    }
-    onLogout={handleLogout}
-/>
-
 /* =========================
    COMPONENT KECIL
 ========================= */
@@ -67,20 +47,35 @@ function Section({ title, action }) {
 ========================= */
 export default function GeneralManagerHome() {
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login", { replace: true });
+    };
+
 
     return (
         <div className="flex flex-col min-h-dvh bg-gray-50">
 
             {/* HEADER */}
-            <Header />
+            <Header
+                initial={
+                    (user?.name?.[0] ||
+                        user?.username?.[0] ||
+                        "U"
+                    ).toUpperCase()
+                }
+                onLogout={handleLogout}
+            />
 
             {/* CONTENT */}
             <main className="flex-1 overflow-y-auto pb-24">
                 <div className="flex flex-col gap-4 pt-3">
 
                     {/* =========================
-             Insight Kloter
-          ========================= */}
+                        Insight Kloter
+                    ========================= */}
                     <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                         <Section title="Insight Kloter (2 Bulan Terakhir)" action="Lihat lebih banyak" />
 
@@ -93,8 +88,8 @@ export default function GeneralManagerHome() {
                     </section>
 
                     {/* =========================
-             Insight User
-          ========================= */}
+                        Insight User
+                    ========================= */}
                     <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                         <Section title="Insight User" />
 
