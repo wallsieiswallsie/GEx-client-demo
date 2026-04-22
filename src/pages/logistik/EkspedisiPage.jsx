@@ -7,7 +7,7 @@ import {
     createExpedition,
     updateExpedition,
     deleteExpedition,
-} from "../../api/expeditions";
+} from "../../services/api/logistik/expeditionsApi";
 
 export default function EkspedisiPage() {
     const [data, setData] = useState([]);
