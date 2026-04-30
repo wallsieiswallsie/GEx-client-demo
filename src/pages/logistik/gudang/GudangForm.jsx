@@ -180,10 +180,10 @@ export default function GudangForm() {
 
             const payload = {
                 ...form,
-                province: form.province?.value,
-                city: form.city?.value,
-                district: form.district?.value,
-                village: form.village?.value,
+                province: form.province?.label,
+                city: form.city?.label,
+                district: form.district?.label,
+                village: form.village?.label,
             };
 
             if (id) {
