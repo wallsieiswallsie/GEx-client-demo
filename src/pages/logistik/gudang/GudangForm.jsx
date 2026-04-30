@@ -6,7 +6,7 @@ import {
     createBranch,
     getBranchById,
     updateBranch,
-} from "../../../services/logistik/branchApi";
+} from "../../../services/api/logistik/branchApi";
 
 import {
     getProvinces,
