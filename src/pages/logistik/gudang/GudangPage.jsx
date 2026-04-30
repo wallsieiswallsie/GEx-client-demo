@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllBranches, deleteBranch } from "../../../services/logistik/branchApi";
+import { getAllBranches, deleteBranch } from "../../../services/api/logistik/branchApi";
 
 export default function GudangPage() {
     const [data, setData] = useState([]);
