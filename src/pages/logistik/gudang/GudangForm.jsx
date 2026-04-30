@@ -1,4 +1,3 @@
-// pages/logistik/gudang/GudangForm.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
