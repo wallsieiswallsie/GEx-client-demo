@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, X, Package } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 
 import {
@@ -159,32 +159,38 @@ export default function ViaPage() {
                             key={item.id}
                             className="bg-white px-4 py-3 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition"
                         >
+                            {/* LEFT */}
                             <div className="flex items-center gap-3">
+
+                                {/* icon */}
                                 <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 text-sm font-bold">
                                     {item.code?.[0] || "V"}
                                 </div>
 
+                                {/* text */}
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-sm text-gray-800">
-                                        {item.name}
-                                    </span>
-                                    <div className="flex flex-col">
+
+                                    {/* name + VD */}
+                                    <div className="flex items-center gap-2">
                                         <span className="font-medium text-sm text-gray-800">
                                             {item.name}
                                         </span>
 
-                                        <span className="text-xs text-gray-400">
-                                            {item.code}
-                                        </span>
-
-                                        <span className="text-[11px] text-gray-400">
-                                            VD: {item.volume_divisor ?? "-"}
+                                        <span className="flex items-center gap-1 text-[11px] font-bold text-gray-500">
+                                            <Package className="w-3 h-3" />
+                                            {item.volume_divisor ?? "-"}
                                         </span>
                                     </div>
+
+                                    {/* code */}
+                                    <span className="text-xs text-gray-400">
+                                        {item.code}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="flex gap-2">
+                            {/* RIGHT */}
+                            <div className="flex flex-col items-center gap-2 pl-3 border-l">
                                 <button
                                     onClick={() => openEdit(item)}
                                     className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
