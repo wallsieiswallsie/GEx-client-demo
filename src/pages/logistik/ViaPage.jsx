@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, X, Package } from "lucide-react";
+import {
+    Plus,
+    Pencil,
+    Trash2,
+    Search,
+    X,
+    Package,
+    Hash,
+    Tag
+} from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 
 import {
@@ -148,7 +157,7 @@ export default function ViaPage() {
             </div>
 
             {/* LIST */}
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3">
                 {loading ? (
                     <div className="text-center text-sm text-gray-400 py-10">
                         Loading...
@@ -157,50 +166,42 @@ export default function ViaPage() {
                     filtered.map((item) => (
                         <div
                             key={item.id}
-                            className="bg-white px-4 py-3 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition"
+                            className="bg-white px-3 py-3 rounded-xl shadow-sm flex justify-between items-start hover:shadow-md transition"
                         >
                             {/* LEFT */}
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col gap-2 w-full">
 
-                                {/* icon */}
-                                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 text-sm font-bold">
-                                    {item.code?.[0] || "V"}
+                                {/* NAME */}
+                                <div className="flex items-center gap-2 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-xs font-medium">
+                                    <Tag className="w-3 h-3" />
+                                    {item.name}
                                 </div>
 
-                                {/* text */}
-                                <div className="flex flex-col">
+                                {/* VD */}
+                                <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                                    <Package className="w-3 h-3" />
+                                    {item.volume_divisor ?? "-"}
+                                </div>
 
-                                    {/* name + VD */}
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-medium text-sm text-gray-800">
-                                            {item.name}
-                                        </span>
-
-                                        <span className="flex items-center gap-1 text-[11px] font-bold text-gray-500">
-                                            <Package className="w-3 h-3" />
-                                            {item.volume_divisor ?? "-"}
-                                        </span>
-                                    </div>
-
-                                    {/* code */}
-                                    <span className="text-xs text-gray-400">
-                                        {item.code}
-                                    </span>
+                                {/* CODE */}
+                                <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                                    <Hash className="w-3 h-3" />
+                                    {item.code}
                                 </div>
                             </div>
 
                             {/* RIGHT */}
-                            <div className="flex flex-col items-center gap-2 pl-3 border-l">
+                            <div className="flex flex-col items-center gap-2 pl-2 border-l ml-2">
                                 <button
                                     onClick={() => openEdit(item)}
-                                    className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
+                                    className="p-1.5 rounded-lg hover:bg-blue-50 active:scale-90 transition"
                                 >
                                     <Pencil className="w-4 h-4 text-blue-500" />
                                 </button>
 
                                 <button
                                     onClick={() => handleDelete(item.id)}
-                                    className="p-2 rounded-lg hover:bg-red-50 active:scale-90 transition"
+                                    className="p-1.5 rounded-lg hover:bg-red-50 active:scale-90 transition"
                                 >
                                     <Trash2 className="w-4 h-4 text-red-500" />
                                 </button>
