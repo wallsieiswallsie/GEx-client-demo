@@ -199,10 +199,6 @@ export default function GudangForm() {
                         </button>
                     }
                 />
-
-                <p className="text-xs text-gray-500 mt-1 ml-[42px]">
-                    Kelola data gudang dan lokasi distribusi
-                </p>
             </div>
 
             {/* FORM */}

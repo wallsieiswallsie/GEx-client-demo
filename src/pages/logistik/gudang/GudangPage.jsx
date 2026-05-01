@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllBranches, deleteBranch } from "../../../services/api/logistik/branchApi";
+import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import SubPageHeader from "../../../components/layout/SubPageHeader";
+
+import {
+    getAllBranches,
+    deleteBranch,
+} from "../../../services/api/logistik/branchApi";
 
 export default function GudangPage() {
     const [data, setData] = useState([]);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const fetchData = async () => {
@@ -19,8 +28,28 @@ export default function GudangPage() {
         }
     };
 
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    // debounce search
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            setDebouncedSearch(search.toLowerCase());
+        }, 300);
+
+        return () => clearTimeout(delay);
+    }, [search]);
+
+    // filter data
+    const filtered = data.filter((b) =>
+        `${b.branch_code} ${b.city} ${b.address}`
+            .toLowerCase()
+            .includes(debouncedSearch)
+    );
+
     const handleDelete = async (id) => {
-        if (!confirm("Yakin hapus data gudang ini?")) return;
+        if (!confirm("Hapus gudang ini?")) return;
 
         try {
             await deleteBranch(id);
@@ -30,67 +59,104 @@ export default function GudangPage() {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     return (
-        <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="font-bold text-lg">Gudang</h1>
-                <button
-                    onClick={() => navigate("/gudang/create")}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                    + Tambah
-                </button>
+        <div className="min-h-dvh bg-gray-50 p-4">
+
+            {/* HEADER */}
+            <div className="mb-5">
+                <SubPageHeader
+                    title="Gudang"
+                    rightAction={
+                        <button
+                            onClick={() => navigate("/gudang/create")}
+                            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm shadow-md hover:scale-[1.03] active:scale-95 transition"
+                        >
+                            <Plus size={16} />
+                            Tambah
+                        </button>
+                    }
+                />
+
+                <p className="text-xs text-gray-500 mt-1 ml-[42px]">
+                    Kelola data gudang dan distribusi logistik
+                </p>
             </div>
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <table className="w-full text-sm border">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="p-2">Kode</th>
-                            <th className="p-2">Alamat</th>
-                            <th className="p-2">Kota</th>
-                            <th className="p-2">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.length === 0 ? (
-                            <tr>
-                                <td colSpan="4" className="text-center p-3">
-                                    Tidak ada data
-                                </td>
-                            </tr>
-                        ) : (
-                            data.map((b) => (
-                                <tr key={b.id} className="border-t">
-                                    <td className="p-2">{b.branch_code}</td>
-                                    <td className="p-2">{b.address}</td>
-                                    <td className="p-2">{b.city}</td>
-                                    <td className="p-2 space-x-2">
-                                        <button
-                                            onClick={() => navigate(`/gudang/edit/${b.id}`)}
-                                            className="text-blue-600"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(b.id)}
-                                            className="text-red-600"
-                                        >
-                                            Hapus
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            )}
+            {/* SEARCH */}
+            <div className="relative mb-5">
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+
+                <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Cari gudang..."
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+                />
+            </div>
+
+            {/* LIST */}
+            <div className="flex flex-col gap-3">
+                {loading ? (
+                    <div className="text-center text-sm text-gray-400 py-10">
+                        Loading...
+                    </div>
+                ) : filtered.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
+                        <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>
+                        Tidak ada data gudang
+                    </div>
+                ) : (
+                    filtered.map((b) => (
+                        <div
+                            key={b.id}
+                            className="bg-white px-4 py-3 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition"
+                        >
+                            {/* LEFT */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                    {b.branch_code?.[0]}
+                                </div>
+
+                                <div>
+                                    <div className="font-medium text-sm text-gray-800">
+                                        {b.branch_code}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                        {b.city}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* ACTION */}
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() =>
+                                        navigate(`/gudang/edit/${b.id}`)
+                                    }
+                                    className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
+                                >
+                                    <Pencil className="w-4 h-4 text-blue-500" />
+                                </button>
+
+                                <button
+                                    onClick={() => handleDelete(b.id)}
+                                    className="p-2 rounded-lg hover:bg-red-50 active:scale-90 transition"
+                                >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* FLOAT BUTTON */}
+            <button
+                onClick={() => navigate("/gudang/create")}
+                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
+            >
+                <Plus />
+            </button>
         </div>
     );
 }
