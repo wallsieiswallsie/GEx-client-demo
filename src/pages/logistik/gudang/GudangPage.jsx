@@ -121,10 +121,24 @@ export default function GudangPage() {
                                 {/* TOP */}
                                 <div className="px-4 py-3 flex justify-between items-center">
                                     <div className="flex items-center gap-3">
+
+                                        {/* CHEVRON */}
+                                        <button
+                                            onClick={() => toggleOpen(b.id)}
+                                            className="p-1 rounded-md hover:bg-gray-100 transition"
+                                        >
+                                            <ChevronDown
+                                                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                                                    }`}
+                                            />
+                                        </button>
+
+                                        {/* INITIAL */}
                                         <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
                                             {b.branch_code?.[0]}
                                         </div>
 
+                                        {/* TEXT */}
                                         <div>
                                             <div className="font-medium text-sm text-gray-800">
                                                 {b.branch_code}
@@ -138,20 +152,7 @@ export default function GudangPage() {
                                     {/* ACTION */}
                                     <div className="flex items-center gap-2">
                                         <button
-                                            onClick={() => toggleOpen(b.id)}
-                                            className="flex items-center gap-1 text-xs text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50 transition"
-                                        >
-                                            Detail
-                                            <ChevronDown
-                                                className={`w-4 h-4 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180" : ""
-                                                    }`}
-                                            />
-                                        </button>
-
-                                        <button
-                                            onClick={() =>
-                                                navigate(`/gudang/edit/${b.id}`)
-                                            }
+                                            onClick={() => navigate(`/gudang/edit/${b.id}`)}
                                             className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
                                         >
                                             <Pencil className="w-4 h-4 text-blue-500" />
@@ -168,43 +169,31 @@ export default function GudangPage() {
 
                                 {/* DROPDOWN DETAIL */}
                                 <div
-                                    className={`px-4 transition-all duration-300 ${isOpen
-                                        ? "max-h-96 py-3 opacity-100"
-                                        : "max-h-0 opacity-0"
+                                    className={`px-4 transition-all duration-300 ${isOpen ? "max-h-52 py-3 opacity-100" : "max-h-0 opacity-0"
                                         } overflow-hidden`}
                                 >
-                                    <div className="text-xs text-gray-600 space-y-1 border-t pt-3">
+                                    <div className="text-xs text-gray-600 border-t pt-3 space-y-2 leading-relaxed">
 
+                                        {/* ADDRESS FORMAT */}
                                         <div>
-                                            <span className="font-medium">Alamat:</span>{" "}
-                                            {b.address}
+                                            {b.address},{" "}
+                                            <span className="uppercase">
+                                                {b.village}, {b.district}, {b.city}, {b.province}, {b.postal_code}
+                                            </span>
                                         </div>
 
-                                        <div>
-                                            <span className="font-medium">Wilayah:</span>{" "}
-                                            {b.village}, {b.district}
-                                        </div>
-
-                                        <div>
-                                            <span className="font-medium">Provinsi:</span>{" "}
-                                            {b.province}
-                                        </div>
-
-                                        <div>
-                                            <span className="font-medium">Kode Pos:</span>{" "}
-                                            {b.postal_code}
-                                        </div>
-
+                                        {/* MAP LINK */}
                                         {b.gmap_link && (
                                             <a
                                                 href={b.gmap_link}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="inline-block mt-1 text-indigo-600 underline text-xs"
+                                                className="inline-block text-indigo-600 text-xs font-medium hover:underline"
                                             >
-                                                Buka di Google Maps
+                                                Lihat di Google Maps
                                             </a>
                                         )}
+
                                     </div>
                                 </div>
                             </div>
