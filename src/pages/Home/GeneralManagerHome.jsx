@@ -15,6 +15,7 @@ import {
     Clock
 } from "lucide-react";
 import Header from "../../components/home/Header";
+import BottomNav from '../../components/home/BottomNav';
 
 import { useAuth } from '../../context/AuthContext';
 
@@ -100,8 +101,8 @@ export default function GeneralManagerHome() {
                     </section>
 
                     {/* =========================
-             Kloter Terdekat
-          ========================= */}
+                        Kloter Terdekat
+                     ========================= */}
                     <section className="mx-4">
                         <Section title="Kloter Pengiriman Terdekat" />
 
@@ -122,8 +123,8 @@ export default function GeneralManagerHome() {
                     </section>
 
                     {/* =========================
-             Belum Dipacking
-          ========================= */}
+                        Belum Dipacking
+                    ========================= */}
                     <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                         <Section title="Belum Dipacking" />
 
@@ -184,9 +185,9 @@ export default function GeneralManagerHome() {
             </main>
 
             {/* =========================
-         BOTTOM NAV (GM)
-      ========================= */}
-            <GM_BottomNav />
+                BOTTOM NAV
+            ========================= */}
+            <BottomNav />
         </div>
     );
 }
@@ -207,22 +208,6 @@ const FEATURE_GROUPS = [
     }
 ];
 
-/* =========================
-   BOTTOM NAV GM
-========================= */
-function GM_BottomNav() {
-    const navigate = useNavigate();
-
-    return (
-        <nav className="sticky bottom-0 bg-white border-t shadow-lg grid grid-cols-5 text-[10px]">
-            <NavItem icon={Home} label="Beranda" onClick={() => navigate("/gm")} />
-            <NavItem icon={Database} label="Database" onClick={() => navigate("/database")} />
-            <NavItem icon={Truck} label="Pengiriman" onClick={() => navigate("/laporan-pengiriman")} />
-            <NavItem icon={Wallet} label="Keuangan" onClick={() => navigate("/laporan-keuangan")} />
-            <NavItem icon={User} label="Profil" onClick={() => navigate("/profil")} />
-        </nav>
-    );
-}
 
 function NavItem({ icon: Icon, label, onClick }) {
     return (

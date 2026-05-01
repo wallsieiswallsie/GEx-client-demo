@@ -1,23 +1,33 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Package, PlayCircle, User } from 'lucide-react';
+import { Home, Package, PlayCircle, User, Database } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const NAV_ITEMS = [
-  { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home' },
-  { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku' },
-  { id: 'konten', icon: PlayCircle, label: 'KONTEN', path: '/konten' },
-  { id: 'profil', icon: User, label: 'PROFIL', path: '/profil' },
+  { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home', roles: ['all'] },
+  { id: 'database', icon: Database, label: 'DATABASE', path: '/database', roles: ['general_manager'] },
+  { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },
+  { id: 'konten', icon: PlayCircle, label: 'KONTEN', path: '/konten', roles: ['customer'] },
+  { id: 'profil', icon: User, label: 'PROFIL', path: '/profil', roles: ['all'] },
 ];
 
 export default function BottomNav() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { role } = useAuth();
+
+  // filter menu berdasarkan role
+  const filteredNav = NAV_ITEMS.filter((item) => {
+    if (item.roles.includes('all')) return true;
+    return item.roles.includes(role);
+  });
 
   return (
     <nav className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg z-50">
       <div className="grid grid-cols-4">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
+        {filteredNav.map((item) => {
+          const isActive =
+            pathname === item.path || pathname.startsWith(item.path + '/');
           const Icon = item.icon;
 
           return (
