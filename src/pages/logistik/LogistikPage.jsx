@@ -1,6 +1,6 @@
 // pages/logistik/LogistikPage.jsx
 import { useNavigate } from "react-router-dom";
-import { MapPin, Truck, PackageCheck } from "lucide-react";
+import { MapPin, Truck, PackageCheck, Route } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 
 export default function LogistikPage() {
@@ -10,6 +10,7 @@ export default function LogistikPage() {
         { label: "Gudang", path: "/gudang", icon: MapPin, color: "bg-green-100 text-green-600" },
         { label: "Rute & Ongkir", path: "/rute", icon: Truck, color: "bg-orange-100 text-orange-600" },
         { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
+        { label: "Via", path: "/via", icon: Route, color: "bg-violet-100 text-violet-600" },
         { label: "Item List", path: "/item-list", icon: PackageCheck, color: "bg-gray-100 text-gray-600" },
     ];
 

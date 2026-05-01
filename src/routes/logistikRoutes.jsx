@@ -4,6 +4,7 @@ import MobileAppLayout from "../layouts/MobileAppLayout";
 import EkspedisiPage from "../pages/logistik/EkspedisiPage";
 import GudangPage from "../pages/logistik/gudang/GudangPage";
 import GudangForm from "../pages/logistik/gudang/GudangForm";
+import ViaPage from "../pages/logistik/ViaPage";
 
 export const logistikRoutes = [
     {
@@ -28,6 +29,10 @@ export const logistikRoutes = [
             {
                 path: "/gudang/edit/:id",
                 element: <GudangForm />,
+            },
+            {
+                path: "/via",
+                element: <ViaPage />,
             },
         ],
     },
