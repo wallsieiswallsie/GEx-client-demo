@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import SubPageHeader from "../../../components/layout/SubPageHeader";
 
+import { Plus, Pencil, Trash2, Search, ChevronDown } from "lucide-react";
+
 import {
     getAllBranches,
     deleteBranch,
@@ -13,6 +15,7 @@ export default function GudangPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [loading, setLoading] = useState(false);
+    const [openId, setOpenId] = useState(null);
 
     const navigate = useNavigate();
 
@@ -41,7 +44,6 @@ export default function GudangPage() {
         return () => clearTimeout(delay);
     }, [search]);
 
-    // filter data
     const filtered = data.filter((b) =>
         `${b.branch_code} ${b.city} ${b.address}`
             .toLowerCase()
@@ -57,6 +59,10 @@ export default function GudangPage() {
         } catch (err) {
             alert(err.message);
         }
+    };
+
+    const toggleOpen = (id) => {
+        setOpenId((prev) => (prev === id ? null : id));
     };
 
     return (
@@ -106,47 +112,106 @@ export default function GudangPage() {
                         Tidak ada data gudang
                     </div>
                 ) : (
-                    filtered.map((b) => (
-                        <div
-                            key={b.id}
-                            className="bg-white px-4 py-3 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition"
-                        >
-                            {/* LEFT */}
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                                    {b.branch_code?.[0]}
+                    filtered.map((b) => {
+                        const isOpen = openId === b.id;
+
+                        return (
+                            <div
+                                key={b.id}
+                                className="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden"
+                            >
+                                {/* TOP */}
+                                <div className="px-4 py-3 flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                            {b.branch_code?.[0]}
+                                        </div>
+
+                                        <div>
+                                            <div className="font-medium text-sm text-gray-800">
+                                                {b.branch_code}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {b.city}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* ACTION */}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => toggleOpen(b.id)}
+                                            className="flex items-center gap-1 text-xs text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50 transition"
+                                        >
+                                            Detail
+                                            <ChevronDown
+                                                className={`w-4 h-4 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180" : ""
+                                                    }`}
+                                            />
+                                        </button>
+
+                                        <button
+                                            onClick={() =>
+                                                navigate(`/gudang/edit/${b.id}`)
+                                            }
+                                            className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
+                                        >
+                                            <Pencil className="w-4 h-4 text-blue-500" />
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleDelete(b.id)}
+                                            className="p-2 rounded-lg hover:bg-red-50 active:scale-90 transition"
+                                        >
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <div className="font-medium text-sm text-gray-800">
-                                        {b.branch_code}
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        {b.city}
+                                {/* DROPDOWN DETAIL */}
+                                <div
+                                    className={`px-4 transition-all duration-300 ${isOpen
+                                        ? "max-h-96 py-3 opacity-100"
+                                        : "max-h-0 opacity-0"
+                                        } overflow-hidden`}
+                                >
+                                    <div className="text-xs text-gray-600 space-y-1 border-t pt-3">
+
+                                        <div>
+                                            <span className="font-medium">Alamat:</span>{" "}
+                                            {b.address}
+                                        </div>
+
+                                        <div>
+                                            <span className="font-medium">Wilayah:</span>{" "}
+                                            {b.village}, {b.district}
+                                        </div>
+
+                                        <div>
+                                            <span className="font-medium">Provinsi:</span>{" "}
+                                            {b.province}
+                                        </div>
+
+                                        <div>
+                                            <span className="font-medium">Kode Pos:</span>{" "}
+                                            {b.postal_code}
+                                        </div>
+
+                                        {b.gmap_link && (
+                                            <a
+                                                href={b.gmap_link}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-block mt-1 text-indigo-600 underline text-xs"
+                                            >
+                                                Buka di Google Maps
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-
-                            {/* ACTION */}
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() =>
-                                        navigate(`/gudang/edit/${b.id}`)
-                                    }
-                                    className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
-                                >
-                                    <Pencil className="w-4 h-4 text-blue-500" />
-                                </button>
-
-                                <button
-                                    onClick={() => handleDelete(b.id)}
-                                    className="p-2 rounded-lg hover:bg-red-50 active:scale-90 transition"
-                                >
-                                    <Trash2 className="w-4 h-4 text-red-500" />
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
 
