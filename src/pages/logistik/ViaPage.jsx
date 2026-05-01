@@ -21,6 +21,7 @@ export default function ViaPage() {
         id: null,
         name: "",
         code: "",
+        volume_divisor: "",
     });
 
     // fetch
@@ -59,6 +60,7 @@ export default function ViaPage() {
             id: null,
             name: "",
             code: "",
+            volume_divisor: "",
         });
         setIsOpen(true);
     };
@@ -80,7 +82,11 @@ export default function ViaPage() {
         }
 
         try {
-            const payload = { name, code };
+            const payload = {
+                name,
+                code,
+                volume_divisor: form.volume_divisor,
+            };
 
             if (form.id) {
                 await updateVia(form.id, payload);
@@ -154,23 +160,30 @@ export default function ViaPage() {
                             className="bg-white px-4 py-3 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition"
                         >
                             <div className="flex items-center gap-3">
-                                {/* icon */}
                                 <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 text-sm font-bold">
                                     {item.code?.[0] || "V"}
                                 </div>
 
-                                {/* text */}
                                 <div className="flex flex-col">
                                     <span className="font-medium text-sm text-gray-800">
                                         {item.name}
                                     </span>
-                                    <span className="text-xs text-gray-400">
-                                        {item.code}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium text-sm text-gray-800">
+                                            {item.name}
+                                        </span>
+
+                                        <span className="text-xs text-gray-400">
+                                            {item.code}
+                                        </span>
+
+                                        <span className="text-[11px] text-gray-400">
+                                            VD: {item.volume_divisor ?? "-"}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* action */}
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => openEdit(item)}
@@ -212,7 +225,6 @@ export default function ViaPage() {
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
                     <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-lg animate-fadeIn">
 
-                        {/* HEADER */}
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-sm font-semibold">
                                 {form.id ? "Edit Via" : "Tambah Via"}
@@ -239,10 +251,23 @@ export default function ViaPage() {
                             onChange={(e) =>
                                 setForm({
                                     ...form,
-                                    code: e.target.value.toUpperCase(), // auto uppercase 🔥
+                                    code: e.target.value.toUpperCase(),
                                 })
                             }
                             placeholder="Kode via (contoh: JKT01)"
+                            className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 mb-3"
+                        />
+
+                        {/* INPUT VOLUME DIVISOR */}
+                        <input
+                            value={form.volume_divisor || ""}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    volume_divisor: e.target.value,
+                                })
+                            }
+                            placeholder="Volume divisor"
                             className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 mb-4"
                         />
 
