@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
+import { ArrowLeft } from "lucide-react";
+import SubPageHeader from "../../components/layout/SubPageHeader";
 
 import {
     createBranch,
@@ -37,81 +39,83 @@ export default function GudangForm() {
     const [districts, setDistricts] = useState([]);
     const [villages, setVillages] = useState([]);
 
-    const [loadingRegion, setLoadingRegion] = useState({
-        province: false,
-        city: false,
-        district: false,
-        village: false,
-    });
-
-    // helper format select
     const mapOptions = (data) =>
         data.map((item) => ({
             value: item.id,
             label: item.name,
         }));
 
-    // load provinces
-    useEffect(() => {
-        loadProvinces();
-    }, []);
-
-    const loadProvinces = async () => {
-        try {
-            setLoadingRegion((s) => ({ ...s, province: true }));
-            const res = await getProvinces();
-            setProvinces(mapOptions(res));
-        } finally {
-            setLoadingRegion((s) => ({ ...s, province: false }));
-        }
+    const handleChange = (field, value) => {
+        setForm((prev) => ({ ...prev, [field]: value }));
     };
 
-    // load edit data
+    // ================= LOAD PROVINCES =================
+    useEffect(() => {
+        getProvinces().then((res) => {
+            setProvinces(mapOptions(res));
+        });
+    }, []);
+
+    // ================= LOAD EDIT =================
     useEffect(() => {
         if (id) loadEditData();
-    }, [id]);
+    }, [id, provinces]);
 
     const loadEditData = async () => {
         try {
             setLoading(true);
             const data = await getBranchById(id);
 
-            // set basic form
-            setForm((prev) => ({
-                ...prev,
-                ...data,
-            }));
+            // ===== MATCH PROVINCE =====
+            const provinceMatch = provinces.find(
+                (p) => p.label === data.province
+            );
 
-            // preload cascading
-            if (data.province) {
-                const citiesData = await getCities(data.province);
+            let cityMatch = null;
+            let districtMatch = null;
+            let villageMatch = null;
+
+            if (provinceMatch) {
+                const citiesData = await getCities(provinceMatch.value);
                 const mappedCities = mapOptions(citiesData);
                 setCities(mappedCities);
 
-                const selectedCity = mappedCities.find(c => c.value === data.city);
+                cityMatch = mappedCities.find(
+                    (c) => c.label === data.city
+                );
 
-                if (data.city) {
-                    const districtsData = await getDistricts(data.city);
+                if (cityMatch) {
+                    const districtsData = await getDistricts(cityMatch.value);
                     const mappedDistricts = mapOptions(districtsData);
                     setDistricts(mappedDistricts);
 
-                    const selectedDistrict = mappedDistricts.find(d => d.value === data.district);
+                    districtMatch = mappedDistricts.find(
+                        (d) => d.label === data.district
+                    );
 
-                    if (data.district) {
-                        const villagesData = await getVillages(data.district);
+                    if (districtMatch) {
+                        const villagesData = await getVillages(districtMatch.value);
                         const mappedVillages = mapOptions(villagesData);
                         setVillages(mappedVillages);
 
-                        setForm((prev) => ({
-                            ...prev,
-                            province: { value: data.province, label: "" },
-                            city: selectedCity,
-                            district: selectedDistrict,
-                            village: mappedVillages.find(v => v.value === data.village),
-                        }));
+                        villageMatch = mappedVillages.find(
+                            (v) => v.label === data.village
+                        );
                     }
                 }
             }
+
+            setForm({
+                branch_code: data.branch_code,
+                address: data.address,
+                province: provinceMatch,
+                city: cityMatch,
+                district: districtMatch,
+                village: villageMatch,
+                postal_code: data.postal_code,
+                gmap_link: data.gmap_link,
+            });
+
         } catch (err) {
             alert(err.message);
         } finally {
@@ -119,27 +123,17 @@ export default function GudangForm() {
         }
     };
 
-    const handleChange = (field, value) => {
-        setForm((prev) => ({ ...prev, [field]: value }));
-    };
-
-    // cascading handlers
+    // ================= CASCADING =================
     const handleProvinceChange = async (option) => {
         handleChange("province", option);
         handleChange("city", null);
         handleChange("district", null);
         handleChange("village", null);
 
-        setCities([]);
-        setDistricts([]);
-        setVillages([]);
-
-        if (!option) return;
-
-        setLoadingRegion((s) => ({ ...s, city: true }));
         const res = await getCities(option.value);
         setCities(mapOptions(res));
-        setLoadingRegion((s) => ({ ...s, city: false }));
+        setDistricts([]);
+        setVillages([]);
     };
 
     const handleCityChange = async (option) => {
@@ -147,31 +141,20 @@ export default function GudangForm() {
         handleChange("district", null);
         handleChange("village", null);
 
-        setDistricts([]);
-        setVillages([]);
-
-        if (!option) return;
-
-        setLoadingRegion((s) => ({ ...s, district: true }));
         const res = await getDistricts(option.value);
         setDistricts(mapOptions(res));
-        setLoadingRegion((s) => ({ ...s, district: false }));
+        setVillages([]);
     };
 
     const handleDistrictChange = async (option) => {
         handleChange("district", option);
         handleChange("village", null);
 
-        setVillages([]);
-
-        if (!option) return;
-
-        setLoadingRegion((s) => ({ ...s, village: true }));
         const res = await getVillages(option.value);
         setVillages(mapOptions(res));
-        setLoadingRegion((s) => ({ ...s, village: false }));
     };
 
+    // ================= SUBMIT =================
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -201,84 +184,95 @@ export default function GudangForm() {
     };
 
     return (
-        <div className="p-4 max-w-xl">
-            <h1 className="font-bold text-lg mb-4">
-                {id ? "Edit Gudang" : "Tambah Gudang"}
-            </h1>
+        <div className="min-h-dvh bg-gray-50 p-4">
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+            {/* HEADER */}
+            <div className="mb-5">
+                <SubPageHeader
+                    title={id ? "Edit Gudang" : "Tambah Gudang"}
+                    leftAction={
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="p-2 rounded-lg hover:bg-gray-200"
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+                    }
+                />
 
+                <p className="text-xs text-gray-500 mt-1 ml-[42px]">
+                    Kelola data gudang dan lokasi distribusi
+                </p>
+            </div>
+
+            {/* FORM */}
+            <form
+                onSubmit={handleSubmit}
+                className="bg-white p-4 rounded-2xl shadow-sm space-y-4"
+            >
                 <input
-                    className="w-full border p-2 rounded"
                     placeholder="Branch Code"
                     value={form.branch_code}
                     onChange={(e) => handleChange("branch_code", e.target.value)}
+                    className="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200"
                 />
 
                 <input
-                    className="w-full border p-2 rounded"
                     placeholder="Alamat"
                     value={form.address}
                     onChange={(e) => handleChange("address", e.target.value)}
+                    className="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200"
                 />
 
-                {/* PROVINCE */}
                 <Select
                     placeholder="Pilih Provinsi"
                     options={provinces}
                     value={form.province}
                     onChange={handleProvinceChange}
-                    isLoading={loadingRegion.province}
                 />
 
-                {/* CITY */}
                 <Select
                     placeholder="Pilih Kota"
                     options={cities}
                     value={form.city}
                     onChange={handleCityChange}
                     isDisabled={!form.province}
-                    isLoading={loadingRegion.city}
                 />
 
-                {/* DISTRICT */}
                 <Select
                     placeholder="Pilih Kecamatan"
                     options={districts}
                     value={form.district}
                     onChange={handleDistrictChange}
                     isDisabled={!form.city}
-                    isLoading={loadingRegion.district}
                 />
 
-                {/* VILLAGE */}
                 <Select
                     placeholder="Pilih Desa"
                     options={villages}
                     value={form.village}
                     onChange={(val) => handleChange("village", val)}
                     isDisabled={!form.district}
-                    isLoading={loadingRegion.village}
                 />
 
                 <input
-                    className="w-full border p-2 rounded"
                     placeholder="Kode Pos"
                     value={form.postal_code}
                     onChange={(e) => handleChange("postal_code", e.target.value)}
+                    className="w-full border rounded-xl px-3 py-2 text-sm"
                 />
 
                 <input
-                    className="w-full border p-2 rounded"
                     placeholder="Google Maps Link"
                     value={form.gmap_link}
                     onChange={(e) => handleChange("gmap_link", e.target.value)}
+                    className="w-full border rounded-xl px-3 py-2 text-sm"
                 />
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="bg-green-500 text-white px-4 py-2 rounded w-full"
+                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-2 rounded-xl text-sm shadow-md hover:opacity-90"
                 >
                     {loading ? "Menyimpan..." : "Simpan"}
                 </button>
