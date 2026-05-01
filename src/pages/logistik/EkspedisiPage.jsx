@@ -107,20 +107,7 @@ export default function EkspedisiPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Ekspedisi"
-                    rightAction={
-                        <button
-                            onClick={openCreate}
-                            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm shadow-md hover:scale-[1.03] active:scale-95 transition"
-                        >
-                            <Plus size={16} />
-                            Tambah
-                        </button>
-                    }
                 />
-
-                <p className="text-xs text-gray-500 mt-1 ml-[42px]">
-                    Kelola daftar ekspedisi untuk pengiriman paket
-                </p>
             </div>
 
             {/* SEARCH */}
