@@ -9,6 +9,7 @@ import { ErrorsProvider } from "./context/ErrorsContext";
 import { authRoutes } from "./routes/authRoutes";
 import { homeRoutes } from "./routes/homeRoutes";
 import { logistikRoutes } from "./routes/logistikRoutes";
+import { operasionalRoutes } from "./routes/operasionalRoutes";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -60,6 +61,17 @@ export default function App() {
 
               {logistikRoutes.map((route, index) => (
                 <Route key={`logistik-${index}`} element={route.element}>
+                  {route.children.map((child, childIndex) => (
+                    <Route
+                      key={childIndex}
+                      path={child.path}
+                      element={child.element}
+                    />
+                  ))}
+                </Route>
+              ))}
+              {operasionalRoutes.map((route, index) => (
+                <Route key={`operasional-${index}`} element={route.element}>
                   {route.children.map((child, childIndex) => (
                     <Route
                       key={childIndex}
