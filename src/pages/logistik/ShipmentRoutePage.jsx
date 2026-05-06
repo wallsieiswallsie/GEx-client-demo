@@ -185,7 +185,7 @@ export default function ShipmentRoutePage() {
             for (const rule of form.rules) {
                 const payloadRule = {
                     route_id: routeId,
-                    min_weight: rule.min_weight,
+                    min_weight: rule.min_weight || null,
                     max_weight: rule.max_weight || null,
                     pricing_type: rule.pricing_type,
                     price: rule.price || null,
@@ -228,7 +228,7 @@ export default function ShipmentRoutePage() {
         <div className="min-h-dvh bg-gray-50 p-4">
 
             <div className="mb-5">
-                <SubPageHeader title="Shipment Routes & Pricing" />
+                <SubPageHeader title="Rute & Ongkir" />
             </div>
 
             {/* SEARCH */}
@@ -237,7 +237,7 @@ export default function ShipmentRoutePage() {
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Cari route..."
+                    placeholder="Cari rute..."
                     className="w-full pl-9 py-2.5 rounded-xl border bg-white text-sm"
                 />
             </div>
@@ -318,7 +318,7 @@ export default function ShipmentRoutePage() {
                             onChange={(v) =>
                                 setForm({ ...form, origin_branch: v?.value || "" })
                             }
-                            placeholder="Pilih Origin"
+                            placeholder="Pilih Gudang Asal"
                             styles={selectStyles}
                         />
 
@@ -335,7 +335,7 @@ export default function ShipmentRoutePage() {
                                         destination_branch: v?.value || "",
                                     })
                                 }
-                                placeholder="Pilih Destination"
+                                placeholder="Pilih Gudang Tujuan"
                                 styles={selectStyles}
                             />
                         </div>
