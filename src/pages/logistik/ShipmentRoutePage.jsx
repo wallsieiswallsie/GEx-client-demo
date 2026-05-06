@@ -185,12 +185,33 @@ export default function ShipmentRoutePage() {
             for (const rule of form.rules) {
                 const payloadRule = {
                     route_id: routeId,
-                    min_weight: rule.min_weight || null,
-                    max_weight: rule.max_weight || null,
-                    pricing_type: rule.pricing_type,
-                    price: rule.price || null,
-                    step_weight: rule.step_weight || null,
-                    step_price: rule.step_price || null,
+
+                    min_weight:
+                        rule.min_weight === ""
+                            ? null
+                            : Number(rule.min_weight),
+
+                    max_weight:
+                        rule.max_weight === ""
+                            ? null
+                            : Number(rule.max_weight),
+
+                    pricing_type: rule.pricing_type || "PER_KG",
+
+                    price:
+                        rule.price === ""
+                            ? null
+                            : Number(rule.price),
+
+                    step_weight:
+                        rule.step_weight === ""
+                            ? null
+                            : Number(rule.step_weight),
+
+                    step_price:
+                        rule.step_price === ""
+                            ? null
+                            : Number(rule.step_price),
                 };
 
                 if (rule.id) {
@@ -384,6 +405,35 @@ export default function ShipmentRoutePage() {
                                             value={rule.price || ""}
                                             onChange={(e) =>
                                                 updateRule(i, "price", e.target.value)
+                                            }
+                                            className="border p-1 rounded"
+                                        />
+                                        <select
+                                            value={rule.pricing_type}
+                                            onChange={(e) =>
+                                                updateRule(i, "pricing_type", e.target.value)
+                                            }
+                                            className="border p-1 rounded col-span-3"
+                                        >
+                                            <option value="PER_KG">PER_KG</option>
+                                            <option value="FLAT">FLAT</option>
+                                            <option value="STEP">STEP</option>
+                                        </select>
+
+                                        <input
+                                            placeholder="Step Weight"
+                                            value={rule.step_weight || ""}
+                                            onChange={(e) =>
+                                                updateRule(i, "step_weight", e.target.value)
+                                            }
+                                            className="border p-1 rounded"
+                                        />
+
+                                        <input
+                                            placeholder="Step Price"
+                                            value={rule.step_price || ""}
+                                            onChange={(e) =>
+                                                updateRule(i, "step_price", e.target.value)
                                             }
                                             className="border p-1 rounded"
                                         />
