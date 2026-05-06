@@ -197,7 +197,6 @@ export default function GeneralManagerHome() {
 ========================= */
 const FEATURE_GROUPS = [
     {
-        title: "Menu Utama",
         items: [
             { label: "Operasional", path: "/operasional", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
             { label: "Logistik", path: "/logistik", icon: Truck, color: "bg-orange-100 text-orange-600" },

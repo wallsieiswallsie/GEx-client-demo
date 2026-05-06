@@ -415,9 +415,9 @@ export default function ShipmentRoutePage() {
                                             }
                                             className="border p-1 rounded col-span-3"
                                         >
-                                            <option value="PER_KG">PER_KG</option>
+                                            <option value="PER_KG">PER KG</option>
                                             <option value="FLAT">FLAT</option>
-                                            <option value="STEP">STEP</option>
+                                            <option value="PER_STEP">PER STEP</option>
                                         </select>
 
                                         <input
