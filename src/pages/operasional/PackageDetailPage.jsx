@@ -8,17 +8,22 @@ import {
     Route,
     ArrowLeft,
     Box,
+    X,
 } from "lucide-react";
 
-import { useNavigate, useParams } from "react-router-dom";
+import {
+    useNavigate,
+    useParams,
+} from "react-router-dom";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 
 import {
     getPackageById,
-} from "../../services/api/operasional/packagesApi";
+} from "../../services/api/logistik/packagesApi";
 
 export default function PackageDetailPage() {
+
     const navigate = useNavigate();
 
     const { id } = useParams();
@@ -26,6 +31,9 @@ export default function PackageDetailPage() {
     const [data, setData] = useState(null);
 
     const [loading, setLoading] = useState(true);
+
+    const [previewOpen, setPreviewOpen] =
+        useState(false);
 
     const fetchDetail = async () => {
         try {
@@ -72,13 +80,6 @@ export default function PackageDetailPage() {
             {/* HEADER */}
             <div className="mb-5 flex items-center gap-3">
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center active:scale-95 transition"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-
                 <SubPageHeader title="Detail Package" />
             </div>
 
@@ -90,6 +91,29 @@ export default function PackageDetailPage() {
                     <Package className="w-4 h-4" />
                     {data.name}
                 </div>
+
+                {/* PHOTO */}
+                {data.photo_url && (
+                    <div className="mb-5">
+
+                        <div className="text-xs text-gray-400 mb-2">
+                            Foto Paket
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                setPreviewOpen(true)
+                            }
+                            className="w-full"
+                        >
+                            <img
+                                src={data.photo_url}
+                                alt={data.name}
+                                className="w-full h-52 object-cover rounded-2xl border shadow-sm active:scale-[0.99] transition"
+                            />
+                        </button>
+                    </div>
+                )}
 
                 {/* DETAILS */}
                 <div className="space-y-4">
@@ -141,7 +165,11 @@ export default function PackageDetailPage() {
                     <DetailItem
                         icon={<Box className="w-4 h-4" />}
                         label="Partner Package"
-                        value={data.is_partner ? "Ya" : "Tidak"}
+                        value={
+                            data.is_partner
+                                ? "Ya"
+                                : "Tidak"
+                        }
                     />
 
                     {data.partnership_code && (
@@ -155,13 +183,21 @@ export default function PackageDetailPage() {
                     <DetailItem
                         icon={<Box className="w-4 h-4" />}
                         label="Status Klaim"
-                        value={data.is_claimed ? "Sudah Diklaim" : "Belum Diklaim"}
+                        value={
+                            data.is_claimed
+                                ? "Sudah Diklaim"
+                                : "Belum Diklaim"
+                        }
                     />
 
                     <DetailItem
                         icon={<Box className="w-4 h-4" />}
                         label="Status Finish"
-                        value={data.is_finished ? "Selesai" : "Belum"}
+                        value={
+                            data.is_finished
+                                ? "Selesai"
+                                : "Belum"
+                        }
                     />
                 </div>
 
@@ -183,17 +219,42 @@ export default function PackageDetailPage() {
                     </h2>
 
                     <div className="space-y-2">
-                        {data.items.map((item, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 text-sm"
-                            >
-                                <Box className="w-4 h-4 text-gray-500" />
+                        {data.items.map(
+                            (item, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 text-sm"
+                                >
+                                    <Box className="w-4 h-4 text-gray-500" />
 
-                                {item.item_name}
-                            </div>
-                        ))}
+                                    {item.item_name}
+                                </div>
+                            )
+                        )}
                     </div>
+                </div>
+            )}
+
+            {/* IMAGE MODAL */}
+            {previewOpen && (
+                <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+
+                    {/* CLOSE */}
+                    <button
+                        onClick={() =>
+                            setPreviewOpen(false)
+                        }
+                        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    {/* IMAGE */}
+                    <img
+                        src={data.photo_url}
+                        alt={data.name}
+                        className="max-w-full max-h-full object-contain rounded-2xl"
+                    />
                 </div>
             )}
         </div>
@@ -213,6 +274,7 @@ function DetailItem({
             </div>
 
             <div className="flex-1 min-w-0">
+
                 <div className="text-xs text-gray-400 mb-1">
                     {label}
                 </div>
