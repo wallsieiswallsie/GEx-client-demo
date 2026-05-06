@@ -6,6 +6,7 @@ import GudangPage from "../pages/logistik/gudang/GudangPage";
 import GudangForm from "../pages/logistik/gudang/GudangForm";
 import ViaPage from "../pages/logistik/ViaPage";
 import ShipmentRoutePage from "../pages/logistik/ShipmentRoutePage";
+import ItemCategoriesPage from "../pages/logistik/ItemCategoriesPage";
 
 export const logistikRoutes = [
     {
@@ -18,6 +19,10 @@ export const logistikRoutes = [
             {
                 path: "/ekspedisi",
                 element: <EkspedisiPage />,
+            },
+            {
+                path: "/item-categories",
+                element: <ItemCategoriesPage />,
             },
             {
                 path: "/gudang",
