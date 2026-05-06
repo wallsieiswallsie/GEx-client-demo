@@ -287,7 +287,10 @@ export default function PackagesPage() {
                     data.map(((item) => (
                         <div
                             key={item.id}
-                            className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md transition"
+                            onClick={() =>
+                                navigate(`/packages/${item.id}`)
+                            }
+                            className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md active:scale-[0.98] transition cursor-pointer"
                         >
                             <div className="flex justify-between gap-3">
 
@@ -325,18 +328,20 @@ export default function PackagesPage() {
                                 {/* ACTION */}
                                 <div className="flex flex-col gap-2 border-l pl-2">
                                     <button
-                                        onClick={() =>
-                                            openEdit(item)
-                                        }
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openEdit(item);
+                                        }}
                                         className="p-1.5 rounded-lg hover:bg-blue-50 active:scale-90 transition"
                                     >
                                         <Pencil className="w-4 h-4 text-blue-500" />
                                     </button>
 
                                     <button
-                                        onClick={() =>
-                                            handleDelete(item.id)
-                                        }
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(item.id);
+                                        }}
                                         className="p-1.5 rounded-lg hover:bg-red-50 active:scale-90 transition"
                                     >
                                         <Trash2 className="w-4 h-4 text-red-500" />
