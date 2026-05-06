@@ -11,7 +11,7 @@ export default function LogistikPage() {
         { label: "Rute & Ongkir", path: "/rute", icon: Route, color: "bg-orange-100 text-orange-600" },
         { label: "Ekspedisi", path: "/ekspedisi", icon: Truck, color: "bg-pink-100 text-pink-600" },
         { label: "Via", path: "/via", icon: Ship, color: "bg-violet-100 text-violet-600" },
-        { label: "Item List", path: "/item-list", icon: PackageCheck, color: "bg-gray-100 text-gray-600" },
+        { label: "Item List", path: "/item-categories", icon: PackageCheck, color: "bg-gray-100 text-gray-600" },
     ];
 
     return (
