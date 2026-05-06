@@ -20,7 +20,7 @@ import {
     createPackage,
     updatePackage,
     deletePackage,
-} from "../../services/api/logistik/packagesApi";
+} from "../../services/api/operasional/packagesApi";
 
 export default function PackagesPage() {
     const [data, setData] = useState([]);
