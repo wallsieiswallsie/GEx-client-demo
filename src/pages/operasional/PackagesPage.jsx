@@ -29,6 +29,12 @@ export default function PackagesPage() {
 
     const [search, setSearch] = useState("");
 
+    const [page, setPage] = useState(1);
+
+    const [hasMore, setHasMore] = useState(true);
+
+    const LIMIT = 10;
+
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
     const [isOpen, setIsOpen] = useState(false);
@@ -51,13 +57,27 @@ export default function PackagesPage() {
         photo: null,
     });
 
-    const fetchData = async () => {
+    const fetchData = async ({
+        currentPage = 1,
+        reset = false,
+    } = {}) => {
         try {
             setLoading(true);
 
-            const res = await getAllPackages();
+            const res = await getAllPackages({
+                page: currentPage,
+                limit: LIMIT,
+                search: debouncedSearch,
+            });
 
-            setData(res);
+            if (reset) {
+                setData(res);
+            } else {
+                setData((prev) => [...prev, ...res]);
+            }
+
+            setHasMore(res.length === LIMIT);
+
         } catch (err) {
             alert(err.message);
         } finally {
@@ -66,8 +86,13 @@ export default function PackagesPage() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        setPage(1);
+
+        fetchData({
+            currentPage: 1,
+            reset: true,
+        });
+    }, [debouncedSearch]);
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -77,15 +102,44 @@ export default function PackagesPage() {
         return () => clearTimeout(delay);
     }, [search]);
 
-    const filtered = useMemo(() => {
-        return data.filter((item) => {
-            return (
-                item.name?.toLowerCase().includes(debouncedSearch) ||
-                item.receipt?.toLowerCase().includes(debouncedSearch) ||
-                item.expedition?.toLowerCase().includes(debouncedSearch)
+    useEffect(() => {
+        const handleScroll = () => {
+
+            if (loading || !hasMore) return;
+
+            const scrollTop = window.scrollY;
+
+            const windowHeight = window.innerHeight;
+
+            const fullHeight =
+                document.documentElement.scrollHeight;
+
+            if (
+                scrollTop + windowHeight >=
+                fullHeight - 200
+            ) {
+                const nextPage = page + 1;
+
+                setPage(nextPage);
+
+                fetchData({
+                    currentPage: nextPage,
+                });
+            }
+        };
+
+        window.addEventListener(
+            "scroll",
+            handleScroll
+        );
+
+        return () =>
+            window.removeEventListener(
+                "scroll",
+                handleScroll
             );
-        });
-    }, [data, debouncedSearch]);
+
+    }, [page, loading, hasMore]);
 
     const openCreate = () => {
         setForm({
@@ -230,7 +284,7 @@ export default function PackagesPage() {
                         Loading...
                     </div>
                 ) : (
-                    filtered.map((item) => (
+                    data.map(((item) => (
                         <div
                             key={item.id}
                             className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md transition"
@@ -292,11 +346,11 @@ export default function PackagesPage() {
                             </div>
                         </div>
                     ))
-                )}
+                    ))}
             </div>
 
             {/* EMPTY */}
-            {!loading && filtered.length === 0 && (
+            {!loading && data.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
                     <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>
                     Belum ada paket

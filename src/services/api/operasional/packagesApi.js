@@ -3,10 +3,23 @@ import { apiFetch } from "../apiClient";
 /**
  * Get all packages
  */
-export const getAllPackages = async () => {
-    const res = await apiFetch("/packages", {
-        method: "GET",
+export const getAllPackages = async ({
+    page = 1,
+    limit = 10,
+    search = "",
+}) => {
+    const params = new URLSearchParams({
+        page,
+        limit,
+        search,
     });
+
+    const res = await apiFetch(
+        `/packages?${params.toString()}`,
+        {
+            method: "GET",
+        }
+    );
 
     return res.data;
 };
