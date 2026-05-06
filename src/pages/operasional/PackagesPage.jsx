@@ -314,13 +314,12 @@ export default function PackagesPage() {
                                         {item.used_weight || 0} kg
                                     </div>
 
-                                    {item.photo_url && (
-                                        <img
-                                            src={item.photo_url}
-                                            alt={item.name}
-                                            className="w-full h-28 object-cover rounded-xl border mt-1"
-                                        />
-                                    )}
+                                    <div className="mt-2">
+                                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100">
+                                            <Truck className="w-3 h-3" />
+                                            {item.route_code || "-"}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* ACTION */}
