@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
     Plus,
@@ -23,6 +24,8 @@ import {
 } from "../../services/api/operasional/packagesApi";
 
 export default function PackagesPage() {
+    const navigate = useNavigate();
+
     const [data, setData] = useState([]);
 
     const [loading, setLoading] = useState(false);
