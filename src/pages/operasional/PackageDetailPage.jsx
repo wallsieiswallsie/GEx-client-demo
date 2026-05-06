@@ -6,7 +6,6 @@ import {
     Truck,
     Scale,
     Route,
-    ArrowLeft,
     Box,
     X,
 } from "lucide-react";
@@ -20,7 +19,7 @@ import SubPageHeader from "../../components/layout/SubPageHeader";
 
 import {
     getPackageById,
-} from "../../services/api/logistik/packagesApi";
+} from "../../services/api/operasional/packagesApi";
 
 export default function PackageDetailPage() {
 
