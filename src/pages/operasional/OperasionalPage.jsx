@@ -7,10 +7,9 @@ export default function OperasionalPage() {
     const navigate = useNavigate();
 
     const items = [
-        { label: "Input Paket", path: "/input", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
+        { label: "Database Paket", path: "/input", icon: Database, color: "bg-blue-100 text-blue-600" },
         { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
         { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
-        { label: "Database Paket", path: "/database", icon: Database, color: "bg-blue-100 text-blue-600" },
         { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
     ];
 
