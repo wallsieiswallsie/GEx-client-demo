@@ -24,12 +24,15 @@ export const useScanner = ({
         hints.set(
             DecodeHintType.POSSIBLE_FORMATS,
             [
+                // QR
                 BarcodeFormat.QR_CODE,
 
+                // BARCODE RESI
                 BarcodeFormat.CODE_128,
                 BarcodeFormat.CODE_39,
                 BarcodeFormat.CODE_93,
 
+                // MARKETPLACE / LOGISTIC
                 BarcodeFormat.EAN_13,
                 BarcodeFormat.EAN_8,
 
@@ -46,7 +49,7 @@ export const useScanner = ({
             new BrowserMultiFormatReader(
                 hints,
                 {
-                    delayBetweenScanAttempts: 50,
+                    delayBetweenScanAttempts: 30,
                 }
             );
 
@@ -56,9 +59,19 @@ export const useScanner = ({
 
         const constraints = {
             video: {
-                facingMode: "environment",
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
+                facingMode: {
+                    ideal: "environment",
+                },
+
+                width: {
+                    ideal: 1920,
+                },
+
+                height: {
+                    ideal: 1080,
+                },
+
+                focusMode: "continuous",
             },
         };
 
@@ -82,7 +95,7 @@ export const useScanner = ({
                             try {
                                 codeReader.reset();
                             } catch (e) { }
-                        }, 100);
+                        }, 150);
                     }
                 }
             )
