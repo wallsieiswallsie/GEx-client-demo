@@ -7,7 +7,7 @@ export default function RelasiPage() {
     const navigate = useNavigate();
 
     const items = [
-        { label: "User", path: "/users", icon: Users, color: "bg-indigo-100 text-indigo-600" },
+        { label: "User", path: "/users-internal", icon: Users, color: "bg-indigo-100 text-indigo-600" },
         { label: "Kontak", path: "/kontak", icon: Users, color: "bg-teal-100 text-teal-600" },
         { label: "Kemitraan", path: "/mitra", icon: Users, color: "bg-rose-100 text-rose-600" },
     ];
