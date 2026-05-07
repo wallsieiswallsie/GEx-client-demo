@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -6,15 +7,15 @@ import {
     Search,
     Pencil,
     Trash2,
-    X,
     Package,
     Scale,
     Truck,
     Receipt,
-    Image as ImageIcon,
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+
+import ModalFormInputPackage from "../../components/forms/ModalFormInputPackage";
 
 import {
     getAllPackages,
@@ -22,6 +23,12 @@ import {
     updatePackage,
     deletePackage,
 } from "../../services/api/operasional/packagesApi";
+
+import { getAllExpeditions } from "../../services/api/logistik/expeditionsApi";
+
+import { getAllItemCategories } from "../../services/api/logistik/itemCategoriesApi";
+
+import { getAllShipmentRoutes } from "../../services/api/logistik/shipmentRouteApi";
 
 export default function PackagesPage() {
     const navigate = useNavigate();
@@ -38,13 +45,22 @@ export default function PackagesPage() {
 
     const LIMIT = 10;
 
-    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] =
+        useState("");
 
     const [isOpen, setIsOpen] = useState(false);
 
     const [preview, setPreview] = useState(null);
 
-    const [form, setForm] = useState({
+    const [expeditions, setExpeditions] =
+        useState([]);
+
+    const [itemCategories, setItemCategories] =
+        useState([]);
+
+    const [routes, setRoutes] = useState([]);
+
+    const defaultForm = {
         id: null,
         name: "",
         arrived_origin_at: "",
@@ -58,7 +74,10 @@ export default function PackagesPage() {
         is_partner: false,
         partnership_code: "",
         photo: null,
-    });
+        items: [],
+    };
+
+    const [form, setForm] = useState(defaultForm);
 
     const fetchData = async ({
         currentPage = 1,
@@ -76,7 +95,10 @@ export default function PackagesPage() {
             if (reset) {
                 setData(res);
             } else {
-                setData((prev) => [...prev, ...res]);
+                setData((prev) => [
+                    ...prev,
+                    ...res,
+                ]);
             }
 
             setHasMore(res.length === LIMIT);
@@ -87,6 +109,48 @@ export default function PackagesPage() {
             setLoading(false);
         }
     };
+
+    const fetchMasterData = async () => {
+        try {
+            const [
+                expeditionsRes,
+                itemCategoriesRes,
+                routesRes,
+            ] = await Promise.all([
+                getAllExpeditions({
+                    page: 1,
+                    limit: 9999,
+                }),
+
+                getAllItemCategories({
+                    page: 1,
+                    limit: 9999,
+                }),
+
+                getAllShipmentRoutes({
+                    page: 1,
+                    limit: 9999,
+                }),
+            ]);
+
+            setExpeditions(
+                expeditionsRes || []
+            );
+
+            setItemCategories(
+                itemCategoriesRes || []
+            );
+
+            setRoutes(routesRes || []);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchMasterData();
+    }, []);
 
     useEffect(() => {
         setPage(1);
@@ -99,23 +163,27 @@ export default function PackagesPage() {
 
     useEffect(() => {
         const delay = setTimeout(() => {
-            setDebouncedSearch(search.trim().toLowerCase());
+            setDebouncedSearch(
+                search.trim().toLowerCase()
+            );
         }, 300);
 
         return () => clearTimeout(delay);
+
     }, [search]);
 
     useEffect(() => {
         const handleScroll = () => {
-
             if (loading || !hasMore) return;
 
             const scrollTop = window.scrollY;
 
-            const windowHeight = window.innerHeight;
+            const windowHeight =
+                window.innerHeight;
 
             const fullHeight =
-                document.documentElement.scrollHeight;
+                document.documentElement
+                    .scrollHeight;
 
             if (
                 scrollTop + windowHeight >=
@@ -145,21 +213,7 @@ export default function PackagesPage() {
     }, [page, loading, hasMore]);
 
     const openCreate = () => {
-        setForm({
-            id: null,
-            name: "",
-            arrived_origin_at: "",
-            receipt: "",
-            expedition: "",
-            length: "",
-            width: "",
-            height: "",
-            real_weight: "",
-            route_code: "",
-            is_partner: false,
-            partnership_code: "",
-            photo: null,
-        });
+        setForm(defaultForm);
 
         setPreview(null);
 
@@ -170,6 +224,7 @@ export default function PackagesPage() {
         setForm({
             ...item,
             photo: null,
+            items: item.items || [],
         });
 
         setPreview(item.photo_url || null);
@@ -184,29 +239,63 @@ export default function PackagesPage() {
                 !form.receipt ||
                 !form.expedition
             ) {
-                alert("Data wajib belum lengkap");
+                alert(
+                    "Data wajib belum lengkap"
+                );
+
                 return;
             }
 
             if (form.id) {
-                await updatePackage(form.id, form);
-            } else {
-                const formData = new FormData();
+                await updatePackage(
+                    form.id,
+                    form
+                );
 
-                formData.append("name", form.name);
+            } else {
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "name",
+                    form.name
+                );
+
                 formData.append(
                     "arrived_origin_at",
                     form.arrived_origin_at
                 );
-                formData.append("receipt", form.receipt);
-                formData.append("expedition", form.expedition);
-                formData.append("length", form.length);
-                formData.append("width", form.width);
-                formData.append("height", form.height);
+
+                formData.append(
+                    "receipt",
+                    form.receipt
+                );
+
+                formData.append(
+                    "expedition",
+                    form.expedition
+                );
+
+                formData.append(
+                    "length",
+                    form.length
+                );
+
+                formData.append(
+                    "width",
+                    form.width
+                );
+
+                formData.append(
+                    "height",
+                    form.height
+                );
+
                 formData.append(
                     "real_weight",
                     form.real_weight
                 );
+
                 formData.append(
                     "route_code",
                     form.route_code
@@ -222,28 +311,49 @@ export default function PackagesPage() {
                     form.partnership_code || ""
                 );
 
+                formData.append(
+                    "items",
+                    JSON.stringify(
+                        form.items || []
+                    )
+                );
+
                 if (form.photo) {
-                    formData.append("photo", form.photo);
+                    formData.append(
+                        "photo",
+                        form.photo
+                    );
                 }
 
-                await createPackage(formData);
+                await createPackage(
+                    formData
+                );
             }
 
             setIsOpen(false);
 
-            fetchData();
+            fetchData({
+                currentPage: 1,
+                reset: true,
+            });
+
         } catch (err) {
             alert(err.message);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!confirm("Hapus paket ini?")) return;
+        if (!confirm("Hapus paket ini?"))
+            return;
 
         try {
             await deletePackage(id);
 
-            fetchData();
+            fetchData({
+                currentPage: 1,
+                reset: true,
+            });
+
         } catch (err) {
             alert(err.message);
         }
@@ -264,7 +374,9 @@ export default function PackagesPage() {
                 <input
                     value={search}
                     onChange={(e) =>
-                        setSearch(e.target.value)
+                        setSearch(
+                            e.target.value
+                        )
                     }
                     placeholder="Cari paket..."
                     className="w-full pl-9 pr-8 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
@@ -272,7 +384,9 @@ export default function PackagesPage() {
 
                 {search && (
                     <button
-                        onClick={() => setSearch("")}
+                        onClick={() =>
+                            setSearch("")
+                        }
                         className="absolute right-3 top-2.5 text-gray-400 text-xs"
                     >
                         ✕
@@ -282,16 +396,19 @@ export default function PackagesPage() {
 
             {/* LIST */}
             <div className="grid grid-cols-2 gap-3">
-                {loading ? (
+                {loading &&
+                    data.length === 0 ? (
                     <div className="text-center text-sm text-gray-400 py-10">
                         Loading...
                     </div>
                 ) : (
-                    data.map(((item) => (
+                    data.map((item) => (
                         <div
                             key={item.id}
                             onClick={() =>
-                                navigate(`/packages/${item.id}`)
+                                navigate(
+                                    `/packages/${item.id}`
+                                )
                             }
                             className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md active:scale-[0.98] transition cursor-pointer"
                         >
@@ -302,38 +419,52 @@ export default function PackagesPage() {
 
                                     <div className="flex items-center gap-2 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-xs font-medium w-fit">
                                         <Package className="w-3 h-3" />
+
                                         {item.name}
                                     </div>
 
                                     <div className="flex items-center gap-2 text-xs text-gray-600">
                                         <Receipt className="w-3 h-3" />
+
                                         {item.receipt}
                                     </div>
 
                                     <div className="flex items-center gap-2 text-xs text-gray-600">
                                         <Truck className="w-3 h-3" />
+
                                         {item.expedition}
                                     </div>
 
                                     <div className="flex items-center gap-2 text-xs text-gray-600">
                                         <Scale className="w-3 h-3" />
-                                        {item.used_weight || 0} kg
+
+                                        {item.used_weight ||
+                                            0}{" "}
+                                        kg
                                     </div>
 
                                     <div className="mt-2">
                                         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100">
                                             <Truck className="w-3 h-3" />
-                                            {item.route_code || "-"}
+
+                                            {item.route_code ||
+                                                "-"}
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* ACTION */}
                                 <div className="flex flex-col gap-2 border-l pl-2">
+
                                     <button
-                                        onClick={(e) => {
+                                        onClick={(
+                                            e
+                                        ) => {
                                             e.stopPropagation();
-                                            openEdit(item);
+
+                                            openEdit(
+                                                item
+                                            );
                                         }}
                                         className="p-1.5 rounded-lg hover:bg-blue-50 active:scale-90 transition"
                                     >
@@ -341,9 +472,14 @@ export default function PackagesPage() {
                                     </button>
 
                                     <button
-                                        onClick={(e) => {
+                                        onClick={(
+                                            e
+                                        ) => {
                                             e.stopPropagation();
-                                            handleDelete(item.id);
+
+                                            handleDelete(
+                                                item.id
+                                            );
                                         }}
                                         className="p-1.5 rounded-lg hover:bg-red-50 active:scale-90 transition"
                                     >
@@ -353,16 +489,18 @@ export default function PackagesPage() {
                             </div>
                         </div>
                     ))
-                    ))}
+                )}
             </div>
 
             {/* EMPTY */}
-            {!loading && data.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
-                    <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>
-                    Belum ada paket
-                </div>
-            )}
+            {!loading &&
+                data.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
+                        <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>
+
+                        Belum ada paket
+                    </div>
+                )}
 
             {/* FLOAT BUTTON */}
             <button
@@ -374,230 +512,25 @@ export default function PackagesPage() {
 
             {/* MODAL */}
             {isOpen && (
-                <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white w-full max-w-md rounded-3xl p-5 shadow-xl max-h-[90vh] overflow-y-auto">
-
-                        {/* HEADER */}
-                        <div className="flex justify-between items-center mb-5">
-                            <h2 className="text-sm font-semibold">
-                                {form.id
-                                    ? "Edit Package"
-                                    : "Tambah Package"}
-                            </h2>
-
-                            <button
-                                onClick={() =>
-                                    setIsOpen(false)
-                                }
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        {/* NAME */}
-                        <input
-                            value={form.name}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    name: e.target.value,
-                                })
-                            }
-                            placeholder="Nama paket"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* DATE */}
-                        <input
-                            type="date"
-                            value={form.arrived_origin_at}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    arrived_origin_at:
-                                        e.target.value,
-                                })
-                            }
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* RECEIPT */}
-                        <input
-                            value={form.receipt}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    receipt: e.target.value,
-                                })
-                            }
-                            placeholder="No resi"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* EXPEDITION */}
-                        <input
-                            value={form.expedition}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    expedition:
-                                        e.target.value,
-                                })
-                            }
-                            placeholder="Ekspedisi"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* SIZE */}
-                        <div className="grid grid-cols-3 gap-2 mb-3">
-                            <input
-                                value={form.length}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        length:
-                                            e.target.value,
-                                    })
-                                }
-                                placeholder="Panjang"
-                                className="border rounded-xl px-3 py-2 text-sm"
-                            />
-
-                            <input
-                                value={form.width}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        width:
-                                            e.target.value,
-                                    })
-                                }
-                                placeholder="Lebar"
-                                className="border rounded-xl px-3 py-2 text-sm"
-                            />
-
-                            <input
-                                value={form.height}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        height:
-                                            e.target.value,
-                                    })
-                                }
-                                placeholder="Tinggi"
-                                className="border rounded-xl px-3 py-2 text-sm"
-                            />
-                        </div>
-
-                        {/* WEIGHT */}
-                        <input
-                            value={form.real_weight}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    real_weight:
-                                        e.target.value,
-                                })
-                            }
-                            placeholder="Berat asli"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* ROUTE */}
-                        <input
-                            value={form.route_code}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    route_code:
-                                        e.target.value,
-                                })
-                            }
-                            placeholder="Route code"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* PARTNER */}
-                        <label className="flex items-center gap-2 text-sm mb-3">
-                            <input
-                                type="checkbox"
-                                checked={form.is_partner}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        is_partner:
-                                            e.target.checked,
-                                    })
-                                }
-                            />
-                            Partner package
-                        </label>
-
-                        {/* PARTNERSHIP CODE */}
-                        <input
-                            value={form.partnership_code}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    partnership_code:
-                                        e.target.value,
-                                })
-                            }
-                            placeholder="Partnership code"
-                            className="w-full border rounded-xl px-3 py-2 text-sm mb-3"
-                        />
-
-                        {/* PHOTO */}
-                        <div className="mb-4">
-                            <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                                <ImageIcon className="w-4 h-4" />
-                                Upload Foto
-                            </label>
-
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    const file =
-                                        e.target.files[0];
-
-                                    setForm({
-                                        ...form,
-                                        photo: file,
-                                    });
-
-                                    if (file) {
-                                        setPreview(
-                                            URL.createObjectURL(
-                                                file
-                                            )
-                                        );
-                                    }
-                                }}
-                                className="w-full text-sm"
-                            />
-
-                            {preview && (
-                                <img
-                                    src={preview}
-                                    alt="preview"
-                                    className="mt-3 w-full h-40 object-cover rounded-2xl border"
-                                />
-                            )}
-                        </div>
-
-                        {/* BUTTON */}
-                        <button
-                            onClick={handleSubmit}
-                            className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-2.5 rounded-xl text-sm font-medium shadow-md hover:opacity-90"
-                        >
-                            {form.id
-                                ? "Simpan Perubahan"
-                                : "Tambah Package"}
-                        </button>
-                    </div>
-                </div>
+                <ModalFormInputPackage
+                    form={form}
+                    setForm={setForm}
+                    preview={preview}
+                    setPreview={setPreview}
+                    handleSubmit={
+                        handleSubmit
+                    }
+                    expeditionOptions={
+                        expeditions
+                    }
+                    itemCategoryOptions={
+                        itemCategories
+                    }
+                    routeOptions={routes}
+                    onClose={() =>
+                        setIsOpen(false)
+                    }
+                />
             )}
         </div>
     );
