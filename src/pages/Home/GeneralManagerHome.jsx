@@ -1,17 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    Home,
     Truck,
     MapPin,
     PackageCheck,
     Users,
     UserX,
     AlertCircle,
-    Database,
     FileText,
     Wallet,
-    User,
     Clock
 } from "lucide-react";
 import Header from "../../components/home/Header";

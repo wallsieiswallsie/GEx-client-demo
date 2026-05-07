@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const NAV_ITEMS = [
   { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home', roles: ['all'] },
-  { id: 'database', icon: Database, label: 'DATABASE', path: '/database', roles: ['general_manager'] },
+  { id: 'database', icon: Database, label: 'DATABASE', path: '/input', roles: ['general_manager'] },
   { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },
   { id: 'konten', icon: PlayCircle, label: 'KONTEN', path: '/konten', roles: ['customer'] },
   { id: 'profil', icon: User, label: 'PROFIL', path: '/profil', roles: ['all'] },
