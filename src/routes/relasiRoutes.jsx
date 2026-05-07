@@ -20,6 +20,10 @@ export const relasiRoutes = [
                 path: "/users-internal-form",
                 element: <UsersInternalForm />,
             },
+            {
+                path: "/users-internal-form/:id",
+                element: <UsersInternalForm />,
+            },
         ],
     },
 ];

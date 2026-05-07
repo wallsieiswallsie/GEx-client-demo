@@ -157,7 +157,7 @@ export default function UsersInternalPage() {
                                     <div className="flex items-center gap-2">
 
                                         <button
-                                            onClick={() => navigate(`/users-internal/edit/${u.id}`)}
+                                            onClick={() => navigate(`/users-internal-form/${u.id}`)}
                                             className="p-2 rounded-lg hover:bg-blue-50 active:scale-90 transition"
                                         >
                                             <Pencil className="w-4 h-4 text-blue-500" />
