@@ -51,15 +51,17 @@ export default function UsersInternalPage() {
         return () => clearTimeout(delay);
     }, [search]);
 
-    const filtered = data.filter((u) =>
-        `
+    const filtered = data.filter(
+        (u) =>
+            u.role !== "customer" &&
+            `
         ${u.name}
         ${u.username}
         ${u.email}
         ${u.role}
         `
-            .toLowerCase()
-            .includes(debouncedSearch)
+                .toLowerCase()
+                .includes(debouncedSearch)
     );
 
     const toggleOpen = (id) => {
@@ -208,8 +210,8 @@ export default function UsersInternalPage() {
                                             {/* ORIGIN / DESTINATION */}
                                             <div
                                                 className={`px-2 py-1 rounded-full text-[11px] font-medium ${u.is_origin
-                                                        ? "bg-emerald-100 text-emerald-700"
-                                                        : "bg-orange-100 text-orange-700"
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : "bg-orange-100 text-orange-700"
                                                     }`}
                                             >
                                                 {u.is_origin ? "Origin" : "Destination"}
