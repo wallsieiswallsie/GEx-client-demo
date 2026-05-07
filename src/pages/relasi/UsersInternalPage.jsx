@@ -220,7 +220,7 @@ export default function UsersInternalPage() {
 
             {/* FLOAT BUTTON */}
             <button
-                onClick={() => navigate("/users-internal/create")}
+                onClick={() => navigate("/users-internal-form")}
                 className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
             >
                 <Plus />
