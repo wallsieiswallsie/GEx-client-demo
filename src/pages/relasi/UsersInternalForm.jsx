@@ -210,11 +210,7 @@ export default function UsersInternalForm() {
 
                     <div>
                         <div className="text-sm font-medium text-gray-700">
-                            Is Origin
-                        </div>
-
-                        <div className="text-xs text-gray-400">
-                            Tandai user sebagai origin
+                            Gudang Asal?
                         </div>
                     </div>
 
