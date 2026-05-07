@@ -11,12 +11,13 @@ import {
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+
 import {
     getAllUsersInternal,
     deleteUserInternal,
 } from "../../services/api/relasi/usersInternalApi";
 
-export default function UsersInternalPage() {
+export default function CustomerPage() {
     const navigate = useNavigate();
 
     const [data, setData] = useState([]);
@@ -25,13 +26,18 @@ export default function UsersInternalPage() {
     const [loading, setLoading] = useState(false);
     const [openId, setOpenId] = useState(null);
 
-    const fetchData = async () => {
+    const fetchCustomers = async () => {
         try {
             setLoading(true);
 
             const res = await getAllUsersInternal();
 
-            setData(res || []);
+            const customers = (res || []).filter(
+                (u) => u.role === "customer"
+            );
+
+            setData(customers);
+
         } catch (err) {
             alert(err.message);
         } finally {
@@ -40,7 +46,7 @@ export default function UsersInternalPage() {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchCustomers();
     }, []);
 
     useEffect(() => {
@@ -51,28 +57,27 @@ export default function UsersInternalPage() {
         return () => clearTimeout(delay);
     }, [search]);
 
-    const filtered = data.filter((u) =>
+    const filteredCustomers = data.filter((u) =>
         `
         ${u.name}
         ${u.username}
         ${u.email}
-        ${u.role}
         `
             .toLowerCase()
             .includes(debouncedSearch)
     );
 
-    const toggleOpen = (id) => {
+    const toggleAccordion = (id) => {
         setOpenId((prev) => (prev === id ? null : id));
     };
 
     const handleDelete = async (id) => {
-        if (!confirm("Hapus user ini?")) return;
+        if (!confirm("Delete this customer?")) return;
 
         try {
             await deleteUserInternal(id);
 
-            fetchData();
+            fetchCustomers();
         } catch (err) {
             alert(err.message);
         }
@@ -84,7 +89,7 @@ export default function UsersInternalPage() {
             {/* HEADER */}
             <div className="mb-5">
                 <SubPageHeader
-                    title="Users Internal"
+                    title="Pelanggan"
                 />
             </div>
 
@@ -95,7 +100,7 @@ export default function UsersInternalPage() {
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Cari user..."
+                    placeholder="Cari Pelanggan..."
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
                 />
             </div>
@@ -106,13 +111,13 @@ export default function UsersInternalPage() {
                     <div className="text-center text-sm text-gray-400 py-10">
                         Loading...
                     </div>
-                ) : filtered.length === 0 ? (
+                ) : filteredCustomers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
                         <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>
-                        Tidak ada data user
+                        No customer data
                     </div>
                 ) : (
-                    filtered.map((u) => {
+                    filteredCustomers.map((u) => {
                         const isOpen = openId === u.id;
 
                         return (
@@ -120,6 +125,7 @@ export default function UsersInternalPage() {
                                 key={u.id}
                                 className="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden"
                             >
+
                                 {/* TOP */}
                                 <div className="px-4 py-3 flex justify-between items-center">
 
@@ -127,7 +133,7 @@ export default function UsersInternalPage() {
 
                                         {/* CHEVRON */}
                                         <button
-                                            onClick={() => toggleOpen(u.id)}
+                                            onClick={() => toggleAccordion(u.id)}
                                             className="p-1 rounded-md hover:bg-gray-100 transition"
                                         >
                                             <ChevronDown
@@ -193,32 +199,27 @@ export default function UsersInternalPage() {
                                             <span className="font-medium text-gray-700">
                                                 WhatsApp:
                                             </span>{" "}
-                                            {u.whatsapp_number}
-                                        </div>
 
+                                            <a
+                                                href={`https://wa.me/${String(u.whatsapp_number).replace(/^0/, "62")}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-emerald-600 hover:underline"
+                                            >
+                                                {u.whatsapp_number}
+                                            </a>
+                                        </div>
                                         <div className="flex items-center gap-2 flex-wrap">
 
-                                            {/* ROLE */}
-                                            {u.role !== "customer" && (
-                                                <div className="px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[11px] font-medium">
-                                                    {u.role}
-                                                </div>
-                                            )}
-
-                                            {/* ORIGIN / DESTINATION */}
-                                            <div
-                                                className={`px-2 py-1 rounded-full text-[11px] font-medium ${u.is_origin
-                                                        ? "bg-emerald-100 text-emerald-700"
-                                                        : "bg-orange-100 text-orange-700"
-                                                    }`}
-                                            >
-                                                {u.is_origin ? "Origin" : "Destination"}
+                                            <div className="px-2 py-1 rounded-full bg-sky-100 text-sky-700 text-[11px] font-medium">
+                                                Customer
                                             </div>
 
                                         </div>
 
                                     </div>
                                 </div>
+
                             </div>
                         );
                     })

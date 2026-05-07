@@ -3,6 +3,7 @@ import MobileAppLayout from "../layouts/MobileAppLayout";
 
 import UsersInternalPage from "../pages/relasi/UsersInternalPage";
 import UsersInternalForm from "../pages/relasi/UsersInternalForm";
+import CustomerPage from "../pages/relasi/CustomerPage";
 
 export const relasiRoutes = [
     {
@@ -23,6 +24,10 @@ export const relasiRoutes = [
             {
                 path: "/users-internal-form/:id",
                 element: <UsersInternalForm />,
+            },
+            {
+                path: "/kontak-customer",
+                element: <CustomerPage />,
             },
         ],
     },
