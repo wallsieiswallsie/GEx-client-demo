@@ -24,7 +24,10 @@ export default function BottomNav() {
 
   return (
     <nav className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg z-50">
-      <div className="grid grid-cols-4">
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: `repeat(${filteredNav.length}, minmax(0, 1fr))` }}
+      >
         {filteredNav.map((item) => {
           const isActive =
             pathname === item.path || pathname.startsWith(item.path + '/');

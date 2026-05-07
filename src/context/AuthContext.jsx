@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   ACCESS_TOKEN_KEY,
   API_URL,
@@ -134,12 +134,27 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const updateUser = useCallback((userData) => {
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+    setUser(userData);
+    setRole(userData.role);
+  }, []);
+
   /** Helper: ambil token langsung untuk dipakai di fetch/axios */
   const getToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 
   return (
     <AuthContext.Provider
-      value={{ user, role, isAuthenticated, isLoading, login, logout, getToken }}
+      value={{
+        user,
+        role,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        updateUser,
+        getToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

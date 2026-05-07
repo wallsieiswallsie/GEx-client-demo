@@ -4,6 +4,7 @@ import AuthLayout from "../layouts/AuthLayout";
 // Lazy loading memastikan module ini hanya diunduh saat pengguna menavigasi ke rute bersangkutan
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const RegisterPage = lazy(() => import("../pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("../pages/ForgotPasswordPage"));
 
 export const authRoutes = [
   {
@@ -16,6 +17,10 @@ export const authRoutes = [
       {
         path: "/register",
         element: <RegisterPage />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPasswordPage />,
       },
     ],
   },

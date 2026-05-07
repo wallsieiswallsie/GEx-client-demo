@@ -19,4 +19,22 @@ export const authApi = {
       method: "POST",
       body: JSON.stringify({ identifier, password }),
     }),
+
+  requestForgotPasswordOtp: async (whatsapp_number) =>
+    apiFetch("/forgot-password/request-otp", {
+      method: "POST",
+      body: JSON.stringify({ whatsapp_number }),
+    }),
+
+  verifyForgotPasswordOtp: async (whatsapp_number, otp) =>
+    apiFetch("/forgot-password/verify-otp", {
+      method: "POST",
+      body: JSON.stringify({ whatsapp_number, otp }),
+    }),
+
+  resetPassword: async (resetToken, password, password_confirmation) =>
+    apiFetch("/forgot-password/reset", {
+      method: "POST",
+      body: JSON.stringify({ resetToken, password, password_confirmation }),
+    }),
 };

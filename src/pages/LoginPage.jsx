@@ -6,14 +6,15 @@ import { authApi } from '../services/api/authApi';
 import { useAuth } from '../context/useAuth';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage] = useState(location.state?.message || '');
 
   const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   // redirect ke halaman sebelumnya atau default
   const from = location.state?.from?.pathname || '/home';
@@ -59,6 +60,12 @@ export default function LoginPage() {
       </div>
 
       {/* ERROR */}
+      {successMessage && (
+        <div className="p-4 text-sm text-green-700 bg-green-50 border border-green-100 rounded-xl">
+          {successMessage}
+        </div>
+      )}
+
       {error && (
         <div className="p-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -97,6 +104,15 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
+
+      <div className="text-center">
+        <Link
+          to="/forgot-password"
+          className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+        >
+          Forgot Password?
+        </Link>
+      </div>
 
       {/* FOOTER */}
       <p className="text-center text-sm text-gray-500 font-medium">

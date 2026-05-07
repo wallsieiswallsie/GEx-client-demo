@@ -9,6 +9,7 @@ import RelasiPage from "../pages/relasi/RelasiPage";
 import CMSPage from "../pages/cms/CMSPage";
 
 const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
+const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 
 export const homeRoutes = [
   {
@@ -41,6 +42,10 @@ export const homeRoutes = [
       {
         path: "/cms",
         element: <CMSPage />
+      },
+      {
+        path: "/profil",
+        element: <ProfilePage />
       },
     ],
   },
