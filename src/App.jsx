@@ -10,6 +10,7 @@ import { authRoutes } from "./routes/authRoutes";
 import { homeRoutes } from "./routes/homeRoutes";
 import { logistikRoutes } from "./routes/logistikRoutes";
 import { operasionalRoutes } from "./routes/operasionalRoutes";
+import { relasiRoutes } from "./routes/relasiRoutes";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -72,6 +73,17 @@ export default function App() {
               ))}
               {operasionalRoutes.map((route, index) => (
                 <Route key={`operasional-${index}`} element={route.element}>
+                  {route.children.map((child, childIndex) => (
+                    <Route
+                      key={childIndex}
+                      path={child.path}
+                      element={child.element}
+                    />
+                  ))}
+                </Route>
+              ))}
+              {relasiRoutes.map((route, index) => (
+                <Route key={`relasi-${index}`} element={route.element}>
                   {route.children.map((child, childIndex) => (
                     <Route
                       key={childIndex}
