@@ -3,12 +3,14 @@ import InputField from '../components/common/InputField';
 import Button from '../components/common/Button';
 import OtpModal from '../components/auth/OtpModal';
 import { authApi } from '../services/api/authApi';
+import { useAuth } from '../context/useAuth';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({ name: '', username: '', whatsapp_number: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showOtpModal, setShowOtpModal] = useState(false);
+  const { login } = useAuth();
 
   const ADMIN_WHATSAPP = import.meta.env.VITE_ADMIN_WA || "6281234567890"; // Ganti default dengan no sebenarnya
 
@@ -51,8 +53,7 @@ export default function RegisterPage() {
     try {
       const res = await authApi.register({ ...formData, otp });
       if (res.status === 'success') {
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('refreshToken', res.data.refreshToken);
+        login(res.data.user, res.data.accessToken, res.data.refreshToken);
         window.location.href = '/dashboard';
       } else {
         setError(res.message);

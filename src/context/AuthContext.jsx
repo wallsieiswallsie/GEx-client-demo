@@ -1,6 +1,13 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-
-export const AuthContext = createContext();
+import React, { useState, useEffect } from 'react';
+import {
+  ACCESS_TOKEN_KEY,
+  API_URL,
+  AUTH_USER_KEY,
+  REFRESH_TOKEN_KEY,
+  clearStoredAuth,
+  refreshAccessToken,
+} from '../services/api/apiClient';
+import { AuthContext } from './useAuth';
 
 /**
  * Decode JWT payload tanpa library eksternal.
@@ -17,43 +24,72 @@ function decodeJwtPayload(token) {
   }
 }
 
+function isTokenValid(token) {
+  const payload = decodeJwtPayload(token);
+
+  return Boolean(payload?.exp && payload.exp * 1000 > Date.now());
+}
+
+function getStoredUser(token) {
+  const payload = decodeJwtPayload(token);
+  const storedUser = localStorage.getItem(AUTH_USER_KEY);
+
+  if (storedUser) {
+    const userData = JSON.parse(storedUser);
+    return {
+      user: userData,
+      role: userData.role || payload?.role || null,
+    };
+  }
+
+  return {
+    user: payload ? { id: payload.id, role: payload.role } : null,
+    role: payload?.role || null,
+  };
+}
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const applyAuthState = (accessToken, userData = null) => {
+    const payload = decodeJwtPayload(accessToken);
+    const nextUser = userData || getStoredUser(accessToken).user;
+    const nextRole = nextUser?.role || payload?.role || null;
+
+    setUser(nextUser);
+    setRole(nextRole);
+    setIsAuthenticated(Boolean(accessToken && nextUser));
+  };
+
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-          const payload = decodeJwtPayload(token);
+        const legacyToken = localStorage.getItem('auth_token');
+        let token = localStorage.getItem(ACCESS_TOKEN_KEY) || legacyToken;
 
-          // Cek apakah token sudah expired (exp dalam detik Unix)
-          if (payload && payload.exp && payload.exp * 1000 > Date.now()) {
-            setIsAuthenticated(true);
-            // Coba ambil data user lengkap dari localStorage (disimpan saat login)
-            const storedUser = localStorage.getItem('auth_user');
-            if (storedUser) {
-              const userData = JSON.parse(storedUser);
-              setUser(userData);
-              setRole(userData.role || payload.role);
-            } else {
-              // Fallback ke data di dalam payload JWT
-              setUser({ id: payload.id, role: payload.role });
-              setRole(payload.role);
-            }
-          } else {
-            // Token expired — bersihkan storage
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('auth_user');
-          }
+        if (legacyToken && !localStorage.getItem(ACCESS_TOKEN_KEY)) {
+          localStorage.setItem(ACCESS_TOKEN_KEY, legacyToken);
         }
+
+        if (token && isTokenValid(token)) {
+          applyAuthState(token);
+          return;
+        }
+
+        if (localStorage.getItem(REFRESH_TOKEN_KEY)) {
+          const refreshed = await refreshAccessToken();
+          token = refreshed.accessToken;
+          applyAuthState(token, refreshed.user);
+          return;
+        }
+
+        clearStoredAuth();
       } catch (error) {
         console.error('Gagal melakukan pengecekan autentikasi', error);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+        clearStoredAuth();
       } finally {
         setIsLoading(false);
       }
@@ -65,26 +101,41 @@ export const AuthProvider = ({ children }) => {
   /**
    * Login: simpan token + data user ke localStorage.
    * @param {object} userData - { id, name, username, role, whatsapp_number, ... }
-   * @param {string} token - JWT access token
+   * @param {string} accessToken - JWT access token
+   * @param {string} refreshToken - JWT refresh token
    */
-  const login = (userData, token) => {
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('auth_user', JSON.stringify(userData));
+  const login = (userData, accessToken, refreshToken) => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+
+    if (refreshToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+    }
+
     setUser(userData);
     setRole(userData.role);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (refreshToken) {
+      fetch(`${API_URL}/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      }).catch(() => {});
+    }
+
+    clearStoredAuth();
     setUser(null);
     setRole(null);
     setIsAuthenticated(false);
   };
 
   /** Helper: ambil token langsung untuk dipakai di fetch/axios */
-  const getToken = () => localStorage.getItem('auth_token');
+  const getToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 
   return (
     <AuthContext.Provider
@@ -94,6 +145,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-// Custom hook helper
-export const useAuth = () => useContext(AuthContext);

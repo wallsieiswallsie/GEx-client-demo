@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import InputField from '../components/common/InputField';
 import Button from '../components/common/Button';
 import { authApi } from '../services/api/authApi';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -29,11 +29,7 @@ export default function LoginPage() {
       if (res.status === 'success') {
         const { user, accessToken, refreshToken } = res.data;
 
-        // ✅ tetap pakai AuthContext untuk accessToken
-        login(user, accessToken);
-
-        // 🔥 TAMBAHAN PENTING: simpan refreshToken
-        localStorage.setItem("refreshToken", refreshToken);
+        login(user, accessToken, refreshToken);
 
         // redirect
         navigate(from, { replace: true });

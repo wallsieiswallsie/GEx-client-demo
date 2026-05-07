@@ -39,26 +39,12 @@ export const getPackageById = async (id) => {
  * Create package
  */
 export const createPackage = async (formData) => {
-    const token = localStorage.getItem("accessToken");
+    const res = await apiFetch("/packages", {
+        method: "POST",
+        body: formData,
+    });
 
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/packages`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-        throw new Error(data.message || "Gagal membuat paket");
-    }
-
-    return data.data;
+    return res.data;
 };
 
 /**

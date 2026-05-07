@@ -14,7 +14,7 @@ import {
 import Header from "../../components/home/Header";
 import BottomNav from '../../components/home/BottomNav';
 
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 /* =========================
    COMPONENT KECIL

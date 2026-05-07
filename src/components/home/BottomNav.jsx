@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Package, PlayCircle, User, Database } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 const NAV_ITEMS = [
   { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home', roles: ['all'] },

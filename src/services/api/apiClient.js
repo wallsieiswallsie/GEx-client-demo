@@ -1,16 +1,71 @@
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export const ACCESS_TOKEN_KEY = "accessToken";
+export const REFRESH_TOKEN_KEY = "refreshToken";
+export const AUTH_USER_KEY = "auth_user";
 
 let isRefreshing = false;
 let refreshPromise = null;
+
+export const clearStoredAuth = () => {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_USER_KEY);
+  localStorage.removeItem("auth_token");
+};
+
+export const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+  if (!refreshToken) {
+    throw new Error("Session habis, silakan login ulang");
+  }
+
+  if (!isRefreshing) {
+    isRefreshing = true;
+
+    refreshPromise = fetch(`${API_URL}/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.status !== "success" || !data?.data?.accessToken) {
+          throw new Error(data.message || "Refresh gagal");
+        }
+
+        const {
+          accessToken,
+          refreshToken: newRefreshToken,
+          user,
+        } = data.data;
+
+        localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+
+        if (user) {
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+        }
+
+        return data.data;
+      })
+      .finally(() => {
+        isRefreshing = false;
+      });
+  }
+
+  return refreshPromise;
+};
 
 export const apiFetch = async (path, options = {}) => {
   const url = path.startsWith("http") ? path : `${API_URL}${path}`;
   let token = localStorage.getItem(ACCESS_TOKEN_KEY);
 
   const makeRequest = async (accessToken) => {
+    const isFormData = options.body instanceof FormData;
     const headers = {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     };
@@ -23,44 +78,11 @@ export const apiFetch = async (path, options = {}) => {
 
   let { res, data } = await makeRequest(token);
 
-  // kalau unauthorized → refresh
-  if (res.status === 401 && path !== "/refresh") {
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (!refreshToken) {
-      logout();
-      throw new Error("Session habis, silakan login ulang");
-    }
-
+  if (res.status === 401 && path !== "/refresh" && path !== "/logout") {
     try {
-      if (!isRefreshing) {
-        isRefreshing = true;
-
-        refreshPromise = fetch(`${API_URL}/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refreshToken }),
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            if (!res?.data) throw new Error("Refresh gagal");
-
-            const { accessToken, refreshToken: newRefreshToken } = res.data;
-
-            localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-            localStorage.setItem("refreshToken", newRefreshToken);
-
-            return accessToken;
-          })
-          .finally(() => {
-            isRefreshing = false;
-          });
-      }
-
-      const newAccessToken = await refreshPromise;
+      const { accessToken: newAccessToken } = await refreshAccessToken();
 
       ({ res, data } = await makeRequest(newAccessToken));
-
     } catch (err) {
       logout();
       throw err;
@@ -76,9 +98,7 @@ export const apiFetch = async (path, options = {}) => {
   return data;
 };
 
-// helper biar clean
 const logout = () => {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem("refreshToken");
+  clearStoredAuth();
   window.location.replace("/login");
 };

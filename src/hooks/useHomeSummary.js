@@ -1,7 +1,6 @@
 import { useReducer, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from '../context/useAuth';
+import { apiFetch } from '../services/api/apiClient';
 
 const initialState = {
   data: null,
@@ -32,7 +31,7 @@ function reducer(state, action) {
  * @returns {{ data: object|null, isLoading: boolean, error: string|null, refetch: Function }}
  */
 export function useHomeSummary() {
-  const { getToken, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const fetchSummary = useCallback(async () => {
@@ -41,25 +40,12 @@ export function useHomeSummary() {
     dispatch({ type: 'LOADING' });
 
     try {
-      const token = getToken();
-      const res = await fetch(`${API_URL}/home/summary`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.message || `HTTP ${res.status}`);
-      }
-
-      const json = await res.json();
+      const json = await apiFetch('/home/summary');
       dispatch({ type: 'SUCCESS', payload: json.data });
     } catch (err) {
       dispatch({ type: 'ERROR', payload: err.message });
     }
-  }, [isAuthenticated, getToken]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchSummary();
