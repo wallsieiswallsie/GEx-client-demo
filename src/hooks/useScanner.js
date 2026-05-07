@@ -15,7 +15,10 @@ export const useScanner = ({
     const codeReaderRef = useRef(null);
 
     useEffect(() => {
-        if (!active) return;
+        if (!active || !videoRef.current) return;
+
+        let isMounted = true;
+        let isScanned = false;
 
         const hints = new Map();
 
@@ -45,17 +48,12 @@ export const useScanner = ({
             true
         );
 
-        // FIX UTAMA:
-        // hints harus di-set manual
-        // bukan lewat constructor parameter kedua
         const codeReader =
             new BrowserMultiFormatReader();
 
         codeReader.hints = hints;
 
         codeReaderRef.current = codeReader;
-
-        let isScanned = false;
 
         const constraints = {
             audio: false,
@@ -80,10 +78,11 @@ export const useScanner = ({
                 await codeReader.decodeFromConstraints(
                     constraints,
                     videoRef.current,
-                    (result, err) => {
+                    (result) => {
                         if (
                             result &&
-                            !isScanned
+                            !isScanned &&
+                            isMounted
                         ) {
                             isScanned = true;
 
@@ -92,11 +91,7 @@ export const useScanner = ({
 
                             onScan(text);
 
-                            setTimeout(() => {
-                                try {
-                                    codeReader.reset();
-                                } catch (e) { }
-                            }, 200);
+                            stopScanner();
                         }
                     }
                 );
@@ -108,12 +103,37 @@ export const useScanner = ({
             }
         };
 
+        const stopScanner = async () => {
+            try {
+                codeReader.reset();
+
+                const stream =
+                    videoRef.current?.srcObject;
+
+                if (stream) {
+                    stream
+                        .getTracks()
+                        .forEach((track) =>
+                            track.stop()
+                        );
+
+                    videoRef.current.srcObject =
+                        null;
+                }
+            } catch (err) {
+                console.error(
+                    "Stop scanner error:",
+                    err
+                );
+            }
+        };
+
         startScanner();
 
         return () => {
-            try {
-                codeReader.reset();
-            } catch (e) { }
+            isMounted = false;
+
+            stopScanner();
         };
-    }, [active]);
+    }, [active, videoRef, onScan]);
 };
