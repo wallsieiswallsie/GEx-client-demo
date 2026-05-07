@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import {
-    BrowserMultiFormatReader,
-} from "@zxing/browser";
+import { BrowserMultiFormatReader } from "@zxing/browser";
 
 import {
     BarcodeFormat,
@@ -24,15 +22,12 @@ export const useScanner = ({
         hints.set(
             DecodeHintType.POSSIBLE_FORMATS,
             [
-                // QR
                 BarcodeFormat.QR_CODE,
 
-                // BARCODE RESI
                 BarcodeFormat.CODE_128,
                 BarcodeFormat.CODE_39,
                 BarcodeFormat.CODE_93,
 
-                // MARKETPLACE / LOGISTIC
                 BarcodeFormat.EAN_13,
                 BarcodeFormat.EAN_8,
 
@@ -45,19 +40,26 @@ export const useScanner = ({
             ]
         );
 
+        hints.set(
+            DecodeHintType.TRY_HARDER,
+            true
+        );
+
+        // FIX UTAMA:
+        // hints harus di-set manual
+        // bukan lewat constructor parameter kedua
         const codeReader =
-            new BrowserMultiFormatReader(
-                hints,
-                {
-                    delayBetweenScanAttempts: 30,
-                }
-            );
+            new BrowserMultiFormatReader();
+
+        codeReader.hints = hints;
 
         codeReaderRef.current = codeReader;
 
         let isScanned = false;
 
         const constraints = {
+            audio: false,
+
             video: {
                 facingMode: {
                     ideal: "environment",
@@ -70,41 +72,43 @@ export const useScanner = ({
                 height: {
                     ideal: 1080,
                 },
-
-                focusMode: "continuous",
             },
         };
 
-        codeReader
-            .decodeFromConstraints(
-                constraints,
-                videoRef.current,
-                (result, err) => {
-                    if (
-                        result &&
-                        !isScanned
-                    ) {
-                        isScanned = true;
+        const startScanner = async () => {
+            try {
+                await codeReader.decodeFromConstraints(
+                    constraints,
+                    videoRef.current,
+                    (result, err) => {
+                        if (
+                            result &&
+                            !isScanned
+                        ) {
+                            isScanned = true;
 
-                        const text =
-                            result.getText();
+                            const text =
+                                result.getText();
 
-                        onScan(text);
+                            onScan(text);
 
-                        setTimeout(() => {
-                            try {
-                                codeReader.reset();
-                            } catch (e) { }
-                        }, 150);
+                            setTimeout(() => {
+                                try {
+                                    codeReader.reset();
+                                } catch (e) { }
+                            }, 200);
+                        }
                     }
-                }
-            )
-            .catch((err) => {
+                );
+            } catch (err) {
                 console.error(
                     "Scanner error:",
                     err
                 );
-            });
+            }
+        };
+
+        startScanner();
 
         return () => {
             try {

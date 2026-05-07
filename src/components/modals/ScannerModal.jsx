@@ -38,11 +38,14 @@ function ScannerModal({
                 <video
                     ref={videoRef}
                     className="w-full h-full object-cover"
+                    playsInline
+                    muted
+                    autoPlay
                 />
 
                 {/* FRAME */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-72 h-40 border-2 border-red-500 rounded-lg relative overflow-hidden">
+                    <div className="w-80 h-24 border-2 border-red-500 rounded-lg relative overflow-hidden">
                         <div className="absolute w-full h-[2px] bg-orange-400 animate-pulse top-1/2" />
                     </div>
                 </div>
