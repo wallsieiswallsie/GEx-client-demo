@@ -51,7 +51,15 @@ function ModalFormInputPackage({
                 route_code: "Bermasalah",
             }));
         }
-    }, [statusPaket]);
+    }, [setForm, statusPaket]);
+
+    useEffect(() => {
+        setStatusPaket(
+            form.route_code === "Bermasalah"
+                ? "Bermasalah"
+                : "Sesuai"
+        );
+    }, [form.id, form.route_code]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } =

@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 import {
-    useNavigate,
     useParams,
 } from "react-router-dom";
 
@@ -22,8 +21,6 @@ import {
 } from "../../services/api/operasional/packagesApi";
 
 export default function PackageDetailPage() {
-
-    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -73,6 +70,8 @@ export default function PackageDetailPage() {
         );
     }
 
+    const photoSrc = data.photo_url || "";
+
     return (
         <div className="min-h-dvh bg-gray-50 p-4">
 
@@ -106,7 +105,7 @@ export default function PackageDetailPage() {
                             className="w-full"
                         >
                             <img
-                                src={`${data.photo_url}?t=${new Date(data.updated_at || Date.now()).getTime()}`}
+                                src={photoSrc}
                                 alt={data.name}
                                 className="w-full h-52 object-cover rounded-2xl border shadow-sm active:scale-[0.99] transition"
                             />
@@ -250,7 +249,7 @@ export default function PackageDetailPage() {
 
                     {/* IMAGE */}
                     <img
-                        src={`${data.photo_url}?t=${new Date(data.updated_at || Date.now()).getTime()}`}
+                        src={photoSrc}
                         alt={data.name}
                         className="max-w-full max-h-full object-contain rounded-2xl"
                     />

@@ -50,10 +50,10 @@ export const createPackage = async (formData) => {
 /**
  * Update package
  */
-export const updatePackage = async (id, payload) => {
+export const updatePackage = async (id, formData) => {
     const res = await apiFetch(`/packages/${id}`, {
         method: "PUT",
-        body: JSON.stringify(payload),
+        body: formData,
     });
 
     return res.data;

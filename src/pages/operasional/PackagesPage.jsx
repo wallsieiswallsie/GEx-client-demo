@@ -19,6 +19,7 @@ import ModalFormInputPackage from "../../components/forms/ModalFormInputPackage"
 
 import {
     getAllPackages,
+    getPackageById,
     createPackage,
     updatePackage,
     deletePackage,
@@ -78,6 +79,29 @@ export default function PackagesPage() {
     };
 
     const [form, setForm] = useState(defaultForm);
+
+    const buildPackageFormData = (values) => {
+        const formData = new FormData();
+
+        formData.append("name", values.name);
+        formData.append("arrived_origin_at", values.arrived_origin_at);
+        formData.append("receipt", values.receipt);
+        formData.append("expedition", values.expedition);
+        formData.append("length", values.length);
+        formData.append("width", values.width);
+        formData.append("height", values.height);
+        formData.append("real_weight", values.real_weight);
+        formData.append("route_code", values.route_code);
+        formData.append("is_partner", values.is_partner ? "true" : "false");
+        formData.append("partnership_code", values.partnership_code || "");
+        formData.append("items", JSON.stringify(values.items || []));
+
+        if (values.photo instanceof File) {
+            formData.append("photo", values.photo);
+        }
+
+        return formData;
+    };
 
     const fetchData = async ({
         currentPage = 1,
@@ -220,16 +244,25 @@ export default function PackagesPage() {
         setIsOpen(true);
     };
 
-    const openEdit = (item) => {
-        setForm({
-            ...item,
-            photo: null,
-            items: item.items || [],
-        });
+    const openEdit = async (item) => {
+        try {
+            const detail = await getPackageById(item.id);
 
-        setPreview(item.photo_url || null);
+            setForm({
+                ...detail,
+                arrived_origin_at: detail.arrived_origin_at
+                    ? detail.arrived_origin_at.slice(0, 10)
+                    : "",
+                photo: null,
+                items: detail.items || [],
+            });
 
-        setIsOpen(true);
+            setPreview(detail.photo_url || null);
+
+            setIsOpen(true);
+        } catch (err) {
+            alert(err.message);
+        }
     };
 
     const handleSubmit = async () => {
@@ -246,85 +279,25 @@ export default function PackagesPage() {
                 return;
             }
 
+            const formData = buildPackageFormData(form);
+
             if (form.id) {
-                await updatePackage(
+                const updatedPackage = await updatePackage(
                     form.id,
-                    form
+                    formData
                 );
 
-            } else {
-                const formData =
-                    new FormData();
-
-                formData.append(
-                    "name",
-                    form.name
-                );
-
-                formData.append(
-                    "arrived_origin_at",
-                    form.arrived_origin_at
-                );
-
-                formData.append(
-                    "receipt",
-                    form.receipt
-                );
-
-                formData.append(
-                    "expedition",
-                    form.expedition
-                );
-
-                formData.append(
-                    "length",
-                    form.length
-                );
-
-                formData.append(
-                    "width",
-                    form.width
-                );
-
-                formData.append(
-                    "height",
-                    form.height
-                );
-
-                formData.append(
-                    "real_weight",
-                    form.real_weight
-                );
-
-                formData.append(
-                    "route_code",
-                    form.route_code
-                );
-
-                formData.append(
-                    "is_partner",
-                    form.is_partner
-                );
-
-                formData.append(
-                    "partnership_code",
-                    form.partnership_code || ""
-                );
-
-                formData.append(
-                    "items",
-                    JSON.stringify(
-                        form.items || []
+                setData((prev) =>
+                    prev.map((item) =>
+                        item.id === updatedPackage.id
+                            ? {
+                                ...item,
+                                ...updatedPackage,
+                            }
+                            : item
                     )
                 );
-
-                if (form.photo) {
-                    formData.append(
-                        "photo",
-                        form.photo
-                    );
-                }
-
+            } else {
                 await createPackage(
                     formData
                 );
