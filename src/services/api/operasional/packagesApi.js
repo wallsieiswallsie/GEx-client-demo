@@ -52,7 +52,7 @@ export const createPackage = async (formData) => {
  */
 export const updatePackage = async (id, formData) => {
     const res = await apiFetch(`/packages/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: formData,
     });
 
