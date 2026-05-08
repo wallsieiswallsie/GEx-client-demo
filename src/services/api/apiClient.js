@@ -63,7 +63,13 @@ export const apiFetch = async (path, options = {}) => {
   let token = localStorage.getItem(ACCESS_TOKEN_KEY);
 
   const makeRequest = async (accessToken) => {
-    const isFormData = options.body instanceof FormData;
+    const isFormData =
+      typeof FormData !== "undefined" &&
+      (
+        options.body instanceof FormData ||
+        Object.prototype.toString.call(options.body) === "[object FormData]"
+      );
+
     const headers = {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
