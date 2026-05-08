@@ -113,6 +113,14 @@ export const getSackItems = async (sackId) => {
     return unwrap(res);
 };
 
+export const getMispackedPackageById = async (id) => {
+    const res = await apiFetch(`/operasional/mispacked-packages/${id}`, {
+        method: "GET",
+    });
+
+    return unwrap(res);
+};
+
 export const addPackageToSack = async ({
     sack_id,
     receipt,

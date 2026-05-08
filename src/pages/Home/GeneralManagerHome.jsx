@@ -15,6 +15,7 @@ import Header from "../../components/home/Header";
 import BottomNav from '../../components/home/BottomNav';
 
 import { useAuth } from '../../context/useAuth';
+import { useHomeSummary } from "../../hooks/useHomeSummary";
 
 /* =========================
    COMPONENT KECIL
@@ -46,6 +47,8 @@ function Section({ title, action }) {
 export default function GeneralManagerHome() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+    const { data: summaryData } = useHomeSummary();
+    const mispackedPackages = summaryData?.mispacked_packages;
 
     const handleLogout = () => {
         logout();
@@ -70,6 +73,31 @@ export default function GeneralManagerHome() {
             {/* CONTENT */}
             <main className="flex-1 overflow-y-auto pb-24">
                 <div className="flex flex-col gap-4 pt-3">
+
+                    {/* =========================
+                        Salah Packing
+                    ========================= */}
+                    {mispackedPackages?.count > 0 && (
+                        <section className="bg-amber-50 border border-amber-100 mx-4 p-4 rounded-2xl shadow-sm">
+                            <Section title={`Peringatan Salah Packing (${mispackedPackages.count})`} />
+
+                            <div className="flex flex-col gap-2 text-sm">
+                                {(mispackedPackages.items || []).map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => navigate(`/mispacked-packages/${item.id}`)}
+                                        className="flex justify-between border-b border-amber-100 pb-2 text-left"
+                                    >
+                                        <span className="font-medium">{item.receipt || "-"}</span>
+                                        <span className="text-amber-700 text-xs flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3" />
+                                            {item.correct_via} ke {item.wrong_via}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     {/* =========================
                         Insight Kloter

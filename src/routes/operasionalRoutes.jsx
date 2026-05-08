@@ -6,6 +6,7 @@ import PackageDetailPage from "../pages/operasional/PackageDetailPage";
 import BatchSackPage from "../pages/operasional/BatchSackPage";
 import BatchDetailPage from "../pages/operasional/BatchDetailPage";
 import SackDetailPage from "../pages/operasional/SackDetailPage";
+import MispackedPackageDetailPage from "../pages/operasional/MispackedPackageDetailPage";
 
 export const operasionalRoutes = [
     {
@@ -34,6 +35,10 @@ export const operasionalRoutes = [
             {
                 path: "/kloter/:batchType/:batchId/sacks/:sackId",
                 element: <SackDetailPage />,
+            },
+            {
+                path: "/mispacked-packages/:id",
+                element: <MispackedPackageDetailPage />,
             },
         ],
     },

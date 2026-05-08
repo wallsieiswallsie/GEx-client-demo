@@ -28,6 +28,11 @@ const statusClass = {
     SEALED: "bg-gray-100 text-gray-600 border-gray-200",
 };
 
+const viaLabel = {
+    K: "Kapal",
+    P: "Pesawat",
+};
+
 export default function SackDetailPage() {
     const { sackId } = useParams();
 
@@ -36,6 +41,7 @@ export default function SackDetailPage() {
     const [loading, setLoading] = useState(false);
     const [scannerOpen, setScannerOpen] = useState(false);
     const [confirmation, setConfirmation] = useState(null);
+    const [viaWarning, setViaWarning] = useState(null);
 
     const locked = sack?.status === "SEALED";
 
@@ -72,6 +78,11 @@ export default function SackDetailPage() {
 
             if (res?.type === "CONFIRMATION_REQUIRED") {
                 setConfirmation(res);
+                return;
+            }
+
+            if (res?.type === "VIA_MISMATCH_WARNING") {
+                setViaWarning(res);
                 return;
             }
 
@@ -315,6 +326,48 @@ export default function SackDetailPage() {
                                 Pindahkan
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {viaWarning && (
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-lg">
+                        <div className="flex justify-between items-center mb-3">
+                            <h2 className="text-sm font-semibold">
+                                Via Paket Tidak Sesuai
+                            </h2>
+
+                            <button onClick={() => setViaWarning(null)}>
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        <p className="text-sm text-gray-700 mb-4">
+                            {viaWarning.message}
+                        </p>
+
+                        <div className="space-y-2 text-sm text-gray-700 mb-4">
+                            <div className="flex justify-between border-b pb-2">
+                                <span className="text-gray-500">Resi</span>
+                                <span className="font-semibold">{viaWarning.data.receipt || "-"}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2">
+                                <span className="text-gray-500">Via seharusnya</span>
+                                <span className="font-semibold">{viaLabel[viaWarning.data.package_via] || viaWarning.data.package_via}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-500">Via batch</span>
+                                <span className="font-semibold">{viaLabel[viaWarning.data.batch_via] || viaWarning.data.batch_via}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setViaWarning(null)}
+                            className="w-full bg-violet-600 text-white py-2 rounded-xl text-sm font-medium"
+                        >
+                            Mengerti
+                        </button>
                     </div>
                 </div>
             )}
