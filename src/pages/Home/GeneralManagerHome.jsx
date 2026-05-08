@@ -32,11 +32,11 @@ function InsightItem({ icon: Icon, label, value }) {
     );
 }
 
-function Section({ title, action }) {
+function Section({ title, action, onAction }) {
     return (
         <div className="flex justify-between items-center mb-2">
             <h2 className="text-sm font-bold">{title}</h2>
-            {action && <button className="text-xs text-violet-600">{action}</button>}
+            {action && <button onClick={onAction} className="text-xs text-violet-600">{action}</button>}
         </div>
     );
 }
@@ -49,6 +49,7 @@ export default function GeneralManagerHome() {
     const { user, logout } = useAuth();
     const { data: summaryData } = useHomeSummary();
     const mispackedPackages = summaryData?.mispacked_packages;
+    const unpackedPackages = summaryData?.unpacked_packages;
 
     const handleLogout = () => {
         logout();
@@ -150,24 +151,52 @@ export default function GeneralManagerHome() {
                     {/* =========================
                         Belum Dipacking
                     ========================= */}
-                    <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
-                        <Section title="Belum Dipacking" />
+                    {unpackedPackages && (
+                        <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
+                            <Section
+                                title={`Belum Packing (${unpackedPackages.count || 0})`}
+                                action="Lihat Lainnya"
+                                onAction={() => navigate("/belum-packing")}
+                            />
 
-                        <div className="flex flex-col gap-2 text-sm">
-                            {[1, 2, 3, 4].map((item) => (
-                                <div
-                                    key={item}
-                                    className="flex justify-between border-b pb-2"
-                                >
-                                    <span>PKT-00{item}234</span>
-                                    <span className="text-red-500 text-xs flex items-center gap-1">
-                                        <AlertCircle className="w-3 h-3" />
-                                        Pending
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                            <p className="text-xs text-gray-500 mb-3">
+                                Paket yang belum masuk ke batch/karung
+                            </p>
+
+                            <div className="flex flex-col gap-2 text-sm">
+                                {(unpackedPackages.items || []).map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => navigate("/belum-packing")}
+                                        className="border-b pb-2 text-left"
+                                    >
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <span className="shrink-0 bg-violet-50 text-violet-700 px-2 py-0.5 rounded-lg text-[10px] font-semibold">
+                                                    {item.route_code || "-"}
+                                                </span>
+                                                <span className="font-medium truncate">
+                                                    {item.receipt}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs text-gray-500 truncate">
+                                                {item.name || "-"}
+                                            </span>
+                                        </div>
+                                        <div className="text-[11px] text-gray-400 mt-1">
+                                            {(item.arrived_origin_at || "").slice(0, 10) || "-"}
+                                        </div>
+                                    </button>
+                                ))}
+
+                                {(unpackedPackages.items || []).length === 0 && (
+                                    <div className="text-sm text-gray-400 py-3">
+                                        Tidak ada paket belum packing
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    )}
 
                     {/* =========================
                         FITUR

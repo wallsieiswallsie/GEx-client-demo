@@ -7,6 +7,7 @@ import BatchSackPage from "../pages/operasional/BatchSackPage";
 import BatchDetailPage from "../pages/operasional/BatchDetailPage";
 import SackDetailPage from "../pages/operasional/SackDetailPage";
 import MispackedPackageDetailPage from "../pages/operasional/MispackedPackageDetailPage";
+import UnpackedPackagesPage from "../pages/operasional/UnpackedPackagesPage";
 
 export const operasionalRoutes = [
     {
@@ -23,6 +24,10 @@ export const operasionalRoutes = [
             {
                 path: "/packages/:id",
                 element: <PackageDetailPage />,
+            },
+            {
+                path: "/belum-packing",
+                element: <UnpackedPackagesPage />,
             },
             {
                 path: "/kloter",
