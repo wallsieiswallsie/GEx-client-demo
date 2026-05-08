@@ -4,6 +4,8 @@ import MobileAppLayout from "../layouts/MobileAppLayout";
 import PackagesPage from "../pages/operasional/PackagesPage";
 import PackageDetailPage from "../pages/operasional/PackageDetailPage";
 import BatchSackPage from "../pages/operasional/BatchSackPage";
+import BatchDetailPage from "../pages/operasional/BatchDetailPage";
+import SackDetailPage from "../pages/operasional/SackDetailPage";
 
 export const operasionalRoutes = [
     {
@@ -24,6 +26,14 @@ export const operasionalRoutes = [
             {
                 path: "/kloter",
                 element: <BatchSackPage />,
+            },
+            {
+                path: "/kloter/:batchType/:batchId",
+                element: <BatchDetailPage />,
+            },
+            {
+                path: "/kloter/:batchType/:batchId/sacks/:sackId",
+                element: <SackDetailPage />,
             },
         ],
     },

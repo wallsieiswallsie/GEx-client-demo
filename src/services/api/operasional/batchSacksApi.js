@@ -27,6 +27,20 @@ export const getBatches = async ({
     return unwrap(res);
 };
 
+export const getBatchById = async ({
+    batch_type,
+    batch_id,
+}) => {
+    const res = await apiFetch(
+        `/operasional/batches/${batch_type}/${batch_id}`,
+        {
+            method: "GET",
+        }
+    );
+
+    return unwrap(res);
+};
+
 export const createShipBatch = async (payload) => {
     const res = await apiFetch("/operasional/batches/ship", {
         method: "POST",
@@ -62,38 +76,6 @@ export const getBatchPackages = async ({
         `/operasional/batches/${batch_type}/${batch_id}/packages?${params.toString()}`,
         {
             method: "GET",
-        }
-    );
-
-    return unwrap(res);
-};
-
-export const addPackageToBatch = async ({
-    batch_type,
-    batch_id,
-    receipt,
-}) => {
-    const res = await apiFetch(
-        `/operasional/batches/${batch_type}/${batch_id}/packages`,
-        {
-            method: "POST",
-            body: JSON.stringify({ receipt }),
-        }
-    );
-
-    return unwrap(res);
-};
-
-export const removePackageFromBatch = async ({
-    batch_type,
-    batch_id,
-    receipt,
-}) => {
-    const res = await apiFetch(
-        `/operasional/batches/${batch_type}/${batch_id}/packages`,
-        {
-            method: "DELETE",
-            body: JSON.stringify({ receipt }),
         }
     );
 
