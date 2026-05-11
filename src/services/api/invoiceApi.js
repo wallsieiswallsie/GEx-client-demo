@@ -1,4 +1,8 @@
-import { apiFetch } from "./apiClient";
+import {
+  ACCESS_TOKEN_KEY,
+  API_URL,
+  apiFetch,
+} from "./apiClient";
 
 export const getInvoices = async ({
   page = 1,
@@ -81,4 +85,29 @@ export const cancelInvoice = async (id) => {
   });
 
   return res.data;
+};
+
+export const getInvoicePdfUrl = (id) => `${API_URL}/invoices/${id}/pdf`;
+
+export const downloadInvoicePdf = async (id, invoiceNumber = "invoice") => {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const res = await fetch(getInvoicePdfUrl(id), {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Gagal download PDF invoice");
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${invoiceNumber}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 };

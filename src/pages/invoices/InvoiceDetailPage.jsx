@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Image, Package, ReceiptText, Wallet, X } from "lucide-react";
+import {
+    Download,
+    Image,
+    Package,
+    ReceiptText,
+    Share2,
+    Wallet,
+    X,
+} from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import Button from "../../components/common/Button";
@@ -9,6 +17,8 @@ import InvoiceAccessDenied from "./InvoiceAccessDenied";
 import InvoiceStatusBadge from "./InvoiceStatusBadge";
 import {
     cancelInvoice,
+    downloadInvoicePdf,
+    getInvoicePdfUrl,
     getInvoiceById,
 } from "../../services/api/invoiceApi";
 
@@ -18,6 +28,7 @@ export default function InvoiceDetailPage() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [canceling, setCanceling] = useState(false);
+    const [downloading, setDownloading] = useState(false);
     const [showAllPackages, setShowAllPackages] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
 
@@ -49,6 +60,53 @@ export default function InvoiceDetailPage() {
         } finally {
             setCanceling(false);
         }
+    };
+
+    const buildShareMessage = () => {
+        const pdfUrl = getInvoicePdfUrl(id);
+
+        return [
+            "Invoice GEx",
+            `No Invoice: ${data.invoice_number}`,
+            `Total Tagihan: Rp ${Number(data.total_amount || 0).toLocaleString("id-ID")}`,
+            "",
+            `PDF Invoice: ${pdfUrl}`,
+        ].join("\n");
+    };
+
+    const handleDownloadPdf = async () => {
+        try {
+            setDownloading(true);
+            await downloadInvoicePdf(id, data.invoice_number);
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            setDownloading(false);
+        }
+    };
+
+    const handleShareWhatsapp = async () => {
+        const message = buildShareMessage();
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `Invoice ${data.invoice_number}`,
+                    text: message,
+                });
+                return;
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    return;
+                }
+            }
+        }
+
+        window.open(
+            `https://wa.me/?text=${encodeURIComponent(message)}`,
+            "_blank",
+            "noopener,noreferrer"
+        );
     };
 
     return (
@@ -84,6 +142,29 @@ export default function InvoiceDetailPage() {
                                 <Info label="Total" value={`Rp ${Number(data.total_amount || 0).toLocaleString("id-ID")}`} />
                             </div>
                         </section>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <Button
+                                onClick={handleDownloadPdf}
+                                loading={downloading}
+                                loadingText="Download..."
+                            >
+                                <span className="inline-flex items-center gap-2">
+                                    <Download className="w-4 h-4" />
+                                    Download PDF
+                                </span>
+                            </Button>
+
+                            <Button
+                                onClick={handleShareWhatsapp}
+                                variant="secondary"
+                            >
+                                <span className="inline-flex items-center gap-2">
+                                    <Share2 className="w-4 h-4" />
+                                    Share WhatsApp
+                                </span>
+                            </Button>
+                        </div>
 
                         <section className="bg-white rounded-2xl p-4 shadow-sm">
                             <div className="flex items-center justify-between gap-3 mb-3">
