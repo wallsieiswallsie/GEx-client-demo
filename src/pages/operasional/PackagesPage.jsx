@@ -15,6 +15,8 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
+import { useAuth } from "../../context/useAuth";
+import { useHomeSummary } from "../../hooks/useHomeSummary";
 
 import ModalFormInputPackage from "../../components/forms/ModalFormInputPackage";
 
@@ -34,6 +36,8 @@ import { getAllShipmentRoutes } from "../../services/api/logistik/shipmentRouteA
 
 export default function PackagesPage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
+    const { data: summaryData } = useHomeSummary();
 
     const [data, setData] = useState([]);
 
@@ -80,6 +84,24 @@ export default function PackagesPage() {
     };
 
     const [form, setForm] = useState(defaultForm);
+
+    const isGeneralManager = role === "general_manager";
+    const isBranchStaff = role === "branch_staff";
+    const isOriginBranchStaff =
+        isBranchStaff &&
+        (
+            user?.is_origin === true ||
+            (
+                user?.is_origin === undefined &&
+                summaryData?.unpacked_packages !== null &&
+                summaryData?.unpacked_packages !== undefined
+            )
+        );
+
+    const canManagePackage = isGeneralManager;
+    const canCreatePackage = isBranchStaff
+        ? isOriginBranchStaff
+        : true;
 
     const buildPackageFormData = (values) => {
         const formData = new FormData();
@@ -382,82 +404,106 @@ export default function PackagesPage() {
                                     `/packages/${item.id}`
                                 )
                             }
-                            className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md active:scale-[0.98] transition cursor-pointer"
+                            className="bg-white rounded-2xl shadow-sm p-3 hover:shadow-md active:scale-[0.98] transition cursor-pointer overflow-hidden"
                         >
                             <div className="flex justify-between gap-3">
 
                                 {/* LEFT */}
-                                <div className="flex flex-col gap-2 w-full">
+                                <div className="flex flex-col gap-2 min-w-0 flex-1">
 
-                                    <div className="flex items-center gap-2 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-xs font-medium w-fit">
-                                        <Package className="w-3 h-3" />
+                                    <div
+                                        title={item.name || "-"}
+                                        className="flex items-center gap-2 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-xs font-medium max-w-full w-fit min-w-0"
+                                    >
+                                        <Package className="w-3 h-3 shrink-0" />
 
-                                        {item.name}
+                                        <span className="truncate">
+                                            {item.name || "-"}
+                                        </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                        <Receipt className="w-3 h-3" />
+                                    <div
+                                        title={item.receipt || "-"}
+                                        className="flex items-center gap-2 text-xs text-gray-600 min-w-0"
+                                    >
+                                        <Receipt className="w-3 h-3 shrink-0" />
 
-                                        {item.receipt}
+                                        <span className="truncate">
+                                            {item.receipt || "-"}
+                                        </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                        <Truck className="w-3 h-3" />
+                                    <div
+                                        title={item.expedition || "-"}
+                                        className="flex items-center gap-2 text-xs text-gray-600 min-w-0"
+                                    >
+                                        <Truck className="w-3 h-3 shrink-0" />
 
-                                        {item.expedition}
+                                        <span className="truncate">
+                                            {item.expedition || "-"}
+                                        </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2 text-xs text-gray-600">
-                                        <Scale className="w-3 h-3" />
+                                    <div
+                                        title={`${item.used_weight || 0} kg`}
+                                        className="flex items-center gap-2 text-xs text-gray-600 min-w-0"
+                                    >
+                                        <Scale className="w-3 h-3 shrink-0" />
 
-                                        {item.used_weight ||
-                                            0}{" "}
-                                        kg
+                                        <span className="truncate">
+                                            {item.used_weight || 0} kg
+                                        </span>
                                     </div>
 
-                                    <div className="mt-2">
-                                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100">
-                                            <Truck className="w-3 h-3" />
+                                    <div className="mt-2 min-w-0">
+                                        <div
+                                            title={item.route_code || "-"}
+                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100 max-w-full min-w-0"
+                                        >
+                                            <Truck className="w-3 h-3 shrink-0" />
 
-                                            {item.route_code ||
-                                                "-"}
+                                            <span className="truncate">
+                                                {item.route_code || "-"}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* ACTION */}
-                                <div className="flex flex-col gap-2 border-l pl-2">
+                                {canManagePackage && (
+                                    <div className="flex flex-col gap-2 border-l pl-2 shrink-0">
 
-                                    <button
-                                        onClick={(
-                                            e
-                                        ) => {
-                                            e.stopPropagation();
+                                        <button
+                                            onClick={(
+                                                e
+                                            ) => {
+                                                e.stopPropagation();
 
-                                            openEdit(
-                                                item
-                                            );
-                                        }}
-                                        className="p-1.5 rounded-lg hover:bg-blue-50 active:scale-90 transition"
-                                    >
-                                        <Pencil className="w-4 h-4 text-blue-500" />
-                                    </button>
+                                                openEdit(
+                                                    item
+                                                );
+                                            }}
+                                            className="p-1.5 rounded-lg hover:bg-blue-50 active:scale-90 transition"
+                                        >
+                                            <Pencil className="w-4 h-4 text-blue-500" />
+                                        </button>
 
-                                    <button
-                                        onClick={(
-                                            e
-                                        ) => {
-                                            e.stopPropagation();
+                                        <button
+                                            onClick={(
+                                                e
+                                            ) => {
+                                                e.stopPropagation();
 
-                                            handleDelete(
-                                                item.id
-                                            );
-                                        }}
-                                        className="p-1.5 rounded-lg hover:bg-red-50 active:scale-90 transition"
-                                    >
-                                        <Trash2 className="w-4 h-4 text-red-500" />
-                                    </button>
-                                </div>
+                                                handleDelete(
+                                                    item.id
+                                                );
+                                            }}
+                                            className="p-1.5 rounded-lg hover:bg-red-50 active:scale-90 transition"
+                                        >
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))
@@ -475,12 +521,14 @@ export default function PackagesPage() {
                 )}
 
             {/* FLOAT BUTTON */}
-            <button
-                onClick={openCreate}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
-            >
-                <Plus />
-            </button>
+            {canCreatePackage && (
+                <button
+                    onClick={openCreate}
+                    className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                >
+                    <Plus />
+                </button>
+            )}
 
             {/* MODAL */}
             {isOpen && (
