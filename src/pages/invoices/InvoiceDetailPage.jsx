@@ -17,8 +17,9 @@ import InvoiceAccessDenied from "./InvoiceAccessDenied";
 import InvoiceStatusBadge from "./InvoiceStatusBadge";
 import {
     cancelInvoice,
+    downloadPdfBlob,
     downloadInvoicePdf,
-    getInvoicePdfUrl,
+    fetchInvoicePdfBlob,
     getInvoiceById,
 } from "../../services/api/invoiceApi";
 
@@ -29,6 +30,7 @@ export default function InvoiceDetailPage() {
     const [loading, setLoading] = useState(false);
     const [canceling, setCanceling] = useState(false);
     const [downloading, setDownloading] = useState(false);
+    const [sharing, setSharing] = useState(false);
     const [showAllPackages, setShowAllPackages] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
 
@@ -62,18 +64,6 @@ export default function InvoiceDetailPage() {
         }
     };
 
-    const buildShareMessage = () => {
-        const pdfUrl = getInvoicePdfUrl(id);
-
-        return [
-            "Invoice GEx",
-            `No Invoice: ${data.invoice_number}`,
-            `Total Tagihan: Rp ${Number(data.total_amount || 0).toLocaleString("id-ID")}`,
-            "",
-            `PDF Invoice: ${pdfUrl}`,
-        ].join("\n");
-    };
-
     const handleDownloadPdf = async () => {
         try {
             setDownloading(true);
@@ -86,27 +76,43 @@ export default function InvoiceDetailPage() {
     };
 
     const handleShareWhatsapp = async () => {
-        const message = buildShareMessage();
+        try {
+            setSharing(true);
 
-        if (navigator.share) {
-            try {
+            const blob = await fetchInvoicePdfBlob(id);
+            const pdfFile = new File(
+                [blob],
+                `${data.invoice_number}.pdf`,
+                { type: "application/pdf" }
+            );
+            const sharePayload = {
+                title: `Invoice ${data.invoice_number}`,
+                text: `Invoice GEx ${data.invoice_number}`,
+                files: [pdfFile],
+            };
+
+            if (
+                navigator.share
+                && navigator.canShare
+                && navigator.canShare({ files: [pdfFile] })
+            ) {
                 await navigator.share({
-                    title: `Invoice ${data.invoice_number}`,
-                    text: message,
+                    title: sharePayload.title,
+                    text: sharePayload.text,
+                    files: sharePayload.files,
                 });
                 return;
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    return;
-                }
             }
-        }
 
-        window.open(
-            `https://wa.me/?text=${encodeURIComponent(message)}`,
-            "_blank",
-            "noopener,noreferrer"
-        );
+            downloadPdfBlob(blob, data.invoice_number);
+            alert("Browser tidak mendukung share file langsung ke WhatsApp. PDF invoice sudah didownload.");
+        } catch (err) {
+            if (err.name !== "AbortError") {
+                alert(err.message || "Gagal share PDF invoice");
+            }
+        } finally {
+            setSharing(false);
+        }
     };
 
     return (
@@ -158,6 +164,8 @@ export default function InvoiceDetailPage() {
                             <Button
                                 onClick={handleShareWhatsapp}
                                 variant="secondary"
+                                loading={sharing}
+                                loadingText="Menyiapkan..."
                             >
                                 <span className="inline-flex items-center gap-2">
                                     <Share2 className="w-4 h-4" />

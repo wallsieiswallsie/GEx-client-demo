@@ -89,7 +89,7 @@ export const cancelInvoice = async (id) => {
 
 export const getInvoicePdfUrl = (id) => `${API_URL}/invoices/${id}/pdf`;
 
-export const downloadInvoicePdf = async (id, invoiceNumber = "invoice") => {
+export const fetchInvoicePdfBlob = async (id) => {
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   const res = await fetch(getInvoicePdfUrl(id), {
     headers: {
@@ -101,7 +101,10 @@ export const downloadInvoicePdf = async (id, invoiceNumber = "invoice") => {
     throw new Error("Gagal download PDF invoice");
   }
 
-  const blob = await res.blob();
+  return await res.blob();
+};
+
+export const downloadPdfBlob = (blob, invoiceNumber = "invoice") => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -110,4 +113,9 @@ export const downloadInvoicePdf = async (id, invoiceNumber = "invoice") => {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+};
+
+export const downloadInvoicePdf = async (id, invoiceNumber = "invoice") => {
+  const blob = await fetchInvoicePdfBlob(id);
+  downloadPdfBlob(blob, invoiceNumber);
 };
