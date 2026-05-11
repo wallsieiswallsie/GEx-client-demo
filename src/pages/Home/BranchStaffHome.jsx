@@ -111,32 +111,6 @@ export default function GeneralManagerHome() {
                     )}
 
                     {/* =========================
-                        Insight Kloter
-                    ========================= */}
-                    <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
-                        <Section title="Insight Kloter (2 Bulan Terakhir)" action="Lihat lebih banyak" />
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <InsightItem icon={Clock} label="Menunggu Jadwal" value="12" />
-                            <InsightItem icon={Truck} label="Dalam Pengiriman" value="8" />
-                            <InsightItem icon={MapPin} label="Tiba Kota Tujuan" value="5" />
-                            <InsightItem icon={PackageCheck} label="Selesai" value="20" />
-                        </div>
-                    </section>
-
-                    {/* =========================
-                        Insight User
-                    ========================= */}
-                    <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
-                        <Section title="Insight User" />
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <InsightItem icon={Users} label="Customer" value="320" />
-                            <InsightItem icon={UserX} label="Non Customer" value="120" />
-                        </div>
-                    </section>
-
-                    {/* =========================
                         Kloter Terdekat
                      ========================= */}
                     <section className="mx-4">
