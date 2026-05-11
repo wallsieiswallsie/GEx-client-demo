@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Package, Search } from "lucide-react";
+import { Package, ScanLine, Search } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import Button from "../../components/common/Button";
 import { LoadingState } from "../../components/common/Loading";
+import ScannerModal from "../../components/modals/ScannerModal";
 import InvoiceAccessDenied from "./InvoiceAccessDenied";
 import {
     createInvoice,
@@ -20,20 +21,22 @@ export default function CreateInvoicePage() {
         package_ids: [],
     });
     const [packages, setPackages] = useState([]);
+    const [selectedPackages, setSelectedPackages] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-
-    const selectedPackages = useMemo(
-        () => packages.filter((item) => form.package_ids.includes(item.id)),
-        [packages, form.package_ids]
-    );
+    const [scannerOpen, setScannerOpen] = useState(false);
 
     const subtotal = selectedPackages.reduce((sum, item) => sum + Number(item.fee || 0), 0);
     const totalWeight = selectedPackages.reduce((sum, item) => sum + Number(item.used_weight || 0), 0);
     const totalAmount = subtotal + Number(form.additional_fee || 0);
 
     const fetchPackages = async () => {
+        if (!search.trim()) {
+            setPackages([]);
+            return;
+        }
+
         try {
             setLoading(true);
             const res = await getAvailableInvoicePackages({
@@ -55,12 +58,22 @@ export default function CreateInvoicePage() {
     }, [search]);
 
     const togglePackage = (packageId) => {
+        const packageData = packages.find((item) => item.id === packageId);
+
         setForm((prev) => ({
             ...prev,
             package_ids: prev.package_ids.includes(packageId)
                 ? prev.package_ids.filter((id) => id !== packageId)
                 : [...prev.package_ids, packageId],
         }));
+
+        setSelectedPackages((prev) => {
+            if (prev.some((item) => item.id === packageId)) {
+                return prev.filter((item) => item.id !== packageId);
+            }
+
+            return packageData ? [...prev, packageData] : prev;
+        });
     };
 
     const handleSubmit = async () => {
@@ -132,14 +145,24 @@ export default function CreateInvoicePage() {
                     </section>
 
                     <section>
-                        <div className="relative mb-3">
-                            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                            <input
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Cari paket tersedia..."
-                                className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
-                            />
+                        <div className="flex gap-2 mb-3">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                                <input
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Cari / scan resi..."
+                                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+                                />
+                            </div>
+
+                            <button
+                                onClick={() => setScannerOpen(true)}
+                                className="w-11 h-10 rounded-xl bg-white border flex items-center justify-center text-gray-600"
+                                aria-label="Scan resi"
+                            >
+                                <ScanLine className="w-4 h-4" />
+                            </button>
                         </div>
 
                         <div className="space-y-2">
@@ -178,8 +201,50 @@ export default function CreateInvoicePage() {
                             })}
                         </div>
 
+                        {!loading && !search.trim() && (
+                            <div className="bg-white rounded-2xl p-4 text-sm text-gray-400 text-center">
+                                Cari atau scan resi untuk menampilkan paket.
+                            </div>
+                        )}
+
+                        {!loading && search.trim() && packages.length === 0 && (
+                            <div className="bg-white rounded-2xl p-4 text-sm text-gray-400 text-center">
+                                Paket tidak ditemukan atau sudah masuk invoice.
+                            </div>
+                        )}
+
                         {loading && <LoadingState variant="section" text="Memuat paket..." />}
                     </section>
+
+                    {selectedPackages.length > 0 && (
+                        <section className="bg-white rounded-2xl p-4 shadow-sm">
+                            <h2 className="font-semibold text-sm text-gray-900 mb-3">
+                                Paket Dipilih
+                            </h2>
+
+                            <div className="space-y-2">
+                                {selectedPackages.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => togglePackage(item.id)}
+                                        className="w-full flex items-start justify-between gap-3 border-b pb-2 last:border-b-0 text-left"
+                                    >
+                                        <div className="min-w-0">
+                                            <div className="text-sm font-semibold text-gray-800 truncate">
+                                                {item.receipt}
+                                            </div>
+                                            <div className="text-xs text-gray-500 truncate">
+                                                {item.name || "-"}
+                                            </div>
+                                        </div>
+                                        <div className="text-xs text-red-500 shrink-0">
+                                            Hapus
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     <Button
                         onClick={handleSubmit}
@@ -190,6 +255,14 @@ export default function CreateInvoicePage() {
                         Buat Invoice
                     </Button>
                 </div>
+
+                <ScannerModal
+                    open={scannerOpen}
+                    onClose={() => setScannerOpen(false)}
+                    onResult={(value) => {
+                        setSearch(value);
+                    }}
+                />
             </div>
         </InvoiceAccessDenied>
     );
