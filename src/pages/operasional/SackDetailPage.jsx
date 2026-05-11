@@ -380,28 +380,13 @@ export default function SackDetailPage() {
                             </div>
 
                             <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
-                                <span className="text-gray-500">Nama Paket</span>
-                                <span className="font-semibold text-right">{viaWarning.data?.name || viaWarning.data?.package_name || "-"}</span>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
-                                <span className="text-gray-500">Route Code</span>
-                                <span className="font-semibold text-right">{viaWarning.data?.route_code || "-"}</span>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
                                 <span className="text-gray-500">Via Package</span>
                                 <span className="font-semibold text-right text-emerald-700">{getViaText(viaWarning.data?.package_via)}</span>
                             </div>
 
-                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
+                            <div className="flex items-center justify-between gap-4">
                                 <span className="text-gray-500">Via Batch Tujuan</span>
                                 <span className="font-semibold text-right text-red-600">{getViaText(viaWarning.data?.batch_via)}</span>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4">
-                                <span className="text-gray-500">Batch Tujuan</span>
-                                <span className="font-semibold text-right">#{viaWarning.data?.wrong_batch_id || "-"}</span>
                             </div>
                         </div>
 
