@@ -52,6 +52,7 @@ export default function GeneralManagerHome() {
     const mispackedPackages = summaryData?.mispacked_packages;
     const unpackedPackages = summaryData?.unpacked_packages;
     const shipBatches = summaryData?.ship_batches || [];
+    const userInsight = summaryData?.user_insight;
 
     const handleLogout = () => {
         logout();
@@ -131,8 +132,16 @@ export default function GeneralManagerHome() {
                         <Section title="Insight User" />
 
                         <div className="grid grid-cols-2 gap-3">
-                            <InsightItem icon={Users} label="Customer" value="320" />
-                            <InsightItem icon={UserX} label="Non Customer" value="120" />
+                            <InsightItem
+                                icon={Users}
+                                label="Customer"
+                                value={userInsight?.customer || 0}
+                            />
+                            <InsightItem
+                                icon={UserX}
+                                label="Non Customer"
+                                value={userInsight?.non_customer || 0}
+                            />
                         </div>
                     </section>
 
