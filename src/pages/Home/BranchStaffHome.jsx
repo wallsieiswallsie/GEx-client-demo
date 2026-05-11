@@ -9,7 +9,8 @@ import {
     AlertCircle,
     FileText,
     Wallet,
-    Clock
+    Clock,
+    Ship
 } from "lucide-react";
 import Header from "../../components/home/Header";
 import BottomNav from '../../components/home/BottomNav';
@@ -50,6 +51,7 @@ export default function GeneralManagerHome() {
     const { data: summaryData } = useHomeSummary();
     const mispackedPackages = summaryData?.mispacked_packages;
     const unpackedPackages = summaryData?.unpacked_packages;
+    const shipBatches = summaryData?.ship_batches || [];
 
     const handleLogout = () => {
         logout();
@@ -138,21 +140,62 @@ export default function GeneralManagerHome() {
                         Kloter Terdekat
                      ========================= */}
                     <section className="mx-4">
-                        <Section title="Kloter Pengiriman Terdekat" />
+                        <Section
+                            title="Kloter Pengiriman Terdekat"
+                            action="Lihat Lainnya"
+                            onAction={() => navigate("/kloter")}
+                        />
 
                         <div className="flex gap-3 overflow-x-auto pb-2">
-                            {[1, 2, 3].map((item) => (
-                                <div
-                                    key={item}
-                                    className="min-w-[230px] bg-white p-4 rounded-2xl shadow-sm"
+                            {shipBatches.slice(0, 3).map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => navigate("/kloter")}
+                                    className="min-w-[240px] text-left bg-gradient-to-br from-sky-50 via-white to-blue-100 p-4 rounded-2xl shadow-sm border border-sky-100"
                                 >
-                                    <p className="text-xs text-gray-400">Kapal</p>
-                                    <p className="font-bold">KM Nusantara {item}</p>
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Berangkat: 25 Mei 2026
-                                    </p>
-                                </div>
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p className="text-xs text-sky-600 font-medium">Kapal</p>
+                                            <p className="font-bold text-gray-800 mt-1">
+                                                KM. {(item.ship_name || "-").toUpperCase()}
+                                            </p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Vendor: {item.vendor || "-"}
+                                            </p>
+                                        </div>
+
+                                        <div className="w-10 h-10 rounded-2xl bg-white/80 flex items-center justify-center text-sky-600 shadow-sm">
+                                            <Ship className="w-5 h-5" />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 mt-4 text-xs">
+                                        <div className="bg-white/70 rounded-xl px-2 py-1.5">
+                                            <p className="text-gray-400">Closing</p>
+                                            <p className="font-semibold text-gray-700">
+                                                {(item.closing_date || "").slice(0, 10) || "-"}
+                                            </p>
+                                        </div>
+                                        <div className="bg-white/70 rounded-xl px-2 py-1.5">
+                                            <p className="text-gray-400">Berangkat</p>
+                                            <p className="font-semibold text-gray-700">
+                                                {(item.depart_date || "").slice(0, 10) || "-"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between gap-3 mt-3 text-xs text-gray-600">
+                                        <span>{Number(item.total_weight || 0).toFixed(2)} kg</span>
+                                        <span>Rp {Number(item.total_value || 0).toLocaleString("id-ID")}</span>
+                                    </div>
+                                </button>
                             ))}
+
+                            {shipBatches.length === 0 && (
+                                <div className="min-w-full bg-white p-4 rounded-2xl shadow-sm text-sm text-gray-400">
+                                    Belum ada jadwal kapal
+                                </div>
+                            )}
                         </div>
                     </section>
 
