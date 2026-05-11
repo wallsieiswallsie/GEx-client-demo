@@ -2,14 +2,19 @@
 import { useNavigate } from "react-router-dom";
 import { FileText, Wallet } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { useAuth } from "../../context/useAuth";
+import { canAccessInvoice } from "../../utils/invoiceAccess";
 
 export default function KeuanganPage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
 
     const items = [
-        { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
+        canAccessInvoice(user, role)
+            ? { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" }
+            : null,
         { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
-    ];
+    ].filter(Boolean);
 
     return (
         <div className="min-h-dvh bg-gray-50 p-4">

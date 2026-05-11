@@ -7,6 +7,12 @@ import LogistikPage from "../pages/logistik/LogistikPage";
 import KeuanganPage from "../pages/keuangan/KeuanganPage";
 import RelasiPage from "../pages/relasi/RelasiPage";
 import CMSPage from "../pages/cms/CMSPage";
+import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
+import InvoiceListPage from "../pages/invoices/InvoiceListPage";
+import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
+import InvoiceDetailPage from "../pages/invoices/InvoiceDetailPage";
+import UploadInvoicePaymentPage from "../pages/invoices/UploadInvoicePaymentPage";
+import UploadInvoiceReceiptPage from "../pages/invoices/UploadInvoiceReceiptPage";
 
 const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
@@ -34,6 +40,30 @@ export const homeRoutes = [
       {
         path: "/keuangan",
         element: <KeuanganPage />
+      },
+      {
+        path: "/invoice",
+        element: <InvoiceDashboardPage />
+      },
+      {
+        path: "/invoice/list",
+        element: <InvoiceListPage />
+      },
+      {
+        path: "/invoice/create",
+        element: <CreateInvoicePage />
+      },
+      {
+        path: "/invoice/:id/payment",
+        element: <UploadInvoicePaymentPage />
+      },
+      {
+        path: "/invoice/:id/receipt",
+        element: <UploadInvoiceReceiptPage />
+      },
+      {
+        path: "/invoice/:id",
+        element: <InvoiceDetailPage />
       },
       {
         path: "/relasi",
