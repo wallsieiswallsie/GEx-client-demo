@@ -1,5 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import BottomNav from '../components/home/BottomNav';
 
 /**
  * MobileAppLayout — frame mobile-first untuk semua halaman dalam app (Home, Paketku, dll).
@@ -8,12 +9,18 @@ import { Outlet } from 'react-router-dom';
  */
 export default function MobileAppLayout() {
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
+    <div className="h-dvh bg-gray-100 flex justify-center overflow-hidden">
       <div
-        className="relative w-full bg-white flex flex-col"
-        style={{ maxWidth: '430px', minHeight: '100dvh' }}
+        className="relative w-full bg-white flex flex-col h-dvh overflow-hidden"
+        style={{ maxWidth: '430px' }}
       >
-        <Outlet />
+        <div className="flex-1 overflow-y-auto">
+          <Outlet />
+        </div>
+
+        <div className="shrink-0">
+          <BottomNav />
+        </div>
       </div>
     </div>
   );

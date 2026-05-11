@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, LogOut, Phone, Shield, User } from 'lucide-react';
-import BottomNav from '../components/home/BottomNav';
 import Button from '../components/common/Button';
 import InputField from '../components/common/InputField';
 import { LoadingState } from '../components/common/Loading';
@@ -246,8 +245,6 @@ export default function ProfilePage() {
           </>
         )}
       </main>
-
-      <BottomNav />
     </div>
   );
 }

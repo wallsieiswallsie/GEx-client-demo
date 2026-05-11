@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/useAuth';
 import { useHomeSummary } from '../../hooks/useHomeSummary';
-import BottomNav from '../../components/home/BottomNav';
 import { LoadingState } from '../../components/common/Loading';
 
 export default function CourierHome() {
@@ -34,7 +33,6 @@ export default function CourierHome() {
           </>
         )}
       </main>
-      <BottomNav />
     </div>
   );
 }

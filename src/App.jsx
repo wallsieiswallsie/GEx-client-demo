@@ -15,6 +15,7 @@ import { relasiRoutes } from "./routes/relasiRoutes";
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
 import { LoadingState } from "./components/common/Loading";
+import MobileAppLayout from "./layouts/MobileAppLayout";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
 
@@ -87,13 +88,14 @@ export default function App() {
               ))}
 
               <Route
-                path="/daftar-paket"
                 element={
                   <ProtectedRoute>
-                    <FormDaftarPaket />
+                    <MobileAppLayout />
                   </ProtectedRoute>
                 }
-              />
+              >
+                <Route path="/daftar-paket" element={<FormDaftarPaket />} />
+              </Route>
 
               {/* === LEGACY DASHBOARD === */}
               <Route path="/dashboard" element={

@@ -9,7 +9,6 @@ import PackageStatusWidget from '../../components/home/PackageStatusWidget';
 import ShipScheduleSection from '../../components/home/ShipScheduleCard';
 import ServiceMenuGrid from '../../components/home/ServiceMenuGrid';
 import NewsBanner from '../../components/home/NewsBanner';
-import BottomNav from '../../components/home/BottomNav';
 import { SkeletonCard } from '../../components/home/SkeletonCard';
 import Header from '../../components/home/Header';
 
@@ -187,9 +186,6 @@ export default function CustomerHome() {
           <NewsBanner banners={null} isLoading={false} />
         </div>
       </main>
-
-      {/* === BOTTOM NAV (sticky) === */}
-      <BottomNav />
     </div>
   );
 }

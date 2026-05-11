@@ -2,18 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Truck,
-    MapPin,
     PackageCheck,
-    Users,
-    UserX,
     AlertCircle,
-    FileText,
-    Wallet,
-    Clock,
     Ship
 } from "lucide-react";
 import Header from "../../components/home/Header";
-import BottomNav from '../../components/home/BottomNav';
 
 import { useAuth } from '../../context/useAuth';
 import { useHomeSummary } from "../../hooks/useHomeSummary";
@@ -262,11 +255,6 @@ export default function GeneralManagerHome() {
 
                 </div>
             </main>
-
-            {/* =========================
-                BOTTOM NAV
-            ========================= */}
-            <BottomNav />
         </div>
     );
 }
@@ -281,13 +269,3 @@ const FEATURE_GROUPS = [
         ]
     }
 ];
-
-
-function NavItem({ icon: Icon, label, onClick }) {
-    return (
-        <button onClick={onClick} className="flex flex-col items-center py-3">
-            <Icon className="w-4 h-4 mb-1" />
-            {label}
-        </button>
-    );
-}
