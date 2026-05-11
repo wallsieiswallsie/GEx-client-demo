@@ -12,6 +12,7 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
+import FloatingActionButton from "../../components/common/FloatingActionButton";
 
 import {
     getAllUsersInternal,
@@ -226,12 +227,13 @@ export default function CustomerPage() {
             </div>
 
             {/* FLOAT BUTTON */}
-            <button
+            <FloatingActionButton
                 onClick={() => navigate("/users-internal-form")}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                ariaLabel="Tambah pelanggan"
+                title="Tambah pelanggan"
             >
                 <Plus />
-            </button>
+            </FloatingActionButton>
         </div>
     );
 }

@@ -11,6 +11,7 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
+import FloatingActionButton from "../../components/common/FloatingActionButton";
 
 import {
     getAllItemCategories,
@@ -208,12 +209,13 @@ export default function ItemCategoriesPage() {
             )}
 
             {/* FLOAT BUTTON */}
-            <button
+            <FloatingActionButton
                 onClick={openCreate}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-violet-600 text-white shadow-lg flex items-center justify-center"
+                ariaLabel="Tambah item"
+                title="Tambah item"
             >
                 <Plus />
-            </button>
+            </FloatingActionButton>
 
             {/* MODAL */}
             {isOpen && (

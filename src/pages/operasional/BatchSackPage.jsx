@@ -13,6 +13,7 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { ButtonLoading, LoadingState } from "../../components/common/Loading";
+import FloatingActionButton from "../../components/common/FloatingActionButton";
 
 import {
     createPlaneBatch,
@@ -252,12 +253,13 @@ export default function BatchSackPage() {
                 </div>
             )}
 
-            <button
+            <FloatingActionButton
                 onClick={openCreate}
-                className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
+                ariaLabel="Tambah batch"
+                title="Tambah batch"
             >
                 <Plus />
-            </button>
+            </FloatingActionButton>
 
             {isOpen && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
