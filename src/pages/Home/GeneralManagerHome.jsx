@@ -80,22 +80,30 @@ export default function GeneralManagerHome() {
                     ========================= */}
                     {mispackedPackages?.count > 0 && (
                         <section className="bg-amber-50 border border-amber-100 mx-4 p-4 rounded-2xl shadow-sm">
-                            <Section title={`Peringatan Salah Packing (${mispackedPackages.count})`} />
+                            <Section
+                                title={`Peringatan Salah Packing (${mispackedPackages.count})`}
+                                action="Lihat Semua"
+                                onAction={() => navigate("/mispacked-packages")}
+                            />
 
                             <div className="flex flex-col gap-2 text-sm">
-                                {(mispackedPackages.items || []).map((item) => (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => navigate(`/mispacked-packages/${item.id}`)}
-                                        className="flex justify-between border-b border-amber-100 pb-2 text-left"
-                                    >
-                                        <span className="font-medium">{item.receipt || "-"}</span>
-                                        <span className="text-amber-700 text-xs flex items-center gap-1">
-                                            <AlertCircle className="w-3 h-3" />
-                                            {item.correct_via} ke {item.wrong_via}
-                                        </span>
-                                    </button>
-                                ))}
+                                {(mispackedPackages.items || []).slice(0, 3).map((item) => {
+                                    const displayName = (item.name || item.receipt || "-").toUpperCase();
+
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => navigate(`/packages/${item.package_id}`)}
+                                            className="flex justify-between gap-3 border-b border-amber-100 pb-2 text-left"
+                                        >
+                                            <span className="font-medium truncate">{displayName}</span>
+                                            <span className="text-amber-700 text-xs flex items-center gap-1 shrink-0">
+                                                <AlertCircle className="w-3 h-3" />
+                                                {item.correct_via} ke {item.wrong_via}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </section>
                     )}

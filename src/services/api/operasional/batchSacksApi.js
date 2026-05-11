@@ -121,6 +121,29 @@ export const getMispackedPackageById = async (id) => {
     return unwrap(res);
 };
 
+export const getMispackedPackages = async ({
+    page = 1,
+    limit = 10,
+    status = "",
+    search = "",
+} = {}) => {
+    const params = new URLSearchParams({
+        page,
+        limit,
+        status,
+        search,
+    });
+
+    const res = await apiFetch(
+        `/operasional/mispacked-packages?${params.toString()}`,
+        {
+            method: "GET",
+        }
+    );
+
+    return unwrap(res);
+};
+
 export const addPackageToSack = async ({
     sack_id,
     receipt,

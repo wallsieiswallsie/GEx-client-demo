@@ -8,6 +8,7 @@ import BatchDetailPage from "../pages/operasional/BatchDetailPage";
 import SackDetailPage from "../pages/operasional/SackDetailPage";
 import MispackedPackageDetailPage from "../pages/operasional/MispackedPackageDetailPage";
 import UnpackedPackagesPage from "../pages/operasional/UnpackedPackagesPage";
+import MispackedPackagesPage from "../pages/operasional/MispackedPackagesPage";
 
 export const operasionalRoutes = [
     {
@@ -44,6 +45,10 @@ export const operasionalRoutes = [
             {
                 path: "/mispacked-packages/:id",
                 element: <MispackedPackageDetailPage />,
+            },
+            {
+                path: "/mispacked-packages",
+                element: <MispackedPackagesPage />,
             },
         ],
     },
