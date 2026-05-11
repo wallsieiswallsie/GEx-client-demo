@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
+    AlertTriangle,
     Check,
     Lock,
     Package,
@@ -33,6 +34,8 @@ const viaLabel = {
     K: "Kapal",
     P: "Pesawat",
 };
+
+const getViaText = (via) => viaLabel[via] || via || "-";
 
 export default function SackDetailPage() {
     const { sackId } = useParams();
@@ -87,6 +90,7 @@ export default function SackDetailPage() {
 
             if (res?.type === "VIA_MISMATCH_WARNING") {
                 setViaWarning(res);
+                setConfirmation(null);
                 return;
             }
 
@@ -98,6 +102,10 @@ export default function SackDetailPage() {
         } finally {
             setActionLoading(false);
         }
+    };
+
+    const closeViaWarning = () => {
+        setViaWarning(null);
     };
 
     const handleRemovePackage = async (packageReceipt) => {
@@ -337,40 +345,71 @@ export default function SackDetailPage() {
             {viaWarning && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
                     <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-lg">
-                        <div className="flex justify-between items-center mb-3">
-                            <h2 className="text-sm font-semibold">
-                                Via Paket Tidak Sesuai
-                            </h2>
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                                    <AlertTriangle className="w-5 h-5" />
+                                </div>
 
-                            <button onClick={() => setViaWarning(null)}>
+                                <div>
+                                    <h2 className="text-base font-semibold text-gray-900">
+                                        Peringatan Salah Packing
+                                    </h2>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Paket tidak dimasukkan ke karung.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={closeViaWarning}
+                                className="p-1 rounded-lg hover:bg-gray-100"
+                            >
                                 <X size={18} />
                             </button>
                         </div>
 
-                        <p className="text-sm text-gray-700 mb-4">
+                        <p className="text-sm text-gray-700 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 mb-4">
                             {viaWarning.message}
                         </p>
 
-                        <div className="space-y-2 text-sm text-gray-700 mb-4">
-                            <div className="flex justify-between border-b pb-2">
+                        <div className="space-y-2 text-sm text-gray-700 mb-5">
+                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
                                 <span className="text-gray-500">Resi</span>
-                                <span className="font-semibold">{viaWarning.data.receipt || "-"}</span>
+                                <span className="font-semibold text-right">{viaWarning.data?.receipt || viaWarning.data?.package_id || "-"}</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2">
-                                <span className="text-gray-500">Via seharusnya</span>
-                                <span className="font-semibold">{viaLabel[viaWarning.data.package_via] || viaWarning.data.package_via}</span>
+
+                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
+                                <span className="text-gray-500">Nama Paket</span>
+                                <span className="font-semibold text-right">{viaWarning.data?.name || viaWarning.data?.package_name || "-"}</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-500">Via batch</span>
-                                <span className="font-semibold">{viaLabel[viaWarning.data.batch_via] || viaWarning.data.batch_via}</span>
+
+                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
+                                <span className="text-gray-500">Route Code</span>
+                                <span className="font-semibold text-right">{viaWarning.data?.route_code || "-"}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
+                                <span className="text-gray-500">Via Package</span>
+                                <span className="font-semibold text-right text-emerald-700">{getViaText(viaWarning.data?.package_via)}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-2">
+                                <span className="text-gray-500">Via Batch Tujuan</span>
+                                <span className="font-semibold text-right text-red-600">{getViaText(viaWarning.data?.batch_via)}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-gray-500">Batch Tujuan</span>
+                                <span className="font-semibold text-right">#{viaWarning.data?.wrong_batch_id || "-"}</span>
                             </div>
                         </div>
 
                         <button
-                            onClick={() => setViaWarning(null)}
+                            onClick={closeViaWarning}
                             className="w-full bg-violet-600 text-white py-2 rounded-xl text-sm font-medium"
                         >
-                            Mengerti
+                            Tutup
                         </button>
                     </div>
                 </div>

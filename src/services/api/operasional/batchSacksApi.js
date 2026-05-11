@@ -1,7 +1,10 @@
 import { apiFetch } from "../apiClient";
 
 const unwrap = (res) => {
-    if (res?.type === "CONFIRMATION_REQUIRED") {
+    if (
+        res?.type === "CONFIRMATION_REQUIRED" ||
+        res?.type === "VIA_MISMATCH_WARNING"
+    ) {
         return res;
     }
 
