@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { LoadingState } from "../../components/common/Loading";
 
 import {
     getMispackedPackages,
@@ -195,9 +196,7 @@ export default function MispackedPackagesPage() {
             )}
 
             {loading && (
-                <div className="text-center text-sm text-gray-400 py-5">
-                    Loading...
-                </div>
+                <LoadingState variant="section" text="Memuat data..." />
             )}
 
             {!loading && data.length < total && (

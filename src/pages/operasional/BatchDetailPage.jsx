@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Box, Plus, X } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { ButtonLoading, LoadingState } from "../../components/common/Loading";
 
 import {
     createSack,
@@ -24,6 +25,7 @@ export default function BatchDetailPage() {
     const [batch, setBatch] = useState(null);
     const [sacks, setSacks] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [form, setForm] = useState({
         sack_number: "",
@@ -64,6 +66,8 @@ export default function BatchDetailPage() {
         }
 
         try {
+            setSubmitLoading(true);
+
             await createSack({
                 batch_id: batchId,
                 batch_type: batchType,
@@ -75,6 +79,8 @@ export default function BatchDetailPage() {
             fetchData();
         } catch (err) {
             alert(err.message);
+        } finally {
+            setSubmitLoading(false);
         }
     };
 
@@ -85,9 +91,7 @@ export default function BatchDetailPage() {
             </div>
 
             {loading && !batch ? (
-                <div className="text-center text-sm text-gray-400 py-10">
-                    Loading...
-                </div>
+                <LoadingState variant="section" text="Memuat detail batch..." />
             ) : (
                 batch && (
                     <div className="space-y-5 pb-24">
@@ -223,9 +227,10 @@ export default function BatchDetailPage() {
 
                         <button
                             onClick={handleCreateSack}
+                            disabled={submitLoading}
                             className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-2 rounded-xl text-sm shadow-md hover:opacity-90"
                         >
-                            Tambah
+                            {submitLoading ? <ButtonLoading text="Menyimpan..." /> : "Tambah"}
                         </button>
                     </div>
                 </div>

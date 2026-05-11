@@ -4,6 +4,7 @@ import { Lock, LogOut, Phone, Shield, User } from 'lucide-react';
 import BottomNav from '../components/home/BottomNav';
 import Button from '../components/common/Button';
 import InputField from '../components/common/InputField';
+import { LoadingState } from '../components/common/Loading';
 import { useAuth } from '../context/useAuth';
 import { profileApi } from '../services/api/profileApi';
 
@@ -121,9 +122,7 @@ export default function ProfilePage() {
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4">
         {loading ? (
-          <div className="min-h-[50vh] flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-blue-600 animate-spin" />
-          </div>
+          <LoadingState variant="section" text="Memuat profil..." />
         ) : (
           <>
             <section className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
@@ -175,8 +174,14 @@ export default function ProfilePage() {
                     required
                   />
 
-                  <Button type="submit" fullWidth disabled={savingProfile}>
-                    {savingProfile ? 'Menyimpan...' : 'Simpan Profil'}
+                  <Button
+                    type="submit"
+                    fullWidth
+                    disabled={savingProfile}
+                    loading={savingProfile}
+                    loadingText="Menyimpan..."
+                  >
+                    Simpan Profil
                   </Button>
                 </form>
 
@@ -218,13 +223,15 @@ export default function ProfilePage() {
                   <Button
                     type="submit"
                     fullWidth
+                    loading={savingPassword}
+                    loadingText="Menyimpan..."
                     disabled={
                       savingPassword ||
                       !passwordForm.current_password ||
                       !passwordForm.new_password
                     }
                   >
-                    {savingPassword ? 'Menyimpan...' : 'Ganti Password'}
+                    Ganti Password
                   </Button>
                 </form>
               </>

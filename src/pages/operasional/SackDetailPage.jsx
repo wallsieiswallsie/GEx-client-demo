@@ -13,6 +13,7 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import ScannerModal from "../../components/modals/ScannerModal";
+import { ButtonLoading, LoadingState } from "../../components/common/Loading";
 
 import {
     addPackageToSack,
@@ -39,6 +40,7 @@ export default function SackDetailPage() {
     const [sack, setSack] = useState(null);
     const [receipt, setReceipt] = useState("");
     const [loading, setLoading] = useState(false);
+    const [actionLoading, setActionLoading] = useState(false);
     const [scannerOpen, setScannerOpen] = useState(false);
     const [confirmation, setConfirmation] = useState(null);
     const [viaWarning, setViaWarning] = useState(null);
@@ -70,6 +72,8 @@ export default function SackDetailPage() {
         if (!value.trim()) return;
 
         try {
+            setActionLoading(true);
+
             const res = await addPackageToSack({
                 sack_id: sackId,
                 receipt: value.trim(),
@@ -91,6 +95,8 @@ export default function SackDetailPage() {
             setSack(res);
         } catch (err) {
             alert(err.message);
+        } finally {
+            setActionLoading(false);
         }
     };
 
@@ -134,9 +140,7 @@ export default function SackDetailPage() {
             </div>
 
             {loading && !sack ? (
-                <div className="text-center text-sm text-gray-400 py-10">
-                    Loading...
-                </div>
+                <LoadingState variant="section" text="Memuat detail karung..." />
             ) : (
                 sack && (
                     <div className="space-y-5 pb-24">
@@ -213,11 +217,11 @@ export default function SackDetailPage() {
                                 </button>
 
                                 <button
-                                    disabled={locked}
+                                    disabled={locked || actionLoading}
                                     onClick={() => handleAddPackage()}
                                     className="w-11 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center disabled:opacity-50"
                                 >
-                                    <Plus className="w-4 h-4" />
+                                    {actionLoading ? <ButtonLoading text="" /> : <Plus className="w-4 h-4" />}
                                 </button>
                             </div>
 

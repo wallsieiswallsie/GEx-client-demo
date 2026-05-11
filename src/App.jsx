@@ -14,24 +14,16 @@ import { relasiRoutes } from "./routes/relasiRoutes";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
+import { LoadingState } from "./components/common/Loading";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
-
-const GlobalLoadingBoundary = () => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div className="flex flex-col items-center gap-3">
-      <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-violet-600 animate-spin"></div>
-      <span className="text-gray-500 font-medium text-sm">Menyiapkan Aplikasi...</span>
-    </div>
-  </div>
-);
 
 export default function App() {
   return (
     <AuthProvider>
       <ErrorsProvider>
         <BrowserRouter>
-          <Suspense fallback={<GlobalLoadingBoundary />}>
+          <Suspense fallback={<LoadingState text="Menyiapkan Aplikasi..." />}>
             <Routes>
 
               {/* === PUBLIC AUTH ROUTES === */}

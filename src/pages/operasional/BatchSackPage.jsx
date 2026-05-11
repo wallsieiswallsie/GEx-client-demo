@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { ButtonLoading, LoadingState } from "../../components/common/Loading";
 
 import {
     createPlaneBatch,
@@ -32,6 +33,7 @@ export default function BatchSackPage() {
     const [batches, setBatches] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
     const [form, setForm] = useState({
@@ -84,6 +86,8 @@ export default function BatchSackPage() {
 
     const handleSubmit = async () => {
         try {
+            setSubmitLoading(true);
+
             if (batchType === "SHIP") {
                 if (!form.ship_name.trim()) {
                     alert("Nama kapal wajib diisi");
@@ -113,6 +117,8 @@ export default function BatchSackPage() {
             fetchData();
         } catch (err) {
             alert(err.message);
+        } finally {
+            setSubmitLoading(false);
         }
     };
 
@@ -170,9 +176,7 @@ export default function BatchSackPage() {
 
             <div className="grid grid-cols-2 gap-3">
                 {loading ? (
-                    <div className="text-center text-sm text-gray-400 py-10">
-                        Loading...
-                    </div>
+                    <LoadingState variant="list" rows={4} />
                 ) : (
                     batches.map((item) => (
                         <button
@@ -348,9 +352,10 @@ export default function BatchSackPage() {
 
                         <button
                             onClick={handleSubmit}
+                            disabled={submitLoading}
                             className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-2 rounded-xl text-sm shadow-md hover:opacity-90"
                         >
-                            Tambah
+                            {submitLoading ? <ButtonLoading text="Menyimpan..." /> : "Tambah"}
                         </button>
                     </div>
                 </div>

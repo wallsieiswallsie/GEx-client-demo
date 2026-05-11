@@ -118,8 +118,14 @@ export default function RegisterPage() {
           />
 
           <div className="pt-4">
-            <Button type="submit" disabled={loading} fullWidth>
-              {loading ? 'Sabar, sedang sinkronisasi...' : 'Daftar Sekarang'}
+            <Button
+              type="submit"
+              disabled={loading}
+              loading={loading}
+              loadingText="Sabar, sedang sinkronisasi..."
+              fullWidth
+            >
+              Daftar Sekarang
             </Button>
           </div>
         </form>

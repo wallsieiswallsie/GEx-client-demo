@@ -5,6 +5,7 @@ import GeneralManagerHome from './GeneralManagerHome';
 import BranchManagerHome from './BranchManagerHome';
 import BranchStaffHome from './BranchStaffHome';
 import SuperAdminHome from './SuperAdminHome';
+import { LoadingState } from '../../components/common/Loading';
 
 // Scaffold cepat untuk role lain — akan dikembangkan di sprint berikutnya
 const CourierHome = React.lazy(() => import('./CourierHome'));
@@ -20,14 +21,7 @@ export default function HomeContainer() {
 
   // Masih loading auth
   if (isLoading) {
-    return (
-      <div className="min-h-dvh flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-violet-600 animate-spin" />
-          <span className="text-sm text-gray-500 font-medium">Memuat...</span>
-        </div>
-      </div>
-    );
+    return <LoadingState text="Memuat..." />;
   }
 
   // Role switcher
@@ -87,9 +81,5 @@ export default function HomeContainer() {
 }
 
 function RoleFallback() {
-  return (
-    <div className="min-h-dvh flex items-center justify-center bg-gray-50">
-      <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-violet-600 animate-spin" />
-    </div>
-  );
+  return <LoadingState text="" />;
 }

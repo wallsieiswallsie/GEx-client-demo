@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/useAuth';
 import { useHomeSummary } from '../../hooks/useHomeSummary';
 import BottomNav from '../../components/home/BottomNav';
+import { LoadingState } from '../../components/common/Loading';
 
 export default function CourierHome() {
   const { user } = useAuth();
@@ -16,9 +17,7 @@ export default function CourierHome() {
 
       <main className="flex-1 p-4 pb-24 flex flex-col gap-4">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-green-600 animate-spin" />
-          </div>
+          <LoadingState variant="section" text="Memuat ringkasan..." />
         ) : (
           <>
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">

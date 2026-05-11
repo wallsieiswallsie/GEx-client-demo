@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { AlertTriangle, Package } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { LoadingState } from "../../components/common/Loading";
 
 import {
     getMispackedPackageById,
@@ -44,9 +45,7 @@ export default function MispackedPackageDetailPage() {
             </div>
 
             {loading && !data ? (
-                <div className="text-center text-sm text-gray-400 py-10">
-                    Loading...
-                </div>
+                <LoadingState variant="section" text="Memuat detail salah packing..." />
             ) : (
                 data && (
                     <div className="bg-white rounded-2xl shadow-sm p-4">

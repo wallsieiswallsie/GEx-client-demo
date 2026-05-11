@@ -15,6 +15,7 @@ import {
 } from "react-router-dom";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { LoadingState } from "../../components/common/Loading";
 
 import {
     getPackageById,
@@ -51,13 +52,7 @@ export default function PackageDetailPage() {
     }, [id]);
 
     if (loading) {
-        return (
-            <div className="min-h-dvh bg-gray-50 p-4">
-                <div className="text-sm text-gray-500">
-                    Loading...
-                </div>
-            </div>
-        );
+        return <LoadingState text="Memuat detail paket..." />;
     }
 
     if (!data) {

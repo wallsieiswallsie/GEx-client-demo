@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { LoadingState } from "../../components/common/Loading";
 
 import ModalFormInputPackage from "../../components/forms/ModalFormInputPackage";
 
@@ -371,9 +372,7 @@ export default function PackagesPage() {
             <div className="grid grid-cols-2 gap-3">
                 {loading &&
                     data.length === 0 ? (
-                    <div className="text-center text-sm text-gray-400 py-10">
-                        Loading...
-                    </div>
+                    <LoadingState variant="list" rows={4} />
                 ) : (
                     data.map((item) => (
                         <div

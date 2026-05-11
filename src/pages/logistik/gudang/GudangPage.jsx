@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Pencil, Trash2, Search, ChevronDown } from "lucide-react";
 import SubPageHeader from "../../../components/layout/SubPageHeader";
+import { LoadingState } from "../../../components/common/Loading";
 
 import {
     getAllBranches,
@@ -88,9 +89,7 @@ export default function GudangPage() {
             {/* LIST */}
             <div className="flex flex-col gap-3">
                 {loading ? (
-                    <div className="text-center text-sm text-gray-400 py-10">
-                        Loading...
-                    </div>
+                    <LoadingState variant="list" rows={4} />
                 ) : filtered.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
                         <div className="w-12 h-12 rounded-full bg-gray-200 mb-3"></div>

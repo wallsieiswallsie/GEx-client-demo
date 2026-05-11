@@ -139,8 +139,14 @@ export default function ForgotPasswordPage() {
             required
           />
 
-          <Button type="submit" fullWidth disabled={loading || !whatsappNumber}>
-            {loading ? 'Mengirim...' : 'Kirim OTP'}
+          <Button
+            type="submit"
+            fullWidth
+            disabled={loading || !whatsappNumber}
+            loading={loading}
+            loadingText="Mengirim..."
+          >
+            Kirim OTP
           </Button>
         </form>
       )}
@@ -155,8 +161,14 @@ export default function ForgotPasswordPage() {
             required
           />
 
-          <Button type="submit" fullWidth disabled={loading || otp.length !== 6}>
-            {loading ? 'Memverifikasi...' : 'Verifikasi OTP'}
+          <Button
+            type="submit"
+            fullWidth
+            disabled={loading || otp.length !== 6}
+            loading={loading}
+            loadingText="Memverifikasi..."
+          >
+            Verifikasi OTP
           </Button>
 
           <Button
@@ -192,8 +204,10 @@ export default function ForgotPasswordPage() {
             type="submit"
             fullWidth
             disabled={loading || !password || !passwordConfirmation}
+            loading={loading}
+            loadingText="Menyimpan..."
           >
-            {loading ? 'Menyimpan...' : 'Reset Password'}
+            Reset Password
           </Button>
         </form>
       )}

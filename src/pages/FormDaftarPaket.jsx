@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Package, Calendar, Clock } from "lucide-react";
 
 import { createClaimedPackage, getMyClaimedPackages } from "../services/api/claimedPackages";
+import { ButtonLoading } from "../components/common/Loading";
 
 export default function FormDaftarPaket() {
   const navigate = useNavigate();
@@ -160,7 +161,7 @@ export default function FormDaftarPaket() {
               }
             `}
           >
-            {loading ? "Loading..." : "Daftarkan Paket"}
+            {loading ? <ButtonLoading text="Mendaftarkan..." /> : "Daftarkan Paket"}
           </button>
         </div>
 

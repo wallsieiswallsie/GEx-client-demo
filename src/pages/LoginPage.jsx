@@ -98,9 +98,11 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading || !identifier || !password}
+            loading={loading}
+            loadingText="Masuk..."
             fullWidth
           >
-            {loading ? 'Masuk...' : 'Login'}
+            Login
           </Button>
         </div>
       </form>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { ArrowLeft } from "lucide-react";
 import SubPageHeader from "../../../components/layout/SubPageHeader";
+import { ButtonLoading } from "../../../components/common/Loading";
 
 import {
     createBranch,
@@ -270,7 +271,7 @@ export default function GudangForm() {
                     disabled={loading}
                     className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-2 rounded-xl text-sm shadow-md hover:opacity-90"
                 >
-                    {loading ? "Menyimpan..." : "Simpan"}
+                    {loading ? <ButtonLoading text="Menyimpan..." /> : "Simpan"}
                 </button>
             </form>
         </div>
