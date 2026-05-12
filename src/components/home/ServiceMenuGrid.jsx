@@ -18,7 +18,7 @@ function MenuItem({ item, onClick }) {
       onClick={() => onClick(item.path)}
       className="group flex w-full flex-col items-center gap-2 rounded-2xl transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      <div className="relative mb-6 flex h-16 w-16 items-center justify-center overflow-visible rounded-[20px] bg-[#F3EEFF]">
+      <div className="relative mb-1 flex h-16 w-16 items-center justify-center overflow-visible rounded-[20px] bg-[#F3EEFF]">
         <img
           src={item.image}
           alt={item.label.replace('\n', ' ')}
