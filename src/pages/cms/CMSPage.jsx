@@ -10,6 +10,7 @@ import {
   Save,
   Ship,
   Sparkles,
+  Play,
 } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
@@ -31,6 +32,7 @@ import {
   updateDisplayedShipSchedule,
   updateTermsAndConditions,
 } from "../../services/api/content/contentApi";
+import { extractYoutubeVideoId, getYoutubeThumbnail } from "../../utils/youtube";
 
 const sections = [
   { key: "banner-dashboard", title: "Banner Dashboard", icon: Sparkles, color: "bg-sky-100 text-sky-700" },
@@ -47,7 +49,7 @@ const configs = {
     create: createBannerDashboard,
     update: updateBannerDashboard,
     fields: [
-      ["content_url", "URL Konten", "url"],
+      ["content_url", "URL Video YouTube", "url", "https://youtu.be/xxxxx", "Masukkan link video YouTube"],
       ["title", "Judul", "text"],
       ["description", "Deskripsi", "textarea"],
       ["is_active", "Aktif", "checkbox"],
@@ -121,7 +123,7 @@ const configs = {
 const toDateInput = (value) => (value ? String(value).slice(0, 10) : "");
 
 function Field({ field, form, setForm }) {
-  const [name, label, type] = field;
+  const [name, label, type, placeholder, helperText] = field;
   const value = type === "date" ? toDateInput(form[name]) : form[name] ?? "";
 
   if (type === "checkbox") {
@@ -140,36 +142,68 @@ function Field({ field, form, setForm }) {
 
   if (type === "textarea") {
     return (
-      <textarea
-        value={value}
-        onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-        placeholder={label}
-        rows={name === "content" ? 6 : 3}
-        className="w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-      />
+      <div>
+        <textarea
+          value={value}
+          onChange={(e) => setForm({ ...form, [name]: e.target.value })}
+          placeholder={placeholder || label}
+          rows={name === "content" ? 6 : 3}
+          className="w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        />
+        {helperText && <p className="mt-1 px-1 text-xs text-gray-500">{helperText}</p>}
+      </div>
     );
   }
 
   return (
-    <input
-      type={type}
-      value={value}
-      onChange={(e) => setForm({ ...form, [name]: type === "number" ? e.target.value : e.target.value })}
-      placeholder={label}
-      className="w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-    />
+    <div>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => setForm({ ...form, [name]: type === "number" ? e.target.value : e.target.value })}
+        placeholder={placeholder || label}
+        className="w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+      />
+      {helperText && <p className="mt-1 px-1 text-xs text-gray-500">{helperText}</p>}
+    </div>
   );
 }
 
 function BannerPreview({ form }) {
+  const [thumbnailError, setThumbnailError] = useState(false);
+
+  useEffect(() => {
+    setThumbnailError(false);
+  }, [form.content_url]);
+
   if (!("content_url" in form)) return null;
+
+  const videoId = extractYoutubeVideoId(form.content_url);
+  const thumbnail = getYoutubeThumbnail(form.content_url);
+  const canPreview = videoId && thumbnail && !thumbnailError;
 
   return (
     <div className="overflow-hidden rounded-xl border bg-gray-900 text-white">
-      {form.content_url ? (
-        <img src={form.content_url} alt={form.title || "Banner"} className="h-32 w-full object-cover" />
+      {canPreview ? (
+        <div className="relative h-32">
+          <img
+            src={thumbnail}
+            alt={form.title || "Thumbnail YouTube"}
+            className="h-full w-full object-cover"
+            onError={() => setThumbnailError(true)}
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm">
+              <Play className="ml-0.5 h-6 w-6" fill="white" />
+            </div>
+          </div>
+        </div>
+      ) : form.content_url ? (
+        <div className="flex h-32 items-center justify-center bg-gray-200 px-4 text-center text-sm text-gray-500">
+          Thumbnail YouTube tidak tersedia
+        </div>
       ) : (
-        <div className="flex h-32 items-center justify-center bg-gray-200 text-sm text-gray-500">Preview banner</div>
+        <div className="flex h-32 items-center justify-center bg-gray-200 text-sm text-gray-500">Preview thumbnail YouTube</div>
       )}
       <div className="p-3">
         <p className="text-sm font-semibold">{form.title || "Judul banner"}</p>

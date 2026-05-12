@@ -14,6 +14,7 @@ import Header from '../../components/home/Header';
 
 import { getUnconfirmedCount } from '../../services/api/claimedPackages';
 import { getBannerDashboard } from '../../services/api/content/contentApi';
+import { getYoutubeThumbnail } from '../../utils/youtube';
 
 import { Play } from 'lucide-react';
 
@@ -54,6 +55,12 @@ function SearchBar({ onSearch }) {
 
 // Banner video/gambar promo dari banner_dashboard
 function PromoBanner({ banner, isLoading }) {
+  const [thumbnailError, setThumbnailError] = useState(false);
+
+  useEffect(() => {
+    setThumbnailError(false);
+  }, [banner?.content_url]);
+
   if (isLoading) {
     return (
       <div className="mx-4">
@@ -70,21 +77,31 @@ function PromoBanner({ banner, isLoading }) {
     );
   }
 
-  const imageUrl = banner.content_url;
+  const thumbnailUrl = getYoutubeThumbnail(banner.content_url);
+  if (!thumbnailUrl) return null;
+
   const title = banner.title || 'Info GEx';
 
   return (
-    <div className="mx-4 relative rounded-2xl overflow-hidden shadow-md group cursor-pointer"
-      style={{ height: '180px' }}>
-      {imageUrl ? (
+    <button
+      type="button"
+      onClick={() => window.open(banner.content_url, "_blank")}
+      className="mx-4 relative block rounded-2xl overflow-hidden shadow-md group cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      style={{ height: '180px' }}
+      aria-label={`Buka video ${title}`}
+    >
+      {!thumbnailError ? (
         <img
-          src={imageUrl}
+          src={thumbnailUrl}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="eager"
+          onError={() => setThumbnailError(true)}
         />
       ) : (
-        <div className="h-full w-full bg-gradient-to-br from-blue-600 to-cyan-500" />
+        <div className="flex h-full w-full items-center justify-center bg-gray-200 px-5 text-center text-sm font-medium text-gray-500">
+          Thumbnail video tidak tersedia
+        </div>
       )}
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -104,8 +121,13 @@ function PromoBanner({ banner, isLoading }) {
           TERBARU
         </span>
         <p className="text-white text-sm font-bold leading-tight drop-shadow-md">{title}</p>
+        {banner.description && (
+          <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-white/85 drop-shadow-md">
+            {banner.description}
+          </p>
+        )}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -168,7 +190,7 @@ export default function CustomerHome() {
   };
 
   // Ambil banner pertama jika ada
-  const firstBanner = banners[0] || null;
+  const firstBanner = banners.find((banner) => getYoutubeThumbnail(banner.content_url)) || null;
 
   return (
     <div className="flex flex-col min-h-dvh bg-gray-50">
