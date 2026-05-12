@@ -1,37 +1,29 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Package,
-  Search,
-  Pencil,
-  MapPin,
-  Handshake,
-  Camera,
-  Headphones,
-  Ship
-} from 'lucide-react';
 
 const MENU_ITEMS = [
-  { id: 'cek-ongkir', icon: Package, label: 'Cek Ongkir', path: '/cek-ongkir', color: 'bg-blue-50 text-blue-600' },
-  { id: 'lacak-paket', icon: Search, label: 'Lacak Paket', path: '/lacak', color: 'bg-amber-50 text-amber-600' },
-  { id: 'daftar-paket', icon: Pencil, label: 'Daftarkan\nPaket', path: '/daftar-paket', color: 'bg-purple-50 text-purple-600' },
-  { id: 'lokasi-gerai', icon: MapPin, label: 'Lokasi Gerai', path: '/gerai', color: 'bg-green-50 text-green-600' },
-  { id: 'kemitraan', icon: Handshake, label: 'Kemitraan', path: '/kemitraan', color: 'bg-red-50 text-red-500' },
-  { id: 'cod-unboxing', icon: Camera, label: 'COD &\nUnboxing', path: '/cod', color: 'bg-sky-50 text-sky-600' },
-  { id: 'bantuan', icon: Headphones, label: 'Bantuan', path: '/bantuan', color: 'bg-orange-50 text-orange-500' },
-  { id: 'jadwal-kapal', icon: Ship, label: 'Jadwal\nKapal', path: '/jadwal', color: 'bg-violet-50 text-violet-600' },
+  { id: 'cek-ongkir', image: '/images/customer_home/cek_ongkir.png', label: 'Cek Ongkir', path: '/cek-ongkir' },
+  { id: 'lacak-paket', image: '/images/customer_home/lacak_paket.png', label: 'Lacak Paket', path: '/lacak' },
+  { id: 'daftar-paket', image: '/images/customer_home/daftarkan_paket.png', label: 'Daftarkan\nPaket', path: '/daftar-paket' },
+  { id: 'lokasi-gerai', image: '/images/customer_home/lokasi_gerai.png', label: 'Lokasi Gerai', path: '/gerai' },
+  { id: 'kemitraan', image: '/images/customer_home/kemitraan.png', label: 'Kemitraan', path: '/kemitraan' },
+  { id: 'cod-unboxing', image: '/images/customer_home/cod_unboxing.png', label: 'COD &\nUnboxing', path: '/cod' },
+  { id: 'bantuan', image: '/images/customer_home/bantuan.png', label: 'Bantuan', path: '/bantuan' },
+  { id: 'jadwal-kapal', image: '/images/customer_home/jadwal_kapal.png', label: 'Jadwal\nKapal', path: '/jadwal' },
 ];
 
 function MenuItem({ item, onClick }) {
-  const Icon = item.icon;
-
   return (
     <button
       onClick={() => onClick(item.path)}
-      className="flex flex-col items-center gap-1.5"
+      className="group flex min-h-[90px] w-full flex-col items-center justify-center gap-2 rounded-2xl bg-white p-2 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${item.color}`}>
-        <Icon className="w-6 h-6" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 shadow-sm transition-all duration-200 group-hover:shadow-md">
+        <img
+          src={item.image}
+          alt={item.label.replace('\n', ' ')}
+          className="h-8 w-8 object-contain"
+        />
       </div>
       <span className="text-[10px] text-gray-600 text-center whitespace-pre-line">
         {item.label}
@@ -46,7 +38,7 @@ export default function ServiceMenuGrid() {
   return (
     <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100">
       <h2 className="text-sm font-bold text-gray-800 mb-4">Layanan Kami</h2>
-      <div className="grid grid-cols-4 gap-y-4">
+      <div className="grid grid-cols-4 gap-3">
         {MENU_ITEMS.map((item) => (
           <MenuItem key={item.id} item={item} onClick={navigate} />
         ))}
