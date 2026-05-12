@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Select from "react-select";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { ButtonLoading } from "../../components/common/Loading";
@@ -40,6 +40,7 @@ export default function UsersInternalForm() {
     const { id } = useParams();
 
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [form, setForm] = useState({
         name: "",
@@ -192,19 +193,34 @@ export default function UsersInternalForm() {
                     }
                 />
 
-                <input
-                    placeholder={
-                        id
-                            ? "Password baru (opsional)"
-                            : "Password"
-                    }
-                    type="password"
-                    value={form.password}
-                    onChange={(e) =>
-                        handleChange("password", e.target.value)
-                    }
-                    className="w-full border rounded-xl px-3 py-2 text-sm"
-                />
+                <div className="relative">
+                    <input
+                        placeholder={
+                            id
+                                ? "Password baru (opsional)"
+                                : "Password"
+                        }
+                        type={showPassword ? "text" : "password"}
+                        value={form.password}
+                        onChange={(e) =>
+                            handleChange("password", e.target.value)
+                        }
+                        className="w-full border rounded-xl px-3 py-2 pr-10 text-sm"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword((current) => !current)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                        title={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    >
+                        {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                        ) : (
+                            <Eye className="h-4 w-4" />
+                        )}
+                    </button>
+                </div>
 
                 {/* SWITCH */}
                 <label className="flex items-center justify-between border rounded-xl px-3 py-3">

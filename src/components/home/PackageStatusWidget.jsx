@@ -25,49 +25,49 @@ const STATUS_ORDER = [
 
 const STATUS_CONFIG = {
   menunggu_tiba: {
-    label: 'MENUNGGU\nTIBA',
+    label: 'Menunggu\nTiba',
     color: 'text-blue-600',
     bg: 'bg-gray-100 border border-gray-200',
     icon: Clock,
   },
   tidak_valid: {
-    label: 'TIDAK\nVALID',
+    label: 'Tidak\nValid',
     color: 'text-red-500',
     bg: 'bg-gray-100 border border-gray-200',
     icon: AlertCircle,
   },
   tiba_gudang: {
-    label: 'TIBA\nGUDANG',
+    label: 'Tiba\nGudang',
     color: 'text-gray-700',
     bg: 'bg-gray-100 border border-gray-200',
     icon: Warehouse,
   },
   dipacking: {
-    label: 'DIPACKING',
+    label: 'Dipacking',
     color: 'text-purple-600',
     bg: 'bg-gray-100 border border-gray-200',
     icon: PackageCheck,
   },
   dalam_pengiriman: {
-    label: 'DALAM\nPENGIRIMAN',
+    label: 'Dalam\nPengiriman',
     color: 'text-amber-600',
     bg: 'bg-gray-100 border border-gray-200',
     icon: Truck,
   },
   tiba_tujuan: {
-    label: 'TIBA\nTUJUAN',
+    label: 'Tiba\nTujuan',
     color: 'text-green-600',
     bg: 'bg-gray-100 border border-gray-200',
     icon: MapPin,
   },
   siap_diambil: {
-    label: 'SIAP\nDIAMBIL',
+    label: 'Siap\nDiambil',
     color: 'text-blue-700',
     bg: 'bg-gray-100 border border-gray-200',
     icon: Inbox,
   },
   selesai: {
-    label: 'SELESAI',
+    label: 'Selesai',
     color: 'text-gray-600',
     bg: 'bg-gray-100 border border-gray-200',
     icon: CheckCircle,

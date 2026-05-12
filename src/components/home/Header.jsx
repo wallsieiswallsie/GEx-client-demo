@@ -13,14 +13,9 @@ export default function Header({ initial, onLogout }) {
 
     return (
         <header className="flex items-center justify-between px-4 pt-5 pb-3 bg-white sticky top-0 z-40 border-b border-gray-50">
-            <GexLogo size={48} />
+            <GexLogo size={55} />
 
             <div className="flex items-center gap-3">
-                {/* Avatar */}
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-red-500 flex items-center justify-center shadow-sm">
-                    <span className="text-white text-sm font-bold">{initial}</span>
-                </div>
-
                 {/* Logout (polos hitam) */}
                 <button
                     id="btn-logout"
@@ -31,8 +26,8 @@ export default function Header({ initial, onLogout }) {
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
+                        width="22"
+                        height="22"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"

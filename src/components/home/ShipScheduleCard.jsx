@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, Clock3, MapPin, Plane, Ship } from 'lucide-react';
+import { CalendarDays, Clock3, MapPin, Plane, Ship, ArrowRight } from 'lucide-react';
 import { SkeletonCard } from './SkeletonCard';
 
 function formatDate(dateStr) {
@@ -80,7 +80,7 @@ function Card({ schedule }) {
             <p className="truncate font-bold text-gray-800">{schedule.origin_city || '-'}</p>
           </div>
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-500">
-            <MapPin className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </div>
           <div className="min-w-0 flex-1 text-right">
             <p className="text-[10px] font-medium text-gray-400">Tujuan</p>
@@ -92,7 +92,7 @@ function Card({ schedule }) {
       <div className="mt-3 grid grid-cols-3 gap-2">
         <DateMetric label="Closing" value={formatDate(schedule.closing_date)} icon={Clock3} />
         <DateMetric label="Berangkat" value={formatDate(schedule.depart_date)} icon={CalendarDays} emphasis />
-        <DateMetric label="Tiba" value={formatDate(schedule.estimated_arrival)} icon={CalendarDays} />
+        <DateMetric label="Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
       </div>
     </div>
   );
