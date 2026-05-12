@@ -7,6 +7,7 @@ import LogistikPage from "../pages/logistik/LogistikPage";
 import KeuanganPage from "../pages/keuangan/KeuanganPage";
 import RelasiPage from "../pages/relasi/RelasiPage";
 import CMSPage from "../pages/cms/CMSPage";
+import InstagramContentPage from "../pages/cms/InstagramContentPage";
 import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPage";
 import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
 import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
@@ -75,6 +76,10 @@ export const homeRoutes = [
       {
         path: "/cms",
         element: <CMSPage />
+      },
+      {
+        path: "/cms/instagram",
+        element: <InstagramContentPage />
       },
       {
         path: "/cms/:section",

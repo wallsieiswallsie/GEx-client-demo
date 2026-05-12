@@ -5,6 +5,7 @@ import {
   ArrowUp,
   ExternalLink,
   FileText,
+  Instagram,
   MapPin,
   Pencil,
   Save,
@@ -39,6 +40,7 @@ const sections = [
   { key: "ship-schedules", title: "Jadwal Kapal", icon: Ship, color: "bg-indigo-100 text-indigo-700" },
   { key: "branches", title: "Lokasi Gerai", icon: MapPin, color: "bg-emerald-100 text-emerald-700" },
   { key: "terms", title: "Bantuan / Syarat & Ketentuan", icon: FileText, color: "bg-amber-100 text-amber-700" },
+  { key: "instagram", title: "Instagram Content", icon: Instagram, color: "bg-pink-100 text-pink-700" },
 ];
 
 const configs = {

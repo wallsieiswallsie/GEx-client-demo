@@ -14,6 +14,7 @@ import Header from '../../components/home/Header';
 
 import { getUnconfirmedCount } from '../../services/api/claimedPackages';
 import { getBannerDashboard } from '../../services/api/content/contentApi';
+import { getInstagramContents } from '../../services/api/content/instagramContentApi';
 import { getYoutubeThumbnail } from '../../utils/youtube';
 
 import { Play } from 'lucide-react';
@@ -147,6 +148,8 @@ export default function CustomerHome() {
   const [unconfirmedCount, setUnconfirmedCount] = useState(0);
   const [banners, setBanners] = useState([]);
   const [bannerLoading, setBannerLoading] = useState(true);
+  const [instagramContents, setInstagramContents] = useState([]);
+  const [instagramLoading, setInstagramLoading] = useState(true);
 
   //  fetch jumlah paket menunggu
   useEffect(() => {
@@ -177,6 +180,23 @@ export default function CustomerHome() {
     };
 
     fetchBanners();
+  }, []);
+
+  useEffect(() => {
+    const fetchInstagramContents = async () => {
+      try {
+        setInstagramLoading(true);
+        const data = await getInstagramContents();
+        setInstagramContents(data || []);
+      } catch (err) {
+        console.error("Gagal ambil konten Instagram:", err);
+        setInstagramContents([]);
+      } finally {
+        setInstagramLoading(false);
+      }
+    };
+
+    fetchInstagramContents();
   }, []);
 
 
@@ -236,7 +256,7 @@ export default function CustomerHome() {
           <ServiceMenuGrid />
 
           {/* 6. Berita */}
-          <NewsBanner banners={null} isLoading={false} />
+          <NewsBanner banners={instagramContents} isLoading={instagramLoading} />
         </div>
       </main>
     </div>
