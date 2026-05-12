@@ -22,7 +22,7 @@ function MenuItem({ item, onClick }) {
         <img
           src={item.image}
           alt={item.label.replace('\n', ' ')}
-          className="absolute -right-3 -bottom-3 h-14 w-14 object-contain transition-transform duration-200 drop-shadow-[0_20px_30px_rgba(99,102,241,0.18)] group-hover:scale-105"
+          className="absolute -right-2 -bottom-3 h-14 w-14 object-contain transition-transform duration-200 drop-shadow-[0_20px_30px_rgba(99,102,241,0.18)] group-hover:scale-105"
         />
       </div>
       <span className="min-h-[28px] text-center text-[12px] font-medium leading-tight text-gray-700 whitespace-pre-line">
