@@ -73,7 +73,7 @@ function Card({ schedule }) {
         </div>
       </div>
 
-      <div className="mt-3 rounded-xl bg-white/80 p-2 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.08)]">
+      <div className="rounded-xl bg-white/80 p-2 pt-0 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.08)]">
         <div className="flex items-center gap-2 text-xs">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-medium text-gray-400">Asal</p>
