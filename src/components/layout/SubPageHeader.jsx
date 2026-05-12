@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function SubPageHeader({ title, rightAction }) {
+export default function SubPageHeader({ title, subtitle, rightAction }) {
     const navigate = useNavigate();
 
     return (
@@ -16,9 +16,17 @@ export default function SubPageHeader({ title, rightAction }) {
                     <ArrowLeft size={22} className="text-gray-700" />
                 </button>
 
-                <h1 className="text-lg font-semibold text-gray-800">
-                    {title}
-                </h1>
+                <div>
+                    <h1 className="text-lg font-semibold text-gray-800">
+                        {title}
+                    </h1>
+
+                    {subtitle && (
+                        <p className="mt-1 text-xs text-gray-500">
+                            {subtitle}
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* RIGHT (OPTIONAL ACTION) */}
