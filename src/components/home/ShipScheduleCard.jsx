@@ -52,6 +52,10 @@ export default function ShipScheduleSection({ schedules, isLoading, onViewAll })
 
       {isLoading ? (
         <SkeletonCard height="120px" />
+      ) : schedules.length === 0 ? (
+        <div className="rounded-xl bg-gray-50 p-4 text-center text-sm text-gray-400">
+          Belum ada jadwal kapal
+        </div>
       ) : (
         <div className="flex gap-3 overflow-x-auto">
           {schedules.map((s) => (

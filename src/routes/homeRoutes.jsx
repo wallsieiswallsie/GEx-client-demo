@@ -7,6 +7,9 @@ import LogistikPage from "../pages/logistik/LogistikPage";
 import KeuanganPage from "../pages/keuangan/KeuanganPage";
 import RelasiPage from "../pages/relasi/RelasiPage";
 import CMSPage from "../pages/cms/CMSPage";
+import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPage";
+import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
+import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -72,6 +75,22 @@ export const homeRoutes = [
       {
         path: "/cms",
         element: <CMSPage />
+      },
+      {
+        path: "/cms/:section",
+        element: <CMSPage />
+      },
+      {
+        path: "/jadwal",
+        element: <CustomerShipSchedulesPage />
+      },
+      {
+        path: "/gerai",
+        element: <CustomerBranchesPage />
+      },
+      {
+        path: "/bantuan",
+        element: <CustomerTermsPage />
       },
       {
         path: "/profil",

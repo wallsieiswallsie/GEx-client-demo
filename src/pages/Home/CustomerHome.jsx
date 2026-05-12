@@ -13,6 +13,7 @@ import { SkeletonCard } from '../../components/home/SkeletonCard';
 import Header from '../../components/home/Header';
 
 import { getUnconfirmedCount } from '../../services/api/claimedPackages';
+import { getBannerDashboard } from '../../services/api/content/contentApi';
 
 import { Play } from 'lucide-react';
 
@@ -61,19 +62,30 @@ function PromoBanner({ banner, isLoading }) {
     );
   }
 
-  const imageUrl = banner?.content_url ||
-    'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80';
-  const title = banner?.title || 'Transformasi Digital Logistik 2024';
+  if (!banner) {
+    return (
+      <div className="mx-4 rounded-2xl border bg-white p-5 text-center text-sm text-gray-400 shadow-sm">
+        Belum ada banner aktif
+      </div>
+    );
+  }
+
+  const imageUrl = banner.content_url;
+  const title = banner.title || 'Info GEx';
 
   return (
     <div className="mx-4 relative rounded-2xl overflow-hidden shadow-md group cursor-pointer"
       style={{ height: '180px' }}>
-      <img
-        src={imageUrl}
-        alt={title}
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        loading="eager"
-      />
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="eager"
+        />
+      ) : (
+        <div className="h-full w-full bg-gradient-to-br from-blue-600 to-cyan-500" />
+      )}
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
@@ -111,6 +123,8 @@ export default function CustomerHome() {
 
   //  state untuk claimed_packages
   const [unconfirmedCount, setUnconfirmedCount] = useState(0);
+  const [banners, setBanners] = useState([]);
+  const [bannerLoading, setBannerLoading] = useState(true);
 
   //  fetch jumlah paket menunggu
   useEffect(() => {
@@ -126,6 +140,23 @@ export default function CustomerHome() {
     fetchUnconfirmed();
   }, []);
 
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        setBannerLoading(true);
+        const data = await getBannerDashboard();
+        setBanners(data || []);
+      } catch (err) {
+        console.error("Gagal ambil banner:", err);
+        setBanners([]);
+      } finally {
+        setBannerLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
 
   const handleLogout = () => {
     logout();
@@ -137,7 +168,7 @@ export default function CustomerHome() {
   };
 
   // Ambil banner pertama jika ada
-  const firstBanner = null; // TODO: hook useBanners() untuk banner_dashboard
+  const firstBanner = banners[0] || null;
 
   return (
     <div className="flex flex-col min-h-dvh bg-gray-50">
@@ -163,7 +194,7 @@ export default function CustomerHome() {
 
         <div className="flex flex-col gap-4 pt-3">
           {/* 2. Promo Banner */}
-          <PromoBanner banner={firstBanner} isLoading={false} />
+          <PromoBanner banner={firstBanner} isLoading={bannerLoading} />
 
           {/* 3. Status Paketmu */}
           <PackageStatusWidget

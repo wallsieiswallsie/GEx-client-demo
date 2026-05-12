@@ -1,6 +1,5 @@
 import { useReducer, useEffect, useCallback } from 'react';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { getDisplayedShipSchedules } from '../services/api/content/contentApi';
 
 const initialState = {
   schedules: [],
@@ -34,14 +33,8 @@ export function useShipSchedules() {
     dispatch({ type: 'LOADING' });
 
     try {
-      const res = await fetch(`${API_URL}/home/schedules`);
-
-      if (!res.ok) {
-        throw new Error(`Gagal memuat jadwal (HTTP ${res.status})`);
-      }
-
-      const json = await res.json();
-      dispatch({ type: 'SUCCESS', payload: json.data?.schedules || [] });
+      const schedules = await getDisplayedShipSchedules();
+      dispatch({ type: 'SUCCESS', payload: schedules || [] });
     } catch (err) {
       dispatch({ type: 'ERROR', payload: err.message });
     }
