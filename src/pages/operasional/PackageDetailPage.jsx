@@ -80,7 +80,7 @@ export default function PackageDetailPage() {
         : "Belum Diklaim";
     const finishStatus = data.is_finished
         ? "Selesai"
-        : "Belum";
+        : "Belum Selesai";
     const fee = `Rp ${Number(data.fee || 0).toLocaleString("id-ID")}`;
     const realWeight = formatWeight(data.real_weight);
     const volumeWeight = formatWeight(data.volume_weight);
@@ -97,7 +97,6 @@ export default function PackageDetailPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Detail Package"
-                    subtitle="Informasi lengkap paket dan pengiriman"
                 />
             </div>
 
@@ -204,15 +203,6 @@ export default function PackageDetailPage() {
             </InfoSection>
 
             <InfoSection title="Dimensi & Berat">
-                <div className="col-span-2 rounded-2xl bg-violet-50 px-4 py-3">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-medium text-violet-700">
-                        <Ruler className="w-4 h-4" />
-                        Panjang x Lebar x Tinggi
-                    </div>
-                    <div className="text-base font-semibold text-gray-900">
-                        {plt}
-                    </div>
-                </div>
                 <InfoItem
                     icon={<Ruler className="w-4 h-4" />}
                     label="Panjang"
