@@ -14,7 +14,7 @@ export default function MobileAppLayout() {
         className="relative w-full bg-white flex flex-col h-dvh overflow-hidden"
         style={{ maxWidth: '430px' }}
       >
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scrollbar-hide">
           <Outlet />
         </div>
 

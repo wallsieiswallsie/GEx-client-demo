@@ -228,7 +228,7 @@ export default function CustomerHome() {
       />
 
       {/* === SCROLLABLE CONTENT === */}
-      <main className="flex-1 overflow-y-auto pb-20" aria-label="Konten utama homepage">
+      <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
         {/* 1. Search */}
         <div className="bg-white">
           <SearchBar onSearch={handleSearch} />

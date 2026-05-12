@@ -129,7 +129,7 @@ export default function PackageStatusWidget({ summary, isLoading, unconfirmedCou
         </button>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-1">
+      <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
         {STATUS_ORDER.map((key) => (
           <StatusChip
             key={key}

@@ -12,12 +12,12 @@ export default function NewsBanner({ banners, isLoading }) {
       </div>
 
       {isLoading ? (
-        <div className="flex gap-3 overflow-x-auto">
-          <div className="min-w-[220px]">
-            <SkeletonCard height="150px" rounded="rounded-2xl" />
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+          <div className="min-w-[132px]">
+            <SkeletonCard height="176px" rounded="rounded-2xl" />
           </div>
-          <div className="min-w-[220px]">
-            <SkeletonCard height="150px" rounded="rounded-2xl" />
+          <div className="min-w-[132px]">
+            <SkeletonCard height="176px" rounded="rounded-2xl" />
           </div>
         </div>
       ) : data.length === 0 ? (
@@ -25,12 +25,12 @@ export default function NewsBanner({ banners, isLoading }) {
           Belum ada konten terbaru
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-1">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
           {data.map((item) => (
             <button
               key={item.id}
               onClick={() => window.open(item.instagram_url, "_blank")}
-              className="relative h-[150px] min-w-[220px] overflow-hidden rounded-2xl bg-gray-200 text-left shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
+              className="relative aspect-[3/4] min-w-[132px] overflow-hidden rounded-2xl bg-gray-200 text-left shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
             >
               {item.thumbnail_url ? (
                 <img
@@ -46,17 +46,17 @@ export default function NewsBanner({ banners, isLoading }) {
               )}
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
-              <div className="absolute left-3 top-3 flex items-center gap-2">
-                <span className="rounded-full bg-pink-600 px-2 py-0.5 text-[10px] font-bold text-white">
+              <div className="absolute left-2.5 top-2.5 flex items-center gap-2">
+                <span className="rounded-full bg-pink-600 px-2 py-0.5 text-[9px] font-bold text-white">
                   {item.post_type || "POST"}
                 </span>
               </div>
-              <div className="absolute bottom-3 left-3 right-3">
+              <div className="absolute bottom-2.5 left-2.5 right-2.5">
                 <div className="mb-1 flex items-center gap-1 text-white/90">
                   <Instagram className="h-3 w-3" />
                   <span className="text-[10px] font-medium">Instagram</span>
                 </div>
-                <p className="line-clamp-1 text-sm font-bold text-white drop-shadow">
+                <p className="line-clamp-2 text-xs font-bold leading-snug text-white drop-shadow">
                   {item.title || "GEx Update"}
                 </p>
                 {item.caption && (

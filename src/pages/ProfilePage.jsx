@@ -119,7 +119,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4">
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4 scrollbar-hide">
         {loading ? (
           <LoadingState variant="section" text="Memuat profil..." />
         ) : (

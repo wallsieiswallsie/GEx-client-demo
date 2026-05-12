@@ -72,7 +72,7 @@ export default function GeneralManagerHome() {
             />
 
             {/* CONTENT */}
-            <main className="flex-1 overflow-y-auto pb-24">
+            <main className="flex-1 overflow-y-auto pb-24 scrollbar-hide">
                 <div className="flex flex-col gap-4 pt-3">
 
                     {/* =========================
@@ -138,7 +138,7 @@ export default function GeneralManagerHome() {
                             onAction={() => navigate("/kloter")}
                         />
 
-                        <div className="flex gap-3 overflow-x-auto pb-2">
+                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                             {shipBatches.slice(0, 3).map((item) => (
                                 <button
                                     key={item.id}

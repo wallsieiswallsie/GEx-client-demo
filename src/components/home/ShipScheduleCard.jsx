@@ -31,12 +31,12 @@ function getStatus(schedule) {
 
 function DateMetric({ icon: Icon, label, value, emphasis = false }) {
   return (
-    <div className={`min-w-0 rounded-xl px-2.5 py-2 ${emphasis ? 'bg-sky-50' : 'bg-gray-50'}`}>
+    <div className={`min-w-0 rounded-xl px-3 py-2 ${emphasis ? 'bg-sky-50' : 'bg-gray-50'}`}>
       <div className="mb-1 flex items-center gap-1 text-[10px] font-medium text-gray-400">
         <Icon className="h-3 w-3 shrink-0" />
-        <span className="truncate">{label}</span>
+        <span>{label}</span>
       </div>
-      <p className={`truncate text-xs font-bold ${emphasis ? 'text-sky-700' : 'text-gray-700'}`}>
+      <p className={`whitespace-nowrap text-xs font-bold ${emphasis ? 'text-sky-700' : 'text-gray-700'}`}>
         {value}
       </p>
     </div>
@@ -51,7 +51,7 @@ function Card({ schedule }) {
   const viaType = schedule.via_type || (isKapal ? 'Kapal' : 'Pesawat');
 
   return (
-    <div className="min-w-[260px] max-w-[260px] rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 p-3.5 text-left shadow-sm">
+    <div className="min-w-[320px] max-w-[320px] rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 p-3.5 text-left shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function ShipScheduleSection({ schedules, isLoading, onViewAll })
           Belum ada jadwal kapal
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-1">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
           {displayedSchedules.map((s) => (
             <Card key={s.id} schedule={s} />
           ))}
