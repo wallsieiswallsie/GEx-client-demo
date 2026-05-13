@@ -12,6 +12,7 @@ import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPa
 import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
 import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
 import PaketkuPage from "../pages/customer/PaketkuPage";
+import CustomerPackageDetailPage from "../pages/customer/CustomerPackageDetailPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -101,6 +102,10 @@ export const homeRoutes = [
       {
         path: "/paketku",
         element: <PaketkuPage />
+      },
+      {
+        path: "/paketku/:id",
+        element: <CustomerPackageDetailPage />
       },
       {
         path: "/profil",

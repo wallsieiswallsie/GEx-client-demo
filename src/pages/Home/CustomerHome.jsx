@@ -12,12 +12,15 @@ import NewsBanner from '../../components/home/NewsBanner';
 import { SkeletonCard } from '../../components/home/SkeletonCard';
 import Header from '../../components/home/Header';
 
-import { getMyPackageStatusCounts } from '../../services/api/claimedPackages';
+import {
+  getMyPackageStatusCounts,
+  getPendingProblematicClaims,
+} from '../../services/api/claimedPackages';
 import { getBannerDashboard } from '../../services/api/content/contentApi';
 import { getInstagramContents } from '../../services/api/content/instagramContentApi';
 import { getYoutubeThumbnail } from '../../utils/youtube';
 
-import { Play } from 'lucide-react';
+import { AlertCircle, Play } from 'lucide-react';
 
 
 // Search bar "Lacak Paket"
@@ -146,6 +149,7 @@ export default function CustomerHome() {
 
   //  state untuk claimed_packages
   const [statusCounts, setStatusCounts] = useState(null);
+  const [pendingProblematic, setPendingProblematic] = useState([]);
   const [banners, setBanners] = useState([]);
   const [bannerLoading, setBannerLoading] = useState(true);
   const [instagramContents, setInstagramContents] = useState([]);
@@ -156,7 +160,9 @@ export default function CustomerHome() {
     const fetchStatusCounts = async () => {
       try {
         const counts = await getMyPackageStatusCounts();
+        const pending = await getPendingProblematicClaims();
         setStatusCounts(counts);
+        setPendingProblematic(pending || []);
       } catch (err) {
         console.error("Gagal ambil status paket:", err);
       }
@@ -243,6 +249,30 @@ export default function CustomerHome() {
             summary={statusCounts}
             isLoading={summaryLoading || !statusCounts}
           />
+
+          {pendingProblematic.length > 0 && (
+            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-sm font-bold text-gray-800">
+                    Menunggu Konfirmasi
+                  </h2>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {pendingProblematic.length} paket bermasalah perlu dilengkapi
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate('/daftar-paket')}
+                  className="rounded-xl bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700"
+                >
+                  Lanjutkan
+                </button>
+              </div>
+            </section>
+          )}
 
           {/* 4. Jadwal Kapal */}
           <ShipScheduleSection

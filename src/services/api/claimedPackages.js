@@ -39,6 +39,31 @@ export const getMyPackagesByStatus = async () => {
   return res.data;
 };
 
+export const getMyPackages = async ({ status = "" } = {}) => {
+  const params = new URLSearchParams();
+
+  if (status) {
+    params.set("status", status);
+  }
+
+  const res = await apiFetch(
+    `/claimed-packages/my-packages${params.toString() ? `?${params.toString()}` : ""}`,
+    {
+      method: "GET",
+    }
+  );
+
+  return res.data;
+};
+
+export const getMyPackageDetail = async (id) => {
+  const res = await apiFetch(`/claimed-packages/my-packages/${id}`, {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
 export const getPendingProblematicClaims = async () => {
   const res = await apiFetch("/claimed-packages/problematic-pending", {
     method: "GET",
