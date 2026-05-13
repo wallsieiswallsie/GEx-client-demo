@@ -23,6 +23,40 @@ export const getMyClaimedPackages = async () => {
   return res.data;
 };
 
+export const getPendingProblematicClaims = async () => {
+  const res = await apiFetch("/claimed-packages/problematic-pending", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const submitProblematicClaimRequest = async (claimId, payload) => {
+  const res = await apiFetch(`/claimed-packages/${claimId}/problematic-request`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+
+  return res.data;
+};
+
+export const getProblematicPackageRequests = async () => {
+  const res = await apiFetch("/problematic-package-requests", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const confirmProblematicPackageRequest = async (packageId, formData) => {
+  const res = await apiFetch(`/problematic-package-requests/${packageId}/confirm`, {
+    method: "POST",
+    body: formData,
+  });
+
+  return res.data;
+};
+
 /**
  * Get count claimed packages unconfirmed (milik user login)
  */

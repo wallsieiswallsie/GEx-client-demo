@@ -9,7 +9,7 @@ export default function OperasionalPage() {
     const items = [
         { label: "Database Paket", path: "/input", icon: Database, color: "bg-blue-100 text-blue-600" },
         { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
-        { label: "Paket Bermasalah", path: "/masalah", icon: AlertCircle, color: "bg-red-100 text-red-500" },
+        { label: "Paket Bermasalah", path: "/problematic-confirmations", icon: AlertCircle, color: "bg-red-100 text-red-500" },
         { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
     ];
 

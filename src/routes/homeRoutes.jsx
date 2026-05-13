@@ -11,6 +11,7 @@ import InstagramContentPage from "../pages/cms/InstagramContentPage";
 import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPage";
 import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
 import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
+import PaketkuPage from "../pages/customer/PaketkuPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -96,6 +97,10 @@ export const homeRoutes = [
       {
         path: "/bantuan",
         element: <CustomerTermsPage />
+      },
+      {
+        path: "/paketku",
+        element: <PaketkuPage />
       },
       {
         path: "/profil",

@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Package, Calendar, Clock } from "lucide-react";
+import { Package, Calendar, Clock, Route } from "lucide-react";
 
-import { createClaimedPackage, getMyClaimedPackages } from "../services/api/claimedPackages";
+import {
+  createClaimedPackage,
+  getMyClaimedPackages,
+  submitProblematicClaimRequest,
+} from "../services/api/claimedPackages";
+import { getAllShipmentRoutes } from "../services/api/logistik/shipmentRouteApi";
 import { ButtonLoading } from "../components/common/Loading";
 
 export default function FormDaftarPaket() {
@@ -12,17 +17,34 @@ export default function FormDaftarPaket() {
   const [fields, setFields] = useState([""]);
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [requestLoading, setRequestLoading] = useState(false);
   const [error, setError] = useState("");
+  const [routeOptions, setRouteOptions] = useState([]);
+  const [problematicClaim, setProblematicClaim] = useState(null);
+  const [problematicForm, setProblematicForm] = useState({
+    name: "",
+    route_code: "",
+  });
 
   // 🔥 FETCH DATA SAAT LOAD
   useEffect(() => {
     fetchPackages();
+    fetchRoutes();
   }, []);
 
   const fetchPackages = async () => {
     try {
       const data = await getMyClaimedPackages();
       setPackages(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchRoutes = async () => {
+    try {
+      const data = await getAllShipmentRoutes();
+      setRouteOptions(data || []);
     } catch (err) {
       console.error(err);
     }
@@ -53,11 +75,23 @@ export default function FormDaftarPaket() {
       setLoading(true);
       setError("");
 
-      await Promise.all(
+      const results = await Promise.all(
         receipts.map((receipt) =>
           createClaimedPackage(receipt)
         )
       );
+
+      const problematic = results.find(
+        (item) => item.needs_problematic_confirmation
+      );
+
+      if (problematic) {
+        setProblematicClaim(problematic);
+        setProblematicForm({
+          name: problematic.package?.name || "",
+          route_code: "",
+        });
+      }
 
       alert("Semua paket berhasil didaftarkan.");
 
@@ -71,6 +105,32 @@ export default function FormDaftarPaket() {
       setError(err.message || "Gagal mendaftarkan paket");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleProblematicSubmit = async () => {
+    if (!problematicForm.name || !problematicForm.route_code) {
+      setError("Nama paket dan route code wajib diisi");
+      return;
+    }
+
+    try {
+      setRequestLoading(true);
+      setError("");
+
+      await submitProblematicClaimRequest(problematicClaim.id, problematicForm);
+
+      setProblematicClaim(null);
+      setProblematicForm({
+        name: "",
+        route_code: "",
+      });
+
+      await fetchPackages();
+    } catch (err) {
+      setError(err.message || "Gagal mengirim request konfirmasi");
+    } finally {
+      setRequestLoading(false);
     }
   };
 
@@ -165,6 +225,75 @@ export default function FormDaftarPaket() {
           </button>
         </div>
 
+        {problematicClaim && (
+          <div className="mt-5 bg-white rounded-3xl shadow-lg border border-orange-100 p-4">
+            <div className="mb-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
+                Bermasalah
+                <span className="h-1 w-1 rounded-full bg-orange-400" />
+                Pending
+              </div>
+
+              <h2 className="mt-3 text-sm font-semibold text-gray-900">
+                Lengkapi Data Paket Bermasalah
+              </h2>
+              <p className="mt-1 text-xs text-gray-500">
+                Resi {problematicClaim.receipt} perlu nama paket dan route code yang benar.
+              </p>
+            </div>
+
+            <label className="text-sm font-medium text-gray-700">
+              Nama Paket
+            </label>
+            <input
+              type="text"
+              value={problematicForm.name}
+              onChange={(e) =>
+                setProblematicForm((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              className="mt-1 mb-3 w-full rounded-xl border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200"
+              placeholder="Nama paket"
+            />
+
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Route size={16} />
+              Route Code Seharusnya
+            </label>
+            <select
+              value={problematicForm.route_code}
+              onChange={(e) =>
+                setProblematicForm((prev) => ({
+                  ...prev,
+                  route_code: e.target.value,
+                }))
+              }
+              className="mt-1 mb-4 w-full rounded-xl border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200"
+            >
+              <option value="">Pilih route code</option>
+              {routeOptions.map((route) => (
+                <option key={route.id} value={route.generated_route_code}>
+                  {route.generated_route_code}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleProblematicSubmit}
+              disabled={requestLoading}
+              className="w-full rounded-xl bg-orange-600 py-3 text-sm font-semibold text-white disabled:bg-gray-300"
+            >
+              {requestLoading ? (
+                <ButtonLoading text="Mengirim..." />
+              ) : (
+                "Kirim Request Konfirmasi"
+              )}
+            </button>
+          </div>
+        )}
+
         {/* 🔥 LIST PAKET */}
         {packages.filter(p => !p.is_confirmed).length > 0 && (
           <div className="mt-6 space-y-4">
@@ -200,9 +329,17 @@ export default function FormDaftarPaket() {
                         </p>
                       </div>
 
-                      <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
-                        Menunggu
-                      </span>
+                      {pkg.is_problematic ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">
+                          Bermasalah
+                          <span className="h-1 w-1 rounded-full bg-orange-500" />
+                          Pending
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                          Menunggu
+                        </span>
+                      )}
                     </div>
 
                     {/* INFO GRID */}
@@ -230,6 +367,27 @@ export default function FormDaftarPaket() {
                     <div className="mt-4 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
                       <div className="h-full w-1/3 bg-yellow-400 animate-pulse"></div>
                     </div>
+
+                    {pkg.is_problematic && pkg.route_code === "bermasalah" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProblematicClaim({
+                            ...pkg,
+                            package: {
+                              name: pkg.name || "",
+                            },
+                          });
+                          setProblematicForm({
+                            name: pkg.name || "",
+                            route_code: "",
+                          });
+                        }}
+                        className="mt-4 w-full rounded-xl bg-orange-600 py-2.5 text-sm font-semibold text-white"
+                      >
+                        Lengkapi Nama & Route Code
+                      </button>
+                    )}
 
                   </div>
                 );

@@ -9,6 +9,7 @@ import SackDetailPage from "../pages/operasional/SackDetailPage";
 import MispackedPackageDetailPage from "../pages/operasional/MispackedPackageDetailPage";
 import UnpackedPackagesPage from "../pages/operasional/UnpackedPackagesPage";
 import MispackedPackagesPage from "../pages/operasional/MispackedPackagesPage";
+import ProblematicConfirmationPage from "../pages/operasional/ProblematicConfirmationPage";
 
 export const operasionalRoutes = [
     {
@@ -49,6 +50,10 @@ export const operasionalRoutes = [
             {
                 path: "/mispacked-packages",
                 element: <MispackedPackagesPage />,
+            },
+            {
+                path: "/problematic-confirmations",
+                element: <ProblematicConfirmationPage />,
             },
         ],
     },
