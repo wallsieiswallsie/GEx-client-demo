@@ -143,7 +143,7 @@ export default function PaketkuPage() {
                 </div>
 
                 <div className="mt-1 text-xs text-gray-500">
-                  {item.receipt || "Nomor Resi Tidak Tersedia"}
+                  {item.receipt?.toUpperCase() || "Nomor Resi Tidak Tersedia"}
                 </div>
 
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">

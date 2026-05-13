@@ -88,12 +88,12 @@ export default function CustomerPackageDetailPage() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-3">
-                        <Info icon={<Package className="h-4 w-4" />} label="Nama Paket" value={data.name} />
-                        <Info icon={<Receipt className="h-4 w-4" />} label="Receipt" value={data.receipt} />
+                        <Info icon={<Package className="h-4 w-4" />} label="Nama Paket" value={data.name?.toUpperCase()} />
+                        <Info icon={<Receipt className="h-4 w-4" />} label="Resi" value={data.receipt?.toUpperCase()} />
                         <Info icon={<Calendar className="h-4 w-4" />} label="Tanggal Tiba" value={formatDate(data.arrived_origin_at)} />
                         <Info icon={<Truck className="h-4 w-4" />} label="Ekspedisi" value={data.expedition} />
-                        <Info icon={<Scale className="h-4 w-4" />} label="Berat Digunakan" value={data.used_weight ? `${data.used_weight} kg` : "-"} />
-                        <Info icon={<Wallet className="h-4 w-4" />} label="Fee" value={formatFee(data.fee)} />
+                        <Info icon={<Scale className="h-4 w-4" />} label="Berat" value={data.used_weight ? `${data.used_weight} kg` : "-"} />
+                        <Info icon={<Wallet className="h-4 w-4" />} label="Tarif" value={formatFee(data.fee)} />
                     </div>
                 </div>
             </div>
