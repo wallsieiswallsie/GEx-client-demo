@@ -150,11 +150,6 @@ export default function GeneralManagerHome() {
                                             </p>
                                         </div>
                                     </div>
-
-                                    <div className="flex justify-between gap-3 mt-3 text-xs text-gray-600">
-                                        <span>{Number(item.total_weight || 0).toFixed(2)} kg</span>
-                                        <span>Rp {Number(item.total_value || 0).toLocaleString("id-ID")}</span>
-                                    </div>
                                 </button>
                             ))}
 
