@@ -128,13 +128,22 @@ export default function PaketkuPage() {
                 key={item.id}
                 className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm"
               >
-                <div className="flex items-center gap-2 text-xs font-semibold text-violet-700">
-                  <Route className="h-4 w-4" />
-                  {item.route_code || "-"}
+                <div className="flex items-center gap-1 text-xs font-semibold text-violet-700">
+                  <Route className="h-4 w-4 flex-shrink-0" />
+
+                  <span className="truncate">
+                    {item.route_code || "Kode Tidak Tersedia"}
+                  </span>
+
+                  <span className="text-gray-300">•</span>
+
+                  <span className="truncate text-gray-900">
+                    {item.name?.toUpperCase() || "Nama Tidak Tersedia"}
+                  </span>
                 </div>
 
-                <div className="mt-2 text-sm font-semibold text-gray-900">
-                  {item.name || "-"}
+                <div className="mt-1 text-xs text-gray-500">
+                  {item.receipt || "Nomor Resi Tidak Tersedia"}
                 </div>
 
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
