@@ -78,8 +78,6 @@ export default function PackagesPage() {
         height: "",
         real_weight: "",
         route_code: "",
-        is_partner: false,
-        partnership_code: "",
         photo: null,
         items: [],
     };
@@ -116,8 +114,6 @@ export default function PackagesPage() {
         formData.append("height", values.height);
         formData.append("real_weight", values.real_weight);
         formData.append("route_code", values.route_code);
-        formData.append("is_partner", values.is_partner ? "true" : "false");
-        formData.append("partnership_code", values.partnership_code || "");
         formData.append("items", JSON.stringify(values.items || []));
 
         if (values.photo instanceof File) {

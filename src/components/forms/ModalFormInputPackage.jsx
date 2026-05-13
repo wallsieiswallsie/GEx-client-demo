@@ -48,14 +48,14 @@ function ModalFormInputPackage({
         if (statusPaket === "Bermasalah") {
             setForm((prev) => ({
                 ...prev,
-                route_code: "Bermasalah",
+                route_code: "bermasalah",
             }));
         }
     }, [setForm, statusPaket]);
 
     useEffect(() => {
         setStatusPaket(
-            form.route_code === "Bermasalah"
+            form.route_code === "bermasalah"
                 ? "Bermasalah"
                 : "Sesuai"
         );
@@ -146,11 +146,18 @@ function ModalFormInputPackage({
                     <div className="flex gap-2">
                         <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
                                 setStatusPaket(
                                     "Sesuai"
-                                )
-                            }
+                                );
+                                setForm((prev) => ({
+                                    ...prev,
+                                    route_code:
+                                        prev.route_code === "bermasalah"
+                                            ? ""
+                                            : prev.route_code,
+                                }));
+                            }}
                             className={`flex-1 py-2 rounded-xl border ${statusPaket ===
                                     "Sesuai"
                                     ? "bg-green-100 border-green-500 text-green-700"
@@ -530,29 +537,6 @@ function ModalFormInputPackage({
                         />
                     )}
                 </div>
-
-                {/* PARTNER */}
-                <label className="flex items-center gap-2 text-sm mb-3">
-                    <input
-                        type="checkbox"
-                        name="is_partner"
-                        checked={form.is_partner}
-                        onChange={handleChange}
-                    />
-
-                    Partner package
-                </label>
-
-                {/* PARTNERSHIP */}
-                <input
-                    value={
-                        form.partnership_code
-                    }
-                    name="partnership_code"
-                    onChange={handleChange}
-                    placeholder="Partnership code"
-                    className="w-full border rounded-xl px-3 py-2 text-sm mb-4"
-                />
 
                 {/* BUTTON */}
                 <button

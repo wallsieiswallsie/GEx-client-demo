@@ -92,7 +92,7 @@ function Card({ schedule }) {
       <div className="mt-3 grid grid-cols-3 gap-2">
         <DateMetric label="Closing" value={formatDate(schedule.closing_date)} icon={Clock3} />
         <DateMetric label="Berangkat" value={formatDate(schedule.depart_date)} icon={CalendarDays} emphasis />
-        <DateMetric label="Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
+        <DateMetric label="Est. Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
       </div>
     </div>
   );
