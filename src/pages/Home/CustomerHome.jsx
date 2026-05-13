@@ -12,15 +12,12 @@ import NewsBanner from '../../components/home/NewsBanner';
 import { SkeletonCard } from '../../components/home/SkeletonCard';
 import Header from '../../components/home/Header';
 
-import {
-  getPendingProblematicClaims,
-  getUnconfirmedCount,
-} from '../../services/api/claimedPackages';
+import { getMyPackageStatusCounts } from '../../services/api/claimedPackages';
 import { getBannerDashboard } from '../../services/api/content/contentApi';
 import { getInstagramContents } from '../../services/api/content/instagramContentApi';
 import { getYoutubeThumbnail } from '../../utils/youtube';
 
-import { AlertCircle, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 
 
 // Search bar "Lacak Paket"
@@ -148,27 +145,24 @@ export default function CustomerHome() {
   const { schedules, isLoading: schedulesLoading } = useShipSchedules();
 
   //  state untuk claimed_packages
-  const [unconfirmedCount, setUnconfirmedCount] = useState(0);
-  const [pendingProblematic, setPendingProblematic] = useState([]);
+  const [statusCounts, setStatusCounts] = useState(null);
   const [banners, setBanners] = useState([]);
   const [bannerLoading, setBannerLoading] = useState(true);
   const [instagramContents, setInstagramContents] = useState([]);
   const [instagramLoading, setInstagramLoading] = useState(true);
 
-  //  fetch jumlah paket menunggu
+  //  fetch jumlah status paket
   useEffect(() => {
-    const fetchUnconfirmed = async () => {
+    const fetchStatusCounts = async () => {
       try {
-        const total = await getUnconfirmedCount();
-        const pending = await getPendingProblematicClaims();
-        setUnconfirmedCount(total);
-        setPendingProblematic(pending || []);
+        const counts = await getMyPackageStatusCounts();
+        setStatusCounts(counts);
       } catch (err) {
-        console.error("Gagal ambil unconfirmed:", err);
+        console.error("Gagal ambil status paket:", err);
       }
     };
 
-    fetchUnconfirmed();
+    fetchStatusCounts();
   }, []);
 
   useEffect(() => {
@@ -246,47 +240,9 @@ export default function CustomerHome() {
 
           {/* 3. Status Paketmu */}
           <PackageStatusWidget
-            summary={summaryData?.package_summary}
-            isLoading={summaryLoading}
-            unconfirmedCount={unconfirmedCount}
+            summary={statusCounts}
+            isLoading={summaryLoading || !statusCounts}
           />
-
-          {pendingProblematic.length > 0 && (
-            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-sm">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-sm font-bold text-gray-800">
-                  Menunggu Konfirmasi
-                </h2>
-                <button
-                  onClick={() => navigate('/paketku')}
-                  className="text-xs font-semibold text-violet-600"
-                >
-                  Lihat
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {pendingProblematic.slice(0, 3).map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-3 rounded-xl bg-orange-50 px-3 py-3"
-                  >
-                    <AlertCircle className="h-5 w-5 shrink-0 text-orange-600" />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold text-gray-900">
-                        {item.receipt}
-                      </div>
-                      <div className="mt-1 inline-flex items-center gap-2 text-xs font-semibold text-orange-700">
-                        Bermasalah
-                        <span className="h-1 w-1 rounded-full bg-orange-500" />
-                        Pending
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* 4. Jadwal Kapal */}
           <ShipScheduleSection

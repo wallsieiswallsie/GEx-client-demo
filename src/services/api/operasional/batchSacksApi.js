@@ -85,6 +85,22 @@ export const getBatchPackages = async ({
     return unwrap(res);
 };
 
+export const updateBatchStatus = async ({
+    batch_type,
+    batch_id,
+    status,
+}) => {
+    const res = await apiFetch(
+        `/operasional/batches/${batch_type}/${batch_id}/status`,
+        {
+            method: "PATCH",
+            body: JSON.stringify({ status }),
+        }
+    );
+
+    return unwrap(res);
+};
+
 export const getSacks = async ({
     batch_type,
     batch_id,

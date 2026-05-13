@@ -23,6 +23,22 @@ export const getMyClaimedPackages = async () => {
   return res.data;
 };
 
+export const getMyPackageStatusCounts = async () => {
+  const res = await apiFetch("/claimed-packages/status-counts", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const getMyPackagesByStatus = async () => {
+  const res = await apiFetch("/claimed-packages/status-list", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
 export const getPendingProblematicClaims = async () => {
   const res = await apiFetch("/claimed-packages/problematic-pending", {
     method: "GET",
@@ -42,6 +58,14 @@ export const submitProblematicClaimRequest = async (claimId, payload) => {
 
 export const getProblematicPackageRequests = async () => {
   const res = await apiFetch("/problematic-package-requests", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const getInternalProblematicPackages = async () => {
+  const res = await apiFetch("/operasional/problematic-packages", {
     method: "GET",
   });
 

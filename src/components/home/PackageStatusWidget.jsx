@@ -74,11 +74,15 @@ const STATUS_CONFIG = {
   },
 };
 
-function StatusChip({ count, config }) {
+function StatusChip({ count, config, onClick }) {
   const Icon = config.icon;
 
   return (
-    <div className="flex-shrink-0 flex flex-col justify-between rounded-xl p-3 min-w-[110px] bg-gray-100">
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex-shrink-0 flex flex-col justify-between rounded-xl p-3 min-w-[110px] bg-gray-100 text-left active:scale-[0.98] transition"
+    >
 
       {/* Row: icon + angka */}
       <div className="flex items-center justify-between">
@@ -92,11 +96,11 @@ function StatusChip({ count, config }) {
       <span className="text-[10px] text-gray-500 mt-2 whitespace-pre-line leading-tight">
         {config.label}
       </span>
-    </div>
+    </button>
   );
 }
 
-export default function PackageStatusWidget({ summary, isLoading, unconfirmedCount = 0 }) {
+export default function PackageStatusWidget({ summary, isLoading }) {
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -134,11 +138,10 @@ export default function PackageStatusWidget({ summary, isLoading, unconfirmedCou
           <StatusChip
             key={key}
             count={
-              key === "menunggu_tiba"
-                ? unconfirmedCount
-                : summary[key] ?? 0
+              summary[key] ?? 0
             }
             config={STATUS_CONFIG[key]}
+            onClick={() => navigate(`/paketku?status=${key.replaceAll("_", "-")}`)}
           />
         ))}
       </div>

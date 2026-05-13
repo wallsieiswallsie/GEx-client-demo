@@ -10,22 +10,28 @@ import {
     createSack,
     getBatchById,
     getSacks,
+    updateBatchStatus,
 } from "../../services/api/operasional/batchSacksApi";
+import { useAuth } from "../../context/useAuth";
 
 const statusClass = {
     OPEN: "bg-emerald-50 text-emerald-700 border-emerald-100",
     CLOSE: "bg-amber-50 text-amber-700 border-amber-100",
     SEALED: "bg-gray-100 text-gray-600 border-gray-200",
+    DEPARTED: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    ARRIVED: "bg-blue-50 text-blue-700 border-blue-100",
 };
 
 export default function BatchDetailPage() {
     const navigate = useNavigate();
     const { batchType, batchId } = useParams();
+    const { user, role } = useAuth();
 
     const [batch, setBatch] = useState(null);
     const [sacks, setSacks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
+    const [statusLoading, setStatusLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [form, setForm] = useState({
         sack_number: "",
@@ -84,6 +90,35 @@ export default function BatchDetailPage() {
         }
     };
 
+    const handleUpdateBatchStatus = async (status) => {
+        const message = status === "DEPARTED"
+            ? "Berangkatkan batch ini?"
+            : "Tandai batch ini sudah tiba?";
+
+        if (!confirm(message)) return;
+
+        try {
+            setStatusLoading(true);
+
+            await updateBatchStatus({
+                batch_type: batchType,
+                batch_id: batchId,
+                status,
+            });
+
+            fetchData();
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            setStatusLoading(false);
+        }
+    };
+
+    const canDepartBatch = role === "general_manager";
+    const canMarkArrived =
+        role === "branch_manager" &&
+        user?.is_origin === false;
+
     return (
         <div className="min-h-dvh bg-gray-50 p-4">
             <div className="mb-5">
@@ -112,7 +147,7 @@ export default function BatchDetailPage() {
                                     </div>
                                 </div>
 
-                                <div className="px-2 py-1 rounded-full border text-[11px] font-semibold bg-emerald-50 text-emerald-700 border-emerald-100">
+                                <div className={`px-2 py-1 rounded-full border text-[11px] font-semibold ${statusClass[batch.status || "OPEN"] || statusClass.OPEN}`}>
                                     {batch.status || "OPEN"}
                                 </div>
                             </div>
@@ -144,6 +179,28 @@ export default function BatchDetailPage() {
                                         {batch.total_sacks || 0}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mt-4 grid grid-cols-2 gap-2">
+                                {canDepartBatch && batch.status !== "DEPARTED" && batch.status !== "ARRIVED" && (
+                                    <button
+                                        onClick={() => handleUpdateBatchStatus("DEPARTED")}
+                                        disabled={statusLoading}
+                                        className="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white disabled:bg-gray-300"
+                                    >
+                                        Berangkatkan Batch
+                                    </button>
+                                )}
+
+                                {canMarkArrived && batch.status === "DEPARTED" && (
+                                    <button
+                                        onClick={() => handleUpdateBatchStatus("ARRIVED")}
+                                        disabled={statusLoading}
+                                        className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:bg-gray-300"
+                                    >
+                                        Tandai Tiba
+                                    </button>
+                                )}
                             </div>
                         </div>
 
