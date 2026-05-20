@@ -178,7 +178,7 @@ export default function CustomerShippingRatePage() {
       <section
         className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
         style={{
-          backgroundImage: "url('/images/header_background/cek_tarif.png')",
+          backgroundImage: "url('/images/header_background/cek_ongkir.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
