@@ -29,9 +29,6 @@ export const ErrorsProvider = ({ children }) => {
   return (
     <ErrorsContext.Provider value={{ errors, addError, removeError, clearErrors }}>
       {children}
-      
-      {/* Opsional: Render Toast/Alert disini untuk global error handling, 
-          atau buat komponen terpisah yang memanggil useErrors(). */}
     </ErrorsContext.Provider>
   );
 };
