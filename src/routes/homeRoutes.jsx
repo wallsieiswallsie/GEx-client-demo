@@ -13,6 +13,7 @@ import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
 import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
 import PaketkuPage from "../pages/customer/PaketkuPage";
 import CustomerPackageDetailPage from "../pages/customer/CustomerPackageDetailPage";
+import CustomerShippingRatePage from "../pages/customer/CustomerShippingRatePage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -94,6 +95,10 @@ export const homeRoutes = [
       {
         path: "/gerai",
         element: <CustomerBranchesPage />
+      },
+      {
+        path: "/cek-ongkir",
+        element: <CustomerShippingRatePage />
       },
       {
         path: "/bantuan",
