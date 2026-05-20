@@ -175,8 +175,15 @@ export default function CustomerShippingRatePage() {
 
   return (
     <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#21006e] via-[#4c0fbd] to-[#7c22d9] px-6 pb-16 pt-8 text-white">
-        <div className="absolute -right-8 top-4 h-40 w-40 rounded-full bg-fuchsia-400/20 blur-2xl" />
+      <section
+        className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
+        style={{
+          backgroundImage: "url('/images/header_background/cek_tarif.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
         <div className="absolute bottom-0 left-0 right-0 h-10 rounded-t-[50%] bg-gray-50" />
 
         <div className="relative z-10 flex items-start gap-4">
@@ -193,23 +200,6 @@ export default function CustomerShippingRatePage() {
             <p className="mt-2 max-w-[180px] text-sm leading-relaxed text-white/85">
               Hitung ongkos kirim dengan mudah dan cepat
             </p>
-          </div>
-          <div className="relative mt-1 h-28 w-32 shrink-0">
-            <div className="absolute right-7 top-4 h-16 w-20 rotate-3 rounded-lg bg-gradient-to-br from-violet-300 to-purple-700 shadow-2xl">
-              <div className="absolute left-1/2 top-0 h-full w-3 -translate-x-1/2 bg-white/35" />
-              <span className="absolute bottom-4 left-4 text-xl font-black tracking-wide">GEx</span>
-            </div>
-            <div className="absolute bottom-1 right-0 flex h-16 w-10 flex-col gap-1 rounded-lg bg-violet-900 p-1.5 shadow-xl">
-              <div className="h-3 rounded bg-white/70" />
-              <div className="grid grid-cols-2 gap-1">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <span key={index} className="h-1.5 rounded bg-white/50" />
-                ))}
-              </div>
-            </div>
-            <div className="absolute bottom-2 left-1 flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-sm font-black text-white shadow-lg">
-              Rp
-            </div>
           </div>
         </div>
       </section>
@@ -305,7 +295,11 @@ export default function CustomerShippingRatePage() {
                   </p>
                 </div>
               </div>
-              <Box className="h-14 w-14 shrink-0 text-violet-600" />
+              <img
+                src="/images/dimensi-cek_tarif.png"
+                alt=""
+                className="h-20 w-28 shrink-0 object-contain sm:h-24 sm:w-32"
+              />
             </div>
 
             {serverError && (
