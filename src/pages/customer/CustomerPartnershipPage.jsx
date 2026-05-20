@@ -52,11 +52,6 @@ export default function CustomerPartnershipPage() {
               Bersama kita tumbuh,{"\n"}sukses bersama
             </p>
           </div>
-          <img
-            src="/images/customer_home/kemitraan.png"
-            alt=""
-            className="mt-6 h-28 w-28 shrink-0 object-contain drop-shadow-2xl"
-          />
         </div>
       </section>
 
