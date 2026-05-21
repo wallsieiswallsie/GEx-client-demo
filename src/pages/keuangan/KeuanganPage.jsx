@@ -1,6 +1,6 @@
 // pages/keuangan/KeuanganPage.jsx
 import { useNavigate } from "react-router-dom";
-import { FileText, Wallet } from "lucide-react";
+import { CreditCard, FileText, Wallet } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { useAuth } from "../../context/useAuth";
 import { canAccessInvoice } from "../../utils/invoiceAccess";
@@ -12,6 +12,9 @@ export default function KeuanganPage() {
     const items = [
         canAccessInvoice(user, role)
             ? { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" }
+            : null,
+        role === "general_manager"
+            ? { label: "Payment Method", path: "/payment-methods", icon: CreditCard, color: "bg-violet-100 text-violet-600" }
             : null,
         { label: "Setoran", path: "/setoran", icon: Wallet, color: "bg-lime-100 text-lime-600" },
     ].filter(Boolean);
