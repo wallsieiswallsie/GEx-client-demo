@@ -20,7 +20,7 @@ export const getAllVia = async () => {
         method: "GET",
     });
 
-    return res.data;
+    return Array.isArray(res.data) ? res.data : (res.data?.vias || []);
 };
 
 /**

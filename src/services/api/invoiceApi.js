@@ -8,18 +8,47 @@ export const getInvoices = async ({
   page = 1,
   limit = 10,
   search = "",
+  status = "",
   payment_status = "",
   received_status = "",
+  month = "",
+  via_code = "",
+  batch_id = "",
 } = {}) => {
   const params = new URLSearchParams({
     page,
     limit,
     search,
-    payment_status,
+    payment_status: payment_status || status,
     received_status,
+    month,
+    via_code,
+    batch_id,
   });
 
   const res = await apiFetch(`/invoices?${params.toString()}`, {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const getShipmentBatches = async ({
+  via_code,
+  month = "",
+  search = "",
+  page = 1,
+  limit = 20,
+} = {}) => {
+  const params = new URLSearchParams({
+    via_code,
+    month,
+    search,
+    page,
+    limit,
+  });
+
+  const res = await apiFetch(`/shipment-batches?${params.toString()}`, {
     method: "GET",
   });
 

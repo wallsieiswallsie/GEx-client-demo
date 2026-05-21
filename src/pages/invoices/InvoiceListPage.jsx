@@ -1,15 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { Filter, Plus, Search, X } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
 import { LoadingState } from "../../components/common/Loading";
 import InvoiceAccessDenied from "./InvoiceAccessDenied";
 import InvoiceStatusBadge from "./InvoiceStatusBadge";
+import FilterInvoiceSheet from "./FilterInvoiceSheet";
 import { getInvoices } from "../../services/api/invoiceApi";
 
 const LIMIT = 10;
+
+function getBatchText(batches = []) {
+    if (!batches.length) {
+        return "";
+    }
+
+    const first = batches[0];
+    const displayName = first.display_name || first.batch_code;
+    const compactName = displayName?.includes("•")
+        ? displayName.split("•").map((item) => item.trim()).filter(Boolean).join(" • ")
+        : displayName;
+    const suffix = batches.length > 1 ? ` +${batches.length - 1} batch lain` : "";
+
+    return `${first.via_name} • ${compactName}${suffix}`;
+}
+
+function emptyFilters() {
+    return {
+        month: "",
+        month_label: "",
+        via_code: "",
+        via: null,
+        batch_id: "",
+        batch: null,
+    };
+}
 
 export default function InvoiceListPage() {
     const navigate = useNavigate();
@@ -19,6 +46,8 @@ export default function InvoiceListPage() {
     const [search, setSearch] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
     const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState(emptyFilters());
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const fetchData = async ({ currentPage = 1, reset = false } = {}) => {
         try {
@@ -28,6 +57,9 @@ export default function InvoiceListPage() {
                 limit: LIMIT,
                 search,
                 payment_status: paymentStatus,
+                month: filters.month,
+                via_code: filters.via_code,
+                batch_id: filters.batch_id,
             });
 
             if (reset) {
@@ -51,7 +83,47 @@ export default function InvoiceListPage() {
         }, 300);
 
         return () => clearTimeout(delay);
-    }, [search, paymentStatus]);
+    }, [search, paymentStatus, filters]);
+
+    const activeChips = [
+        filters.month && {
+            key: "month",
+            label: filters.month_label || filters.month,
+            onRemove: () => setFilters((prev) => ({
+                ...prev,
+                month: "",
+                month_label: "",
+                batch_id: "",
+                batch: null,
+            })),
+        },
+        filters.via_code && {
+            key: "via",
+            label: filters.via?.name || filters.via_code,
+            onRemove: () => setFilters((prev) => ({
+                ...prev,
+                via_code: "",
+                via: null,
+                batch_id: "",
+                batch: null,
+            })),
+        },
+        filters.batch_id && {
+            key: "batch",
+            label: filters.batch?.display_name || "Batch",
+            onRemove: () => setFilters((prev) => ({
+                ...prev,
+                batch_id: "",
+                batch: null,
+            })),
+        },
+    ].filter(Boolean);
+
+    const applyFilters = (nextFilters) => {
+        setPage(1);
+        setFilters(nextFilters);
+        setFilterOpen(false);
+    };
 
     const loadMore = () => {
         const nextPage = page + 1;
@@ -66,14 +138,33 @@ export default function InvoiceListPage() {
                     <SubPageHeader title="Daftar Invoice" />
                 </div>
 
-                <div className="relative mb-4">
-                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                    <input
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Cari invoice/customer..."
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
-                    />
+                <div className="mb-4 flex gap-2">
+                    <div className="relative min-w-0 flex-1">
+                        <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                        <input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Cari invoice/customer..."
+                            className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setFilterOpen(true)}
+                        className={`relative flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold ${
+                            activeChips.length
+                                ? "border-violet-600 bg-violet-50 text-violet-700"
+                                : "border-gray-200 bg-white text-gray-700"
+                        }`}
+                    >
+                        <Filter className="h-4 w-4" />
+                        Filter
+                        {activeChips.length > 0 && (
+                            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-600 px-1 text-[10px] text-white">
+                                {activeChips.length}
+                            </span>
+                        )}
+                    </button>
                 </div>
 
                 <div className="flex gap-2 mb-4">
@@ -96,6 +187,22 @@ export default function InvoiceListPage() {
                         </button>
                     ))}
                 </div>
+
+                {activeChips.length > 0 && (
+                    <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+                        {activeChips.map((chip) => (
+                            <button
+                                type="button"
+                                key={chip.key}
+                                onClick={chip.onRemove}
+                                className="flex max-w-[220px] shrink-0 items-center gap-1 rounded-full border border-violet-100 bg-violet-50 px-3 py-1.5 text-xs font-medium text-violet-700"
+                            >
+                                <span className="truncate">{chip.label}</span>
+                                <X className="h-3 w-3 shrink-0" />
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 <div className="text-sm font-semibold text-gray-800 mb-3">
                     Total {total} invoice
@@ -125,6 +232,12 @@ export default function InvoiceListPage() {
                                 <span>{Number(item.total_weight || 0).toFixed(2)} kg</span>
                                 <span>Rp {Number(item.total_amount || 0).toLocaleString("id-ID")}</span>
                             </div>
+
+                            {getBatchText(item.shipment_batches) && (
+                                <div className="mt-3 border-t border-gray-100 pt-2 text-xs font-medium text-gray-500">
+                                    {getBatchText(item.shipment_batches)}
+                                </div>
+                            )}
                         </button>
                     ))}
                 </div>
@@ -154,6 +267,13 @@ export default function InvoiceListPage() {
                 >
                     <Plus />
                 </FloatingActionButton>
+
+                <FilterInvoiceSheet
+                    open={filterOpen}
+                    value={filters}
+                    onClose={() => setFilterOpen(false)}
+                    onApply={applyFilters}
+                />
             </div>
         </InvoiceAccessDenied>
     );
