@@ -38,19 +38,28 @@ export default function CustomerPartnershipPage() {
       >
         <div className="relative z-10 flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white backdrop-blur transition hover:bg-white/25"
-              aria-label="Kembali"
-            >
-              <ArrowLeft className="h-6 w-6" />
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white backdrop-blur transition hover:bg-white/25"
+                aria-label="Kembali"
+              >
+                <ArrowLeft className="h-6 w-6" />
+              </button>
 
-            <h1 className="text-3xl font-black leading-tight">Kemitraan</h1>
-            <p className="mt-3 max-w-[190px] whitespace-pre-line text-base font-medium leading-relaxed text-white/90">
-              Bersama kita tumbuh,{"\n"}sukses bersama
-            </p>
+              <div className="min-w-0">
+                <h1 className="text-3xl font-black leading-tight">
+                  Kemitraan
+                </h1>
+
+                <p className="mt-2 text-base font-medium leading-relaxed text-white/90">
+                  Bersama kita tumbuh,
+                  <br />
+                  sukses bersama
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
