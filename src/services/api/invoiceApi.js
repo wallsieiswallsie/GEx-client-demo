@@ -61,6 +61,14 @@ export const getAvailableInvoicePackages = async ({
   return res.data;
 };
 
+export const getActiveInvoicePaymentMethods = async () => {
+  const res = await apiFetch("/invoices/payment-methods/active", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
 export const uploadInvoicePayment = async (id, formData) => {
   const res = await apiFetch(`/invoices/${id}/payments`, {
     method: "POST",
