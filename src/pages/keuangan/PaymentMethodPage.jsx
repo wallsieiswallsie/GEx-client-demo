@@ -19,6 +19,7 @@ const emptyForm = {
   code: "",
   fee_percentage: "",
   is_active: true,
+  is_cash: false,
 };
 
 const formatDate = (value) => (value ? String(value).slice(0, 10) : "-");
@@ -79,6 +80,7 @@ export default function PaymentMethodPage() {
       code: item.code || "",
       fee_percentage: item.fee_percentage ?? "",
       is_active: Boolean(item.is_active),
+      is_cash: Boolean(item.is_cash),
     });
     setIsOpen(true);
   };
@@ -96,6 +98,7 @@ export default function PaymentMethodPage() {
       code: form.code.trim().toUpperCase(),
       fee_percentage: Number(form.fee_percentage),
       is_active: Boolean(form.is_active),
+      is_cash: Boolean(form.is_cash),
     };
 
     if (!payload.name || !payload.code) {
@@ -199,6 +202,11 @@ export default function PaymentMethodPage() {
                     <CheckCircle2 className="h-3 w-3" />
                     {item.is_active ? "Active" : "Inactive"}
                   </span>
+                  {item.is_cash && (
+                    <span className="ml-2 mt-3 inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
+                      Cash
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex shrink-0 items-center gap-1">
@@ -272,6 +280,15 @@ export default function PaymentMethodPage() {
                   type="checkbox"
                   checked={form.is_active}
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+                  className="h-4 w-4 accent-violet-600"
+                />
+              </label>
+              <label className="flex items-center justify-between rounded-xl border bg-white px-3 py-2 text-sm">
+                <span className="font-medium text-gray-700">Tunai / Cash</span>
+                <input
+                  type="checkbox"
+                  checked={form.is_cash}
+                  onChange={(e) => setForm({ ...form, is_cash: e.target.checked })}
                   className="h-4 w-4 accent-violet-600"
                 />
               </label>

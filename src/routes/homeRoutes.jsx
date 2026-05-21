@@ -22,6 +22,7 @@ import InvoiceDetailPage from "../pages/invoices/InvoiceDetailPage";
 import UploadInvoicePaymentPage from "../pages/invoices/UploadInvoicePaymentPage";
 import UploadInvoiceReceiptPage from "../pages/invoices/UploadInvoiceReceiptPage";
 import PaymentMethodPage from "../pages/keuangan/PaymentMethodPage";
+import CashSettlementsPage from "../pages/keuangan/CashSettlementsPage";
 
 const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
@@ -53,6 +54,22 @@ export const homeRoutes = [
       {
         path: "/payment-methods",
         element: <PaymentMethodPage />
+      },
+      {
+        path: "/cash-settlements",
+        element: <CashSettlementsPage />
+      },
+      {
+        path: "/cash-settlements/new",
+        element: <CashSettlementsPage mode="new" />
+      },
+      {
+        path: "/cash-settlements/:id/select",
+        element: <CashSettlementsPage mode="select" />
+      },
+      {
+        path: "/cash-settlements/:id",
+        element: <CashSettlementsPage mode="detail" />
       },
       {
         path: "/invoice",
