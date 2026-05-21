@@ -97,6 +97,38 @@ export default function FilterInvoiceSheet({
     }, [open]);
 
     useEffect(() => {
+        if (!open) {
+            return undefined;
+        }
+
+        const scrollY = window.scrollY;
+        const originalPosition = document.body.style.position;
+        const originalTop = document.body.style.top;
+        const originalLeft = document.body.style.left;
+        const originalRight = document.body.style.right;
+        const originalWidth = document.body.style.width;
+        const originalOverflow = document.body.style.overflow;
+
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.position = originalPosition;
+            document.body.style.top = originalTop;
+            document.body.style.left = originalLeft;
+            document.body.style.right = originalRight;
+            document.body.style.width = originalWidth;
+            document.body.style.overflow = originalOverflow;
+
+            window.scrollTo(0, scrollY);
+        };
+    }, [open]);
+
+    useEffect(() => {
         if (open) {
             setDraft(value);
             setBatchSearch("");
@@ -224,19 +256,16 @@ export default function FilterInvoiceSheet({
 
     return (
         <div
-            className={`fixed inset-0 z-50 flex items-end bg-black/40 transition-opacity duration-200 ${
+            className={`fixed inset-0 z-50 transition-opacity duration-200 ${
                 open ? "opacity-100" : "opacity-0"
             }`}
+            onClick={onClose}
         >
-            <button
-                type="button"
-                aria-label="Tutup filter"
-                className="absolute inset-0 w-full h-full"
-                onClick={onClose}
-            />
+            <div className="absolute inset-0 bg-black/40" />
 
             <div
-                className={`relative flex w-full max-h-[88dvh] flex-col rounded-t-2xl bg-white shadow-xl transition-transform duration-200 ease-out ${
+                onClick={(e) => e.stopPropagation()}
+                className={`absolute bottom-0 left-0 right-0 flex max-h-[85vh] flex-col rounded-t-3xl bg-white shadow-xl transition-transform duration-200 ease-out ${
                     open ? "translate-y-0" : "translate-y-full"
                 }`}
             >
