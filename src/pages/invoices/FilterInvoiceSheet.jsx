@@ -63,8 +63,10 @@ export default function FilterInvoiceSheet({
     value,
     onClose,
     onApply,
+    onReset,
 }) {
     const monthOptions = useMemo(() => getRecentMonths(), []);
+    const [shouldRender, setShouldRender] = useState(open);
     const [draft, setDraft] = useState(value);
     const [vias, setVias] = useState([]);
     const [loadingVia, setLoadingVia] = useState(false);
@@ -74,6 +76,25 @@ export default function FilterInvoiceSheet({
     const [batchTotal, setBatchTotal] = useState(0);
     const [batchPage, setBatchPage] = useState(1);
     const [loadingBatch, setLoadingBatch] = useState(false);
+
+    const hasChanges = (
+        draft?.month !== value?.month ||
+        draft?.via_code !== value?.via_code ||
+        String(draft?.batch_id || "") !== String(value?.batch_id || "")
+    );
+
+    useEffect(() => {
+        if (open) {
+            setShouldRender(true);
+            return undefined;
+        }
+
+        const timeout = setTimeout(() => {
+            setShouldRender(false);
+        }, 180);
+
+        return () => clearTimeout(timeout);
+    }, [open]);
 
     useEffect(() => {
         if (open) {
@@ -150,7 +171,7 @@ export default function FilterInvoiceSheet({
         fetchBatches({ page: 1, reset: true });
     }, [open, draft?.via_code, draft?.month, debouncedBatchSearch]);
 
-    if (!open) {
+    if (!shouldRender) {
         return null;
     }
 
@@ -198,10 +219,15 @@ export default function FilterInvoiceSheet({
             batch: null,
         });
         setBatchSearch("");
+        onReset();
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end bg-black/40">
+        <div
+            className={`fixed inset-0 z-50 flex items-end bg-black/40 transition-opacity duration-200 ${
+                open ? "opacity-100" : "opacity-0"
+            }`}
+        >
             <button
                 type="button"
                 aria-label="Tutup filter"
@@ -209,7 +235,11 @@ export default function FilterInvoiceSheet({
                 onClick={onClose}
             />
 
-            <div className="relative w-full max-h-[88dvh] overflow-y-auto rounded-t-2xl bg-white shadow-xl">
+            <div
+                className={`relative flex w-full max-h-[88dvh] flex-col rounded-t-2xl bg-white shadow-xl transition-transform duration-200 ease-out ${
+                    open ? "translate-y-0" : "translate-y-full"
+                }`}
+            >
                 <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-3">
                     <div className="flex items-center gap-2">
                         <SlidersHorizontal className="h-4 w-4 text-violet-600" />
@@ -224,7 +254,7 @@ export default function FilterInvoiceSheet({
                     </button>
                 </div>
 
-                <div className="space-y-5 p-4 pb-24">
+                <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4 pb-5">
                     <section>
                         <div className="mb-2 text-xs font-semibold uppercase text-gray-500">
                             Pilih Bulan
@@ -375,7 +405,7 @@ export default function FilterInvoiceSheet({
                     </section>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 z-20 border-t bg-white p-4">
+                <div className="sticky bottom-0 z-20 border-t bg-white p-4">
                     <div className="mx-auto flex max-w-md gap-2">
                         <button
                             type="button"
@@ -387,7 +417,12 @@ export default function FilterInvoiceSheet({
                         <button
                             type="button"
                             onClick={() => onApply(draft)}
-                            className="flex-1 rounded-xl bg-violet-600 py-2.5 text-sm font-semibold text-white"
+                            disabled={!hasChanges}
+                            className={`flex-1 rounded-xl py-2.5 text-sm font-semibold text-white ${
+                                hasChanges
+                                    ? "bg-violet-600"
+                                    : "cursor-not-allowed bg-violet-300"
+                            }`}
                         >
                             Terapkan
                         </button>

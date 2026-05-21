@@ -11,6 +11,7 @@ import FilterInvoiceSheet from "./FilterInvoiceSheet";
 import { getInvoices } from "../../services/api/invoiceApi";
 
 const LIMIT = 10;
+const LIST_TOP_ID = "invoice-list-top";
 
 function getBatchText(batches = []) {
     if (!batches.length) {
@@ -46,7 +47,7 @@ export default function InvoiceListPage() {
     const [search, setSearch] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
     const [loading, setLoading] = useState(false);
-    const [filters, setFilters] = useState(emptyFilters());
+    const [appliedFilter, setAppliedFilter] = useState(emptyFilters());
     const [filterOpen, setFilterOpen] = useState(false);
 
     const fetchData = async ({ currentPage = 1, reset = false } = {}) => {
@@ -57,9 +58,9 @@ export default function InvoiceListPage() {
                 limit: LIMIT,
                 search,
                 payment_status: paymentStatus,
-                month: filters.month,
-                via_code: filters.via_code,
-                batch_id: filters.batch_id,
+                month: appliedFilter.month,
+                via_code: appliedFilter.via_code,
+                batch_id: appliedFilter.batch_id,
             });
 
             if (reset) {
@@ -83,13 +84,13 @@ export default function InvoiceListPage() {
         }, 300);
 
         return () => clearTimeout(delay);
-    }, [search, paymentStatus, filters]);
+    }, [search, paymentStatus, appliedFilter]);
 
     const activeChips = [
-        filters.month && {
+        appliedFilter.month && {
             key: "month",
-            label: filters.month_label || filters.month,
-            onRemove: () => setFilters((prev) => ({
+            label: appliedFilter.month_label || appliedFilter.month,
+            onRemove: () => setAppliedFilter((prev) => ({
                 ...prev,
                 month: "",
                 month_label: "",
@@ -97,10 +98,10 @@ export default function InvoiceListPage() {
                 batch: null,
             })),
         },
-        filters.via_code && {
+        appliedFilter.via_code && {
             key: "via",
-            label: filters.via?.name || filters.via_code,
-            onRemove: () => setFilters((prev) => ({
+            label: appliedFilter.via?.name || appliedFilter.via_code,
+            onRemove: () => setAppliedFilter((prev) => ({
                 ...prev,
                 via_code: "",
                 via: null,
@@ -108,10 +109,10 @@ export default function InvoiceListPage() {
                 batch: null,
             })),
         },
-        filters.batch_id && {
+        appliedFilter.batch_id && {
             key: "batch",
-            label: filters.batch?.display_name || "Batch",
-            onRemove: () => setFilters((prev) => ({
+            label: appliedFilter.batch?.display_name || "Batch",
+            onRemove: () => setAppliedFilter((prev) => ({
                 ...prev,
                 batch_id: "",
                 batch: null,
@@ -119,10 +120,27 @@ export default function InvoiceListPage() {
         },
     ].filter(Boolean);
 
-    const applyFilters = (nextFilters) => {
+    const scrollListToTop = () => {
+        document.getElementById(LIST_TOP_ID)?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    };
+
+    const applyFilters = (nextFilter) => {
         setPage(1);
-        setFilters(nextFilters);
+        setLoading(true);
+        setAppliedFilter(nextFilter);
         setFilterOpen(false);
+        scrollListToTop();
+    };
+
+    const resetFilters = () => {
+        setPage(1);
+        setLoading(true);
+        setAppliedFilter(emptyFilters());
+        setFilterOpen(false);
+        scrollListToTop();
     };
 
     const loadMore = () => {
@@ -133,7 +151,7 @@ export default function InvoiceListPage() {
 
     return (
         <InvoiceAccessDenied>
-            <div className="min-h-dvh bg-gray-50 p-4">
+            <div id={LIST_TOP_ID} className="min-h-dvh bg-gray-50 p-4">
                 <div className="mb-5">
                     <SubPageHeader title="Daftar Invoice" />
                 </div>
@@ -270,9 +288,10 @@ export default function InvoiceListPage() {
 
                 <FilterInvoiceSheet
                     open={filterOpen}
-                    value={filters}
+                    value={appliedFilter}
                     onClose={() => setFilterOpen(false)}
                     onApply={applyFilters}
+                    onReset={resetFilters}
                 />
             </div>
         </InvoiceAccessDenied>
