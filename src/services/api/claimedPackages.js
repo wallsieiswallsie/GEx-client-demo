@@ -89,8 +89,14 @@ export const getProblematicPackageRequests = async () => {
   return res.data;
 };
 
-export const getInternalProblematicPackages = async () => {
-  const res = await apiFetch("/operasional/problematic-packages", {
+export const getInternalProblematicPackages = async (tab = "") => {
+  const params = new URLSearchParams();
+
+  if (tab) {
+    params.set("tab", tab);
+  }
+
+  const res = await apiFetch(`/problematic-packages${params.toString() ? `?${params.toString()}` : ""}`, {
     method: "GET",
   });
 

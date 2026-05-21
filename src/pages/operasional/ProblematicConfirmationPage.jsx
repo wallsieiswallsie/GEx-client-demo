@@ -41,16 +41,42 @@ function StatusBadge({ confirmed }) {
     );
 }
 
+const TABS = [
+    {
+        key: "waiting",
+        label: "Menunggu",
+        icon: AlertCircle,
+    },
+    {
+        key: "confirmed",
+        label: "Terkonfirmasi",
+        icon: CheckCircle,
+    },
+    {
+        key: "archive",
+        label: "Arsip",
+        icon: Archive,
+    },
+];
+
+const emptyData = {
+    summary: {
+        waiting: 0,
+        confirmed: 0,
+        archive: 0,
+    },
+    waiting: [],
+    confirmed: [],
+    archive: [],
+};
+
 export default function ProblematicConfirmationPage() {
     const navigate = useNavigate();
     const { user, role } = useAuth();
     const fileInputRef = useRef(null);
 
-    const [activeSection, setActiveSection] = useState("pending");
-    const [data, setData] = useState({
-        pending: [],
-        archive: [],
-    });
+    const [activeSection, setActiveSection] = useState("waiting");
+    const [data, setData] = useState(emptyData);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -69,7 +95,7 @@ export default function ProblematicConfirmationPage() {
         if (!keyword) return source;
 
         return source.filter((item) =>
-            [item.receipt, item.name]
+            [item.receipt, item.name, item.route_code, item.expedition]
                 .filter(Boolean)
                 .some((value) => String(value).toLowerCase().includes(keyword))
         );
@@ -87,7 +113,14 @@ export default function ProblematicConfirmationPage() {
         try {
             setLoading(true);
             const result = await getInternalProblematicPackages();
-            setData(result || { pending: [], archive: [] });
+            setData({
+                ...emptyData,
+                ...(result || {}),
+                summary: {
+                    ...emptyData.summary,
+                    ...(result?.summary || {}),
+                },
+            });
         } catch (err) {
             alert(err.message);
         } finally {
@@ -150,40 +183,31 @@ export default function ProblematicConfirmationPage() {
         <div className="min-h-dvh bg-gray-50 p-4 pb-28">
             <SubPageHeader title="Paket Bermasalah" />
 
-            <div className="mt-4 flex gap-2 mb-4">
-                <button
-                    onClick={() => setActiveSection("pending")}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium border ${activeSection === "pending"
-                        ? "bg-violet-600 text-white border-violet-600"
-                        : "bg-white text-gray-600"
-                        }`}
-                >
-                    <AlertCircle className="w-4 h-4" />
-                    Menunggu
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeSection === "pending"
-                        ? "bg-white/20 text-white"
-                        : "bg-gray-100 text-gray-500"
-                        }`}>
-                        {data.pending?.length || 0}
-                    </span>
-                </button>
+            <div className="mt-4 grid grid-cols-3 gap-2 mb-4">
+                {TABS.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeSection === tab.key;
 
-                <button
-                    onClick={() => setActiveSection("archive")}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium border ${activeSection === "archive"
-                        ? "bg-violet-600 text-white border-violet-600"
-                        : "bg-white text-gray-600"
-                        }`}
-                >
-                    <Archive className="w-4 h-4" />
-                    Arsip
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${activeSection === "archive"
-                        ? "bg-white/20 text-white"
-                        : "bg-gray-100 text-gray-500"
-                        }`}>
-                        {data.archive?.length || 0}
-                    </span>
-                </button>
+                    return (
+                        <button
+                            key={tab.key}
+                            onClick={() => setActiveSection(tab.key)}
+                            className={`flex items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-medium sm:text-sm ${isActive
+                                ? "bg-violet-600 text-white border-violet-600"
+                                : "bg-white text-gray-600"
+                                }`}
+                        >
+                            <Icon className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{tab.label}</span>
+                            <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${isActive
+                                ? "bg-white/20 text-white"
+                                : "bg-gray-100 text-gray-500"
+                                }`}>
+                                {data.summary?.[tab.key] ?? data[tab.key]?.length ?? 0}
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="relative mb-5">
@@ -192,7 +216,7 @@ export default function ProblematicConfirmationPage() {
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Cari package..."
+                    placeholder="Cari resi, nama, route, ekspedisi..."
                     className="w-full pl-9 pr-8 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
                 />
 
@@ -239,7 +263,7 @@ export default function ProblematicConfirmationPage() {
                             <StatusBadge confirmed={item.is_confirmed} />
                         </div>
 
-                        {activeSection === "pending" && (
+                        {activeSection === "confirmed" && (
                             <button
                                 type="button"
                                 onClick={(e) => {
