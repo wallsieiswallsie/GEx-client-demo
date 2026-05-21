@@ -7,6 +7,7 @@ import Button from "../../components/common/Button";
 import { LoadingState } from "../../components/common/Loading";
 import ScannerModal from "../../components/modals/ScannerModal";
 import InvoiceAccessDenied from "./InvoiceAccessDenied";
+import { useAuth } from "../../context/useAuth";
 import {
     createInvoice,
     getAvailableInvoicePackages,
@@ -14,6 +15,7 @@ import {
 
 export default function CreateInvoicePage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
     const [form, setForm] = useState({
         customer_name: "",
         customer_whatsapp: "",
@@ -26,6 +28,7 @@ export default function CreateInvoicePage() {
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [scannerOpen, setScannerOpen] = useState(false);
+    const [branchMissing, setBranchMissing] = useState(false);
 
     const subtotal = selectedPackages.reduce((sum, item) => sum + Number(item.fee || 0), 0);
     const totalWeight = selectedPackages.reduce((sum, item) => sum + Number(item.used_weight || 0), 0);
@@ -46,6 +49,11 @@ export default function CreateInvoicePage() {
 
             setPackages(res.items || []);
         } catch (err) {
+            if (err.message === "User belum terhubung dengan cabang aktif.") {
+                setBranchMissing(true);
+                return;
+            }
+
             alert(err.message);
         } finally {
             setLoading(false);
@@ -109,8 +117,19 @@ export default function CreateInvoicePage() {
             <div className="min-h-dvh bg-gray-50 p-4">
                 <div className="mb-5">
                     <SubPageHeader title="Buat Invoice" />
+                    {role !== "general_manager" && user?.branch_code && (
+                        <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                            Cabang {user.branch_code}
+                        </div>
+                    )}
                 </div>
 
+                {branchMissing ? (
+                    <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
+                        Akun Anda belum terhubung dengan cabang gudang. Silakan hubungi General Manager.
+                    </div>
+                ) : (
+                <>
                 <div className="space-y-4">
                     <section className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
                         <input
@@ -263,6 +282,8 @@ export default function CreateInvoicePage() {
                         setSearch(value);
                     }}
                 />
+                </>
+                )}
             </div>
         </InvoiceAccessDenied>
     );

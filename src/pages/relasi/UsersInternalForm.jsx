@@ -7,7 +7,9 @@ import Select from "react-select";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { useAuth } from "../../context/useAuth";
 import { ButtonLoading } from "../../components/common/Loading";
+import { getAllBranches } from "../../services/api/logistik/branchApi";
 
 import {
     createUserInternal,
@@ -36,11 +38,13 @@ const roleOptions = [
 
 export default function UsersInternalForm() {
     const navigate = useNavigate();
+    const { role } = useAuth();
 
     const { id } = useParams();
 
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [branchOptions, setBranchOptions] = useState([]);
 
     const [form, setForm] = useState({
         name: "",
@@ -48,6 +52,7 @@ export default function UsersInternalForm() {
         whatsapp_number: "",
         email: "",
         role: null,
+        branch: null,
         password: "",
         is_origin: false,
     });
@@ -60,10 +65,31 @@ export default function UsersInternalForm() {
     };
 
     useEffect(() => {
+        if (role === "general_manager") {
+            loadBranches();
+        }
+    }, [role]);
+
+    useEffect(() => {
         if (id) {
             loadData();
         }
-    }, [id]);
+    }, [id, branchOptions]);
+
+    const loadBranches = async () => {
+        try {
+            const branches = await getAllBranches();
+
+            setBranchOptions(
+                (branches || []).map((branch) => ({
+                    value: branch.id,
+                    label: `${branch.branch_code} - ${branch.city || branch.address || "Cabang"}`,
+                }))
+            );
+        } catch (err) {
+            alert(err.message);
+        }
+    };
 
     const loadData = async () => {
         try {
@@ -79,6 +105,10 @@ export default function UsersInternalForm() {
                 role:
                     roleOptions.find(
                         (r) => r.value === data.role
+                    ) || null,
+                branch:
+                    branchOptions.find(
+                        (branch) => Number(branch.value) === Number(data.branch_id)
                     ) || null,
                 password: "",
                 is_origin: data.is_origin || false,
@@ -99,7 +129,10 @@ export default function UsersInternalForm() {
             const payload = {
                 ...form,
                 role: form.role?.value,
+                branch_id: form.branch?.value || null,
             };
+
+            delete payload.branch;
 
             if (!payload.password) {
                 delete payload.password;
@@ -138,7 +171,11 @@ export default function UsersInternalForm() {
                 />
             </div>
 
-            {/* FORM */}
+            {role !== "general_manager" ? (
+                <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
+                    Anda tidak memiliki akses pengaturan PIC cabang.
+                </div>
+            ) : (
             <form
                 onSubmit={handleSubmit}
                 className="bg-white p-4 rounded-2xl shadow-sm space-y-4"
@@ -190,6 +227,16 @@ export default function UsersInternalForm() {
                     value={form.role}
                     onChange={(val) =>
                         handleChange("role", val)
+                    }
+                />
+
+                <Select
+                    placeholder="Cabang Gudang"
+                    options={branchOptions}
+                    value={form.branch}
+                    isClearable
+                    onChange={(val) =>
+                        handleChange("branch", val)
                     }
                 />
 
@@ -254,6 +301,7 @@ export default function UsersInternalForm() {
                 </button>
 
             </form>
+            )}
         </div>
     );
 }

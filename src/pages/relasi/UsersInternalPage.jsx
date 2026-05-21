@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { useAuth } from "../../context/useAuth";
 import { LoadingState } from "../../components/common/Loading";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
 import {
@@ -20,6 +21,7 @@ import {
 
 export default function UsersInternalPage() {
     const navigate = useNavigate();
+    const { role } = useAuth();
 
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
@@ -28,6 +30,10 @@ export default function UsersInternalPage() {
     const [openId, setOpenId] = useState(null);
 
     const fetchData = async () => {
+        if (role !== "general_manager") {
+            return;
+        }
+
         try {
             setLoading(true);
 
@@ -43,7 +49,7 @@ export default function UsersInternalPage() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [role]);
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -91,6 +97,13 @@ export default function UsersInternalPage() {
                     title="Users Internal"
                 />
             </div>
+
+            {role !== "general_manager" ? (
+                <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
+                    Anda tidak memiliki akses pengaturan PIC cabang.
+                </div>
+            ) : (
+                <>
 
             {/* SEARCH */}
             <div className="relative mb-5">
@@ -152,6 +165,11 @@ export default function UsersInternalPage() {
                                             <div className="text-xs text-gray-500">
                                                 @{u.username}
                                             </div>
+                                            {u.branch_code && (
+                                                <div className="mt-1 inline-flex max-w-[140px] items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                                    <span className="truncate">{u.branch_code}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -217,6 +235,12 @@ export default function UsersInternalPage() {
                                                 {u.is_origin ? "Origin" : "Destination"}
                                             </div>
 
+                                            {u.branch_code && (
+                                                <div className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-medium">
+                                                    Cabang {u.branch_code}
+                                                </div>
+                                            )}
+
                                         </div>
 
                                     </div>
@@ -235,6 +259,8 @@ export default function UsersInternalPage() {
             >
                 <Plus />
             </FloatingActionButton>
+                </>
+            )}
         </div>
     );
 }

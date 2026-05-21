@@ -85,7 +85,7 @@ export default function CashSettlementsPage({ mode = "list" }) {
 
 function SettlementsListPage() {
   const navigate = useNavigate();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
   const [searchParams] = useSearchParams();
   const approvalOnly = searchParams.get("approval") === "1";
   const [items, setItems] = useState([]);
@@ -96,6 +96,7 @@ function SettlementsListPage() {
   const [branchCode, setBranchCode] = useState("");
   const [staffId, setStaffId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [branchMissing, setBranchMissing] = useState(false);
 
   const isStaff = role === "branch_staff";
   const isGeneralManager = role === "general_manager";
@@ -117,6 +118,11 @@ function SettlementsListPage() {
       setItems(res.items || []);
       setTotal(res.total || 0);
     } catch (err) {
+      if (err.message === "User belum terhubung dengan cabang aktif.") {
+        setBranchMissing(true);
+        return;
+      }
+
       alert(err.message);
     } finally {
       setLoading(false);
@@ -133,7 +139,19 @@ function SettlementsListPage() {
     <div className="min-h-dvh bg-gray-50 p-4">
       <div className="mb-5">
         <SubPageHeader title={title} />
+        {role !== "general_manager" && user?.branch_code && (
+          <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+            Cabang {user.branch_code}
+          </div>
+        )}
       </div>
+
+      {branchMissing ? (
+        <div className="rounded-2xl bg-white p-5 text-center text-sm text-gray-500 shadow-sm">
+          Akun Anda belum terhubung dengan cabang gudang. Silakan hubungi General Manager.
+        </div>
+      ) : (
+      <>
 
       <div className="mb-4 flex gap-2">
         <div className="relative min-w-0 flex-1">
@@ -235,6 +253,8 @@ function SettlementsListPage() {
         >
           <Plus />
         </FloatingActionButton>
+      )}
+      </>
       )}
     </div>
   );

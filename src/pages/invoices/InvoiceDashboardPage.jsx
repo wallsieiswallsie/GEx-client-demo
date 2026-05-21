@@ -5,10 +5,12 @@ import { FileText, Plus, ReceiptText, Wallet } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
 import InvoiceAccessDenied from "./InvoiceAccessDenied";
+import { useAuth } from "../../context/useAuth";
 import { getInvoices } from "../../services/api/invoiceApi";
 
 export default function InvoiceDashboardPage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
     const [summary, setSummary] = useState({
         total: 0,
         paid: 0,
@@ -16,6 +18,7 @@ export default function InvoiceDashboardPage() {
         received: 0,
     });
     const [loading, setLoading] = useState(false);
+    const [branchMissing, setBranchMissing] = useState(false);
 
     useEffect(() => {
         const fetchSummary = async () => {
@@ -35,6 +38,11 @@ export default function InvoiceDashboardPage() {
                     received: received.total || 0,
                 });
             } catch (err) {
+                if (err.message === "User belum terhubung dengan cabang aktif.") {
+                    setBranchMissing(true);
+                    return;
+                }
+
                 alert(err.message);
             } finally {
                 setLoading(false);
@@ -49,9 +57,18 @@ export default function InvoiceDashboardPage() {
             <div className="min-h-dvh bg-gray-50 p-4">
                 <div className="mb-5">
                     <SubPageHeader title="Invoice" />
+                    {role !== "general_manager" && user?.branch_code && (
+                        <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                            Cabang {user.branch_code}
+                        </div>
+                    )}
                 </div>
 
-                {loading ? (
+                {branchMissing ? (
+                    <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
+                        Akun Anda belum terhubung dengan cabang gudang. Silakan hubungi General Manager.
+                    </div>
+                ) : loading ? (
                     <LoadingState variant="section" text="Memuat invoice..." />
                 ) : (
                     <div className="space-y-4">

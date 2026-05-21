@@ -5,6 +5,7 @@ import { Filter, Plus, Search, X } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
 import { LoadingState } from "../../components/common/Loading";
+import { useAuth } from "../../context/useAuth";
 import InvoiceAccessDenied from "./InvoiceAccessDenied";
 import InvoiceStatusBadge from "./InvoiceStatusBadge";
 import FilterInvoiceSheet from "./FilterInvoiceSheet";
@@ -41,6 +42,7 @@ function emptyFilters() {
 
 export default function InvoiceListPage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -49,6 +51,7 @@ export default function InvoiceListPage() {
     const [loading, setLoading] = useState(false);
     const [appliedFilter, setAppliedFilter] = useState(emptyFilters());
     const [filterOpen, setFilterOpen] = useState(false);
+    const [branchMissing, setBranchMissing] = useState(false);
 
     const fetchData = async ({ currentPage = 1, reset = false } = {}) => {
         try {
@@ -71,6 +74,11 @@ export default function InvoiceListPage() {
 
             setTotal(res.total || 0);
         } catch (err) {
+            if (err.message === "User belum terhubung dengan cabang aktif.") {
+                setBranchMissing(true);
+                return;
+            }
+
             alert(err.message);
         } finally {
             setLoading(false);
@@ -154,7 +162,19 @@ export default function InvoiceListPage() {
             <div id={LIST_TOP_ID} className="min-h-dvh bg-gray-50 p-4">
                 <div className="mb-5">
                     <SubPageHeader title="Daftar Invoice" />
+                    {role !== "general_manager" && user?.branch_code && (
+                        <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                            Cabang {user.branch_code}
+                        </div>
+                    )}
                 </div>
+
+                {branchMissing ? (
+                    <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
+                        Akun Anda belum terhubung dengan cabang gudang. Silakan hubungi General Manager.
+                    </div>
+                ) : (
+                    <>
 
                 <div className="mb-4 flex gap-2">
                     <div className="relative min-w-0 flex-1">
@@ -293,6 +313,8 @@ export default function InvoiceListPage() {
                     onApply={applyFilters}
                     onReset={resetFilters}
                 />
+                    </>
+                )}
             </div>
         </InvoiceAccessDenied>
     );
