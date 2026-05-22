@@ -25,7 +25,7 @@ import {
   addCashSettlementItems,
   approveCashSettlement,
   createBranchManagerCashSettlement,
-  createCashSettlement,
+  createStaffCashSettlement,
   getCashSettlementById,
   getCashSettlements,
   getEligibleCashInvoices,
@@ -320,23 +320,103 @@ function SettlementsListPage() {
 function CreateSettlementPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [invoices, setInvoices] = useState([]);
+  const [selected, setSelected] = useState({});
+  const [search, setSearch] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [appliedFilter, setAppliedFilter] = useState(emptyFilters());
+  const [loadingInvoices, setLoadingInvoices] = useState(false);
   const [note, setNote] = useState("");
+  const [proof, setProof] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [processingText, setProcessingText] = useState("");
+  const [formError, setFormError] = useState("");
 
-  const handleNext = async () => {
+  const selectedInvoices = useMemo(() => Object.values(selected), [selected]);
+  const totalAmount = selectedInvoices.reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
+
+  const fetchInvoices = useCallback(async () => {
+    try {
+      setLoadingInvoices(true);
+      const res = await getEligibleCashInvoices({
+        page: 1,
+        limit: 50,
+        search,
+        month: appliedFilter.month,
+        via_code: appliedFilter.via_code,
+        batch_id: appliedFilter.batch_id,
+      });
+      setInvoices(res.items || []);
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setLoadingInvoices(false);
+    }
+  }, [appliedFilter, search]);
+
+  useEffect(() => {
+    const delay = setTimeout(fetchInvoices, 300);
+
+    return () => clearTimeout(delay);
+  }, [fetchInvoices]);
+
+  const toggleInvoice = (item) => {
+    setSelected((prev) => {
+      const next = { ...prev };
+
+      if (next[item.id]) {
+        delete next[item.id];
+      } else {
+        next[item.id] = item;
+      }
+
+      return next;
+    });
+  };
+
+  const handleSubmit = async () => {
+    setFormError("");
+
+    if (selectedInvoices.length === 0) {
+      setFormError("Pilih minimal satu invoice.");
+      return;
+    }
+
+    if (totalAmount <= 0) {
+      setFormError("Total setoran tidak boleh kosong.");
+      return;
+    }
+
+    if (!proof) {
+      setFormError("Bukti setoran wajib diupload.");
+      return;
+    }
+
+    if (!confirm("Ajukan setoran tunai ke branch manager?")) return;
+
     try {
       setSaving(true);
-      const created = await createCashSettlement({ note });
-      navigate(`/cash-settlements/${created.id}/select`);
+      setProcessingText("Mengompres gambar...");
+      const compressedProof = await prepareUploadFile(proof);
+      setProcessingText("Mengupload file...");
+      const formData = new FormData();
+      formData.append("invoice_ids", JSON.stringify(selectedInvoices.map((item) => item.id)));
+      formData.append("note", note || "");
+      formData.append("proof", compressedProof, compressedProof.name || proof.name);
+      const created = await createStaffCashSettlement(formData);
+
+      alert("Setoran tunai berhasil diajukan");
+      navigate(`/cash-settlements/${created.id}`);
     } catch (err) {
-      alert(err.message);
+      setFormError(err.message || "Gagal mengupload file.");
     } finally {
       setSaving(false);
+      setProcessingText("");
     }
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50 p-4">
+    <div className="min-h-dvh bg-gray-50 p-4 pb-36">
       <div className="mb-5">
         <SubPageHeader title="Buat Setoran Baru" />
       </div>
@@ -349,6 +429,75 @@ function CreateSettlementPage() {
         <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-3 text-xs font-medium text-amber-700">
           Setoran hanya untuk invoice dengan metode pembayaran TUNAI (CASH).
         </div>
+
+        <div className="mt-4 flex gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari invoice/customer..."
+              className="w-full rounded-xl border bg-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setFilterOpen(true)}
+            className="rounded-xl border bg-white px-3 py-2.5 text-gray-700"
+            aria-label="Filter invoice"
+          >
+            <Filter className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {invoices.map((item) => {
+            const checked = Boolean(selected[item.id]);
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => toggleInvoice(item)}
+                className={`w-full rounded-2xl border bg-white p-3 text-left ${
+                  checked ? "border-violet-600 ring-2 ring-violet-100" : "border-gray-100"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${
+                    checked ? "border-violet-600 bg-violet-600 text-white" : "border-gray-300"
+                  }`}>
+                    {checked && <Check className="h-4 w-4" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-bold text-gray-900">{item.invoice_number}</div>
+                    <div className="mt-1 truncate text-xs text-gray-500">{item.customer_name}</div>
+                    <div className="mt-2 text-sm font-semibold text-violet-700">{formatMoney(item.total_amount)}</div>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {!loadingInvoices && invoices.length === 0 && (
+          <div className="mt-4 rounded-xl border border-dashed p-4 text-center text-sm text-gray-400">
+            Tidak ada invoice tunai eligible
+          </div>
+        )}
+
+        {loadingInvoices && <LoadingState variant="section" text="Memuat invoice tunai..." />}
+
+        <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white px-3 py-3 text-sm font-semibold text-gray-700">
+          <Upload className="h-4 w-4" />
+          {proof ? proof.name : "Upload bukti setoran"}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setProof(e.target.files?.[0] || null)}
+            className="hidden"
+          />
+        </label>
+
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -356,13 +505,49 @@ function CreateSettlementPage() {
           rows={4}
           className="mt-4 w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
         />
+
+        {formError && (
+          <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700">
+            {formError}
+          </div>
+        )}
+
+        {processingText && (
+          <div className="mt-3 rounded-xl border border-violet-100 bg-violet-50 p-3 text-xs font-semibold text-violet-700">
+            {processingText}
+          </div>
+        )}
       </section>
 
       <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
-        <Button onClick={handleNext} loading={saving} loadingText="Membuat..." fullWidth>
-          Lanjut Pilih Invoice
+        <div className="mb-3 flex items-center justify-between text-sm">
+          <span className="text-gray-500">{selectedInvoices.length} invoice dipilih</span>
+          <span className="font-bold text-gray-900">{formatMoney(totalAmount)}</span>
+        </div>
+        <Button
+          onClick={handleSubmit}
+          disabled={saving || selectedInvoices.length === 0 || totalAmount <= 0 || !proof}
+          loading={saving}
+          loadingText={processingText || "Mengajukan..."}
+          fullWidth
+        >
+          Ajukan Setoran
         </Button>
       </div>
+
+      <FilterInvoiceSheet
+        open={filterOpen}
+        value={appliedFilter}
+        onClose={() => setFilterOpen(false)}
+        onApply={(next) => {
+          setAppliedFilter(next);
+          setFilterOpen(false);
+        }}
+        onReset={() => {
+          setAppliedFilter(emptyFilters());
+          setFilterOpen(false);
+        }}
+      />
     </div>
   );
 }
@@ -452,6 +637,11 @@ function CreateBranchManagerSettlementPage() {
       return;
     }
 
+    if (totalStaffSettlement <= 0) {
+      setFormError("Total setoran tidak boleh kosong.");
+      return;
+    }
+
     if (!proof) {
       setFormError("Bukti transfer wajib diupload.");
       return;
@@ -476,6 +666,11 @@ function CreateBranchManagerSettlementPage() {
 
     if (totalExpenses > totalStaffSettlement) {
       setFormError("Total pengeluaran melebihi total setoran.");
+      return;
+    }
+
+    if (finalTransferAmount <= 0) {
+      setFormError("Nominal final transfer harus lebih dari 0.");
       return;
     }
 
@@ -660,6 +855,12 @@ function CreateBranchManagerSettlementPage() {
           </div>
         )}
 
+        {selectedSettlements.length > 0 && finalTransferAmount <= 0 && (
+          <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700">
+            Nominal final transfer harus lebih dari 0.
+          </div>
+        )}
+
         {formError && (
           <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700">
             {formError}
@@ -695,7 +896,7 @@ function CreateBranchManagerSettlementPage() {
       <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
         <Button
           onClick={handleSubmit}
-          disabled={saving || selectedSettlements.length === 0 || totalExpenses > totalStaffSettlement || !proof}
+          disabled={saving || selectedSettlements.length === 0 || totalStaffSettlement <= 0 || finalTransferAmount <= 0 || !proof}
           loading={saving}
           loadingText={processingText || "Mengajukan..."}
           fullWidth

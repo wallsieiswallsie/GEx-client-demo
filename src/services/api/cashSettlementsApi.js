@@ -95,6 +95,15 @@ export const createCashSettlement = async (payload) => {
   return res.data;
 };
 
+export const createStaffCashSettlement = async (formData) => {
+  const res = await apiFetch("/cash-settlements/staff", {
+    method: "POST",
+    body: formData,
+  });
+
+  return res.data;
+};
+
 export const createBranchManagerCashSettlement = async (formData) => {
   const res = await apiFetch("/cash-settlements/branch-manager", {
     method: "POST",
