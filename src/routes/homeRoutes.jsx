@@ -64,6 +64,10 @@ export const homeRoutes = [
         element: <CashSettlementsPage mode="new" />
       },
       {
+        path: "/cash-settlements/branch-manager/new",
+        element: <CashSettlementsPage mode="branch-manager-new" />
+      },
+      {
         path: "/cash-settlements/:id/select",
         element: <CashSettlementsPage mode="select" />
       },

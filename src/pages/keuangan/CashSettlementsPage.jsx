@@ -23,6 +23,7 @@ import { canAccessFinance } from "../../utils/financeAccess";
 import {
   addCashSettlementItems,
   approveCashSettlement,
+  createBranchManagerCashSettlement,
   createCashSettlement,
   getCashSettlementById,
   getCashSettlements,
@@ -77,6 +78,7 @@ export default function CashSettlementsPage({ mode = "list" }) {
   }
 
   if (mode === "new") return <CreateSettlementPage />;
+  if (mode === "branch-manager-new") return <CreateBranchManagerSettlementPage />;
   if (mode === "select") return <SelectInvoicesPage />;
   if (mode === "detail") return <SettlementDetailPage />;
 
@@ -88,6 +90,8 @@ function SettlementsListPage() {
   const { user, role } = useAuth();
   const [searchParams] = useSearchParams();
   const approvalOnly = searchParams.get("approval") === "1";
+  const sourceType = searchParams.get("source_type") || "";
+  const mine = searchParams.get("mine") === "1";
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [status, setStatus] = useState(approvalOnly ? "submitted" : "");
@@ -113,6 +117,8 @@ function SettlementsListPage() {
         month,
         branch_code: branchCode.trim(),
         staff_id: staffId.trim(),
+        source_type: sourceType,
+        mine,
         approval_only: approvalOnly,
       });
       setItems(res.items || []);
@@ -127,7 +133,7 @@ function SettlementsListPage() {
     } finally {
       setLoading(false);
     }
-  }, [approvalOnly, branchCode, month, search, staffId, status]);
+  }, [approvalOnly, branchCode, mine, month, search, sourceType, staffId, status]);
 
   useEffect(() => {
     const delay = setTimeout(fetchData, 300);
@@ -229,10 +235,13 @@ function SettlementsListPage() {
               <CashSettlementStatusBadge value={item.status} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-              <InfoBox label="Invoice" value={item.total_invoice || 0} />
+              <InfoBox label={item.source_type === "branch_manager" ? "Jenis" : "Invoice"} value={item.source_type === "branch_manager" ? "Setoran BM" : (item.total_invoice || 0)} />
               <InfoBox label="Total" value={formatMoney(item.total_amount)} />
             </div>
             <div className="mt-3 text-xs text-gray-500">
+              <span className="mr-2 rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-600">
+                {item.source_type === "branch_manager" ? "Setoran Branch Manager" : "Setoran Staff"}
+              </span>
               Oleh {item.submitted_by_name || item.created_by_name || "-"}
             </div>
           </button>
@@ -304,6 +313,104 @@ function CreateSettlementPage() {
       <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
         <Button onClick={handleNext} loading={saving} loadingText="Membuat..." fullWidth>
           Lanjut Pilih Invoice
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function CreateBranchManagerSettlementPage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [proof, setProof] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const normalizedAmount = Number(String(amount).replace(/\D/g, ""));
+
+  const handleSubmit = async () => {
+    if (!normalizedAmount || normalizedAmount <= 0) {
+      alert("Nominal setoran wajib lebih dari 0");
+      return;
+    }
+
+    if (!proof) {
+      alert("Bukti transfer wajib diupload");
+      return;
+    }
+
+    if (!confirm("Ajukan setoran ke general manager?")) return;
+
+    try {
+      setSaving(true);
+      const formData = new FormData();
+      formData.append("total_amount", String(normalizedAmount));
+      formData.append("note", note || "");
+      formData.append("proof", proof);
+      const created = await createBranchManagerCashSettlement(formData);
+
+      alert("Setoran branch manager berhasil diajukan");
+      navigate(`/cash-settlements/${created.id}`);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="min-h-dvh bg-gray-50 p-4 pb-32">
+      <div className="mb-5">
+        <SubPageHeader title="Ajukan Setoran ke GM" />
+      </div>
+
+      <section className="rounded-2xl bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <InfoBox label="Branch" value={user?.branch_code || "Otomatis dari akun"} />
+          <InfoBox label="Tanggal" value={formatDate(new Date().toISOString())} />
+        </div>
+
+        <label className="mt-4 block">
+          <span className="mb-1 block text-xs font-semibold text-gray-500">Nominal Setoran</span>
+          <input
+            inputMode="numeric"
+            value={amount ? formatMoney(normalizedAmount) : ""}
+            onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
+            placeholder="Rp 0"
+            className="w-full rounded-xl border bg-white px-3 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-violet-200"
+          />
+        </label>
+
+        <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white px-3 py-3 text-sm font-semibold text-gray-700">
+          <Upload className="h-4 w-4" />
+          {proof ? proof.name : "Upload bukti transfer"}
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            onChange={(e) => setProof(e.target.files?.[0] || null)}
+            className="hidden"
+          />
+        </label>
+
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Catatan setoran opsional"
+          rows={4}
+          className="mt-4 w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+        />
+      </section>
+
+      <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
+        <Button
+          onClick={handleSubmit}
+          disabled={saving || !normalizedAmount || !proof}
+          loading={saving}
+          loadingText="Mengajukan..."
+          fullWidth
+        >
+          Ajukan Setoran
         </Button>
       </div>
     </div>
@@ -510,8 +617,11 @@ function SettlementDetailPage() {
   const isDraft = data?.status === "draft";
   const isRejected = data?.status === "rejected";
   const isSubmitted = data?.status === "submitted";
-  const canStaffEdit = role === "branch_staff" && (isDraft || isRejected);
-  const canManagerReview = role === "branch_manager" && isSubmitted;
+  const sourceType = data?.source_type || "branch_staff";
+  const isBranchManagerSettlement = sourceType === "branch_manager";
+  const canStaffEdit = role === "branch_staff" && !isBranchManagerSettlement && (isDraft || isRejected);
+  const canManagerReview = role === "branch_manager" && !isBranchManagerSettlement && isSubmitted;
+  const canGeneralManagerReview = role === "general_manager" && isBranchManagerSettlement && isSubmitted;
 
   const handleRemove = async (itemId) => {
     if (!confirm("Hapus invoice dari draft setoran?")) return;
@@ -548,14 +658,18 @@ function SettlementDetailPage() {
   };
 
   const handleApprove = async () => {
-    if (!confirm("Setujui setoran tunai ini? Invoice terkait akan dikunci sebagai sudah disetor.")) return;
+    const message = isBranchManagerSettlement
+      ? "Setujui setoran branch manager ini?"
+      : "Setujui setoran tunai ini? Invoice terkait akan dikunci sebagai sudah disetor.";
+
+    if (!confirm(message)) return;
 
     try {
       setSaving(true);
       const res = await approveCashSettlement(id);
       setData(res);
       alert("Setoran tunai disetujui");
-      navigate("/cash-settlements?approval=1");
+      navigate(isBranchManagerSettlement ? "/cash-settlements" : "/cash-settlements?approval=1");
     } catch (err) {
       alert(err.message);
     } finally {
@@ -575,7 +689,7 @@ function SettlementDetailPage() {
       setData(res);
       setRejectOpen(false);
       alert("Setoran tunai ditolak");
-      navigate("/cash-settlements?approval=1");
+      navigate(isBranchManagerSettlement ? "/cash-settlements" : "/cash-settlements?approval=1");
     } catch (err) {
       alert(err.message);
     } finally {
@@ -598,17 +712,21 @@ function SettlementDetailPage() {
               <div className="min-w-0">
                 <h1 className="truncate text-sm font-bold text-gray-900">{data.settlement_code}</h1>
                 <p className="mt-1 text-xs text-gray-500">{data.branch_code}</p>
+                <span className="mt-2 inline-flex rounded-lg bg-gray-100 px-2 py-1 text-[11px] font-semibold text-gray-600">
+                  {isBranchManagerSettlement ? "Setoran Branch Manager" : "Setoran Staff"}
+                </span>
               </div>
               <CashSettlementStatusBadge value={data.status} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              <InfoBox label="Invoice" value={data.total_invoice || 0} />
-              <InfoBox label="Total Sistem" value={formatMoney(data.total_amount)} />
+              <InfoBox label={isBranchManagerSettlement ? "Jenis" : "Invoice"} value={isBranchManagerSettlement ? "Cabang ke GM" : (data.total_invoice || 0)} />
+              <InfoBox label={isBranchManagerSettlement ? "Nominal" : "Total Sistem"} value={formatMoney(data.total_amount)} />
               <InfoBox label="Dibuat" value={formatDate(data.created_at)} />
               <InfoBox label="Diajukan" value={formatDate(data.submitted_at)} />
             </div>
           </section>
 
+          {!isBranchManagerSettlement && (
           <section className="rounded-2xl bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold text-gray-900">Invoice Tunai</h2>
@@ -649,12 +767,20 @@ function SettlementDetailPage() {
               </div>
             )}
           </section>
+          )}
 
           <section className="rounded-2xl bg-white p-4 shadow-sm">
             <h2 className="mb-3 text-sm font-semibold text-gray-900">Bukti dan Catatan</h2>
             {data.proof_url ? (
               <button
-                onClick={() => setPreviewImage(data.proof_url)}
+                onClick={() => {
+                  if (String(data.proof_url).toLowerCase().includes(".pdf")) {
+                    window.open(data.proof_url, "_blank", "noopener,noreferrer");
+                    return;
+                  }
+
+                  setPreviewImage(data.proof_url);
+                }}
                 className="mb-3 flex w-full items-center gap-3 rounded-xl border bg-gray-50 p-3 text-left"
               >
                 <Image className="h-5 w-5 text-violet-600" />
@@ -692,7 +818,9 @@ function SettlementDetailPage() {
             {data.rejected_reason && (
               <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs text-red-700">
                 {data.rejected_reason}
-                <div className="mt-1 font-semibold">Ubah invoice untuk mengembalikan setoran menjadi draft.</div>
+                {!isBranchManagerSettlement && (
+                  <div className="mt-1 font-semibold">Ubah invoice untuk mengembalikan setoran menjadi draft.</div>
+                )}
               </div>
             )}
           </section>
@@ -728,7 +856,7 @@ function SettlementDetailPage() {
         </div>
       )}
 
-      {canManagerReview && (
+      {(canManagerReview || canGeneralManagerReview) && (
         <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
           <div className="grid grid-cols-2 gap-2">
             <Button variant="secondary" onClick={() => setRejectOpen(true)} disabled={saving}>

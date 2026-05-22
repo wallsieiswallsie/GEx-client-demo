@@ -8,6 +8,8 @@ export const getCashSettlements = async ({
   month = "",
   branch_code = "",
   staff_id = "",
+  source_type = "",
+  mine = false,
   approval_only = false,
 } = {}) => {
   const params = new URLSearchParams({
@@ -18,6 +20,8 @@ export const getCashSettlements = async ({
     month,
     branch_code,
     staff_id,
+    source_type,
+    mine: mine ? "true" : "",
     approval_only: approval_only ? "true" : "",
   });
 
@@ -66,6 +70,15 @@ export const createCashSettlement = async (payload) => {
   const res = await apiFetch("/cash-settlements", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+
+  return res.data;
+};
+
+export const createBranchManagerCashSettlement = async (formData) => {
+  const res = await apiFetch("/cash-settlements/branch-manager", {
+    method: "POST",
+    body: formData,
   });
 
   return res.data;
