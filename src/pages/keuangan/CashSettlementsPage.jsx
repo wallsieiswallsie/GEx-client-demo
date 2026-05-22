@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 import {
   Check,
   CheckCircle2,
@@ -73,6 +74,48 @@ function getBatchText(batches = []) {
 
 function isManagerSettlementType(value) {
   return value === "branch_manager_to_general_manager" || value === "branch_manager";
+}
+
+const MAX_IMAGE_UPLOAD_BYTES = 2 * 1024 * 1024;
+const MAX_PDF_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+async function compressIfImage(file) {
+  if (!file || !file.type?.startsWith("image/")) {
+    return file;
+  }
+
+  return imageCompression(file, {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1600,
+    useWebWorker: true,
+  });
+}
+
+async function prepareUploadFile(file, { allowPdf = false } = {}) {
+  if (!file) return null;
+
+  const isImage = file.type?.startsWith("image/");
+  const isPdf = file.type === "application/pdf";
+
+  if (!isImage && !(allowPdf && isPdf)) {
+    throw new Error(allowPdf ? "File wajib berupa image atau PDF." : "File wajib berupa image.");
+  }
+
+  if (isPdf) {
+    if (file.size > MAX_PDF_UPLOAD_BYTES) {
+      throw new Error("Ukuran file terlalu besar.");
+    }
+
+    return file;
+  }
+
+  const compressed = await compressIfImage(file);
+
+  if (compressed.size > MAX_IMAGE_UPLOAD_BYTES) {
+    throw new Error("Ukuran file terlalu besar.");
+  }
+
+  return compressed;
 }
 
 export default function CashSettlementsPage({ mode = "list" }) {
@@ -336,6 +379,8 @@ function CreateBranchManagerSettlementPage() {
   const [note, setNote] = useState("");
   const [proof, setProof] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [processingText, setProcessingText] = useState("");
+  const [formError, setFormError] = useState("");
 
   const selectedSettlements = useMemo(() => Object.values(selected), [selected]);
   const totalStaffSettlement = selectedSettlements.reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
@@ -400,35 +445,37 @@ function CreateBranchManagerSettlementPage() {
   };
 
   const handleSubmit = async () => {
+    setFormError("");
+
     if (selectedSettlements.length === 0) {
-      alert("Minimal pilih satu setoran staff");
+      setFormError("Minimal pilih satu setoran staff.");
       return;
     }
 
     if (!proof) {
-      alert("Bukti transfer wajib diupload");
+      setFormError("Bukti transfer wajib diupload.");
       return;
     }
 
     for (const expense of expenses) {
       if (!expense.description.trim()) {
-        alert("Keterangan pengeluaran wajib diisi");
+        setFormError("Keterangan pengeluaran wajib diisi.");
         return;
       }
 
       if (!Number(expense.amount || 0) || Number(expense.amount || 0) <= 0) {
-        alert("Nominal pengeluaran wajib lebih dari 0");
+        setFormError("Nominal pengeluaran wajib lebih dari 0.");
         return;
       }
 
       if (!expense.proof) {
-        alert("Foto nota pengeluaran wajib diupload");
+        setFormError("Foto nota pengeluaran wajib diupload.");
         return;
       }
     }
 
     if (totalExpenses > totalStaffSettlement) {
-      alert("Total pengeluaran melebihi total setoran.");
+      setFormError("Total pengeluaran melebihi total setoran.");
       return;
     }
 
@@ -436,6 +483,15 @@ function CreateBranchManagerSettlementPage() {
 
     try {
       setSaving(true);
+      setProcessingText("Mengompres gambar...");
+      const compressedProof = await prepareUploadFile(proof, { allowPdf: true });
+      const compressedExpenses = [];
+
+      for (const expense of expenses) {
+        compressedExpenses.push(await prepareUploadFile(expense.proof));
+      }
+
+      setProcessingText("Mengupload file...");
       const formData = new FormData();
       formData.append("staff_settlement_ids", JSON.stringify(selectedSettlements.map((item) => item.id)));
       formData.append("expenses", JSON.stringify(expenses.map((expense, index) => ({
@@ -444,18 +500,20 @@ function CreateBranchManagerSettlementPage() {
         proof_field: `expense_proof_${index}`,
       }))));
       formData.append("note", note || "");
-      formData.append("proof", proof);
+      formData.append("proof", compressedProof, compressedProof.name || proof.name);
       expenses.forEach((expense, index) => {
-        formData.append(`expense_proof_${index}`, expense.proof);
+        const file = compressedExpenses[index];
+        formData.append(`expense_proof_${index}`, file, file.name || expense.proof.name);
       });
       const created = await createBranchManagerCashSettlement(formData);
 
       alert("Setoran berhasil diteruskan ke general manager");
       navigate(`/cash-settlements/${created.id}`);
     } catch (err) {
-      alert(err.message);
+      setFormError(err.message || "Gagal mengupload file.");
     } finally {
       setSaving(false);
+      setProcessingText("");
     }
   };
 
@@ -602,6 +660,18 @@ function CreateBranchManagerSettlementPage() {
           </div>
         )}
 
+        {formError && (
+          <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700">
+            {formError}
+          </div>
+        )}
+
+        {processingText && (
+          <div className="mt-3 rounded-xl border border-violet-100 bg-violet-50 p-3 text-xs font-semibold text-violet-700">
+            {processingText}
+          </div>
+        )}
+
         <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white px-3 py-3 text-sm font-semibold text-gray-700">
           <Upload className="h-4 w-4" />
           {proof ? proof.name : "Upload bukti transfer"}
@@ -627,7 +697,7 @@ function CreateBranchManagerSettlementPage() {
           onClick={handleSubmit}
           disabled={saving || selectedSettlements.length === 0 || totalExpenses > totalStaffSettlement || !proof}
           loading={saving}
-          loadingText="Mengajukan..."
+          loadingText={processingText || "Mengajukan..."}
           fullWidth
         >
           Teruskan Setoran
