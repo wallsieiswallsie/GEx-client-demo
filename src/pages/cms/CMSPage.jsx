@@ -122,6 +122,11 @@ const configs = {
   },
 };
 
+const canAccessSection = (role, section) => {
+  if (role === "general_manager") return true;
+  return role === "branch_manager" && section === "ship-schedules";
+};
+
 const toDateInput = (value) => (value ? String(value).slice(0, 10) : "");
 
 function Field({ field, form, setForm }) {
@@ -264,6 +269,10 @@ export default function CMSPage() {
   const [saving, setSaving] = useState(false);
 
   const orderedItems = useMemo(() => items || [], [items]);
+  const accessibleSections = useMemo(
+    () => sections.filter((item) => canAccessSection(role, item.key)),
+    [role]
+  );
 
   useEffect(() => {
     if (!config) return;
@@ -272,16 +281,24 @@ export default function CMSPage() {
     fetchData();
   }, [activeSection]);
 
-  if (role !== "general_manager") {
+  if (!["general_manager", "branch_manager"].includes(role)) {
     return <Navigate to="/home" replace />;
   }
 
+  if (section && !canAccessSection(role, section)) {
+    return <Navigate to={role === "branch_manager" ? "/cms/ship-schedules" : "/cms"} replace />;
+  }
+
   if (!section) {
+    if (role === "branch_manager") {
+      return <Navigate to="/cms/ship-schedules" replace />;
+    }
+
     return (
       <div className="min-h-dvh bg-gray-50 p-4">
         <SubPageHeader title="Konten Customer" subtitle="Kelola konten yang tampil di aplikasi customer" />
         <div className="grid grid-cols-2 gap-3">
-          {sections.map((item) => (
+          {accessibleSections.map((item) => (
             <button
               key={item.key}
               onClick={() => navigate(`/cms/${item.key}`)}

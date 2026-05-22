@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
+    Database,
     Truck,
     PackageCheck,
     AlertCircle,
@@ -258,6 +259,8 @@ const FEATURE_GROUPS = [
     {
         items: [
             { label: "Operasional", path: "/operasional", icon: PackageCheck, color: "bg-violet-100 text-violet-600" },
+            { label: "Database", path: "/input", icon: Database, color: "bg-blue-100 text-blue-600" },
+            { label: "Jadwal Kapal", path: "/cms/ship-schedules", icon: Ship, color: "bg-indigo-100 text-indigo-600" },
         ]
     }
 ];
