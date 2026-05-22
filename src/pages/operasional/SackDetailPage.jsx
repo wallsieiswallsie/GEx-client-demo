@@ -23,6 +23,7 @@ import {
     removePackageFromSack,
     sealSack,
 } from "../../services/api/operasional/batchSacksApi";
+import { useAuth } from "../../context/useAuth";
 
 const statusClass = {
     OPEN: "bg-emerald-50 text-emerald-700 border-emerald-100",
@@ -39,6 +40,7 @@ const getViaText = (via) => viaLabel[via] || via || "-";
 
 export default function SackDetailPage() {
     const { sackId } = useParams();
+    const { user, role } = useAuth();
 
     const [sack, setSack] = useState(null);
     const [receipt, setReceipt] = useState("");
@@ -49,6 +51,12 @@ export default function SackDetailPage() {
     const [viaWarning, setViaWarning] = useState(null);
 
     const locked = sack?.status === "SEALED";
+
+    const canManageSackItems =
+        role === "general_manager" ||
+        (role === "branch_staff" && user?.is_origin === true);
+
+    const canCloseOrSealSack = role === "general_manager";
 
     const fetchData = async () => {
         try {
@@ -72,6 +80,7 @@ export default function SackDetailPage() {
         value = receipt,
         force_move = false,
     } = {}) => {
+        if (!canManageSackItems) return;
         if (!value.trim()) return;
 
         try {
@@ -109,6 +118,7 @@ export default function SackDetailPage() {
     };
 
     const handleRemovePackage = async (packageReceipt) => {
+        if (!canManageSackItems) return;
         if (!confirm("Hapus paket dari karung ini?")) return;
 
         try {
@@ -124,6 +134,8 @@ export default function SackDetailPage() {
     };
 
     const handleCloseSack = async () => {
+        if (!canCloseOrSealSack) return;
+
         try {
             await closeSack(sackId);
             fetchData();
@@ -133,6 +145,8 @@ export default function SackDetailPage() {
     };
 
     const handleSealSack = async () => {
+        if (!canCloseOrSealSack) return;
+
         try {
             await sealSack(sackId);
             fetchData();
@@ -202,56 +216,60 @@ export default function SackDetailPage() {
                         </div>
 
                         <div className="bg-white rounded-2xl shadow-sm p-4">
-                            <div className="flex gap-2 mb-3">
-                                <input
-                                    value={receipt}
-                                    disabled={locked}
-                                    onChange={(e) => setReceipt(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            handleAddPackage();
-                                        }
-                                    }}
-                                    placeholder="Input resi"
-                                    className="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 disabled:bg-gray-100"
-                                />
+                            {canManageSackItems && (
+                                <div className="flex gap-2 mb-3">
+                                    <input
+                                        value={receipt}
+                                        disabled={locked}
+                                        onChange={(e) => setReceipt(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                handleAddPackage();
+                                            }
+                                        }}
+                                        placeholder="Input resi"
+                                        className="flex-1 border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 disabled:bg-gray-100"
+                                    />
 
-                                <button
-                                    disabled={locked}
-                                    onClick={() => setScannerOpen(true)}
-                                    className="w-11 h-10 rounded-xl bg-gray-100 flex items-center justify-center disabled:opacity-50"
-                                >
-                                    <ScanLine className="w-4 h-4 text-gray-600" />
-                                </button>
+                                    <button
+                                        disabled={locked}
+                                        onClick={() => setScannerOpen(true)}
+                                        className="w-11 h-10 rounded-xl bg-gray-100 flex items-center justify-center disabled:opacity-50"
+                                    >
+                                        <ScanLine className="w-4 h-4 text-gray-600" />
+                                    </button>
 
-                                <button
-                                    disabled={locked || actionLoading}
-                                    onClick={() => handleAddPackage()}
-                                    className="w-11 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center disabled:opacity-50"
-                                >
-                                    {actionLoading ? <ButtonLoading text="" /> : <Plus className="w-4 h-4" />}
-                                </button>
-                            </div>
+                                    <button
+                                        disabled={locked || actionLoading}
+                                        onClick={() => handleAddPackage()}
+                                        className="w-11 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center disabled:opacity-50"
+                                    >
+                                        {actionLoading ? <ButtonLoading text="" /> : <Plus className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            )}
 
-                            <div className="flex gap-2">
-                                <button
-                                    disabled={sack.status !== "OPEN"}
-                                    onClick={handleCloseSack}
-                                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-amber-500 text-white text-xs font-medium disabled:opacity-50"
-                                >
-                                    <Check className="w-3 h-3" />
-                                    Close
-                                </button>
+                            {canCloseOrSealSack && (
+                                <div className="flex gap-2">
+                                    <button
+                                        disabled={sack.status !== "OPEN"}
+                                        onClick={handleCloseSack}
+                                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-amber-500 text-white text-xs font-medium disabled:opacity-50"
+                                    >
+                                        <Check className="w-3 h-3" />
+                                        Close
+                                    </button>
 
-                                <button
-                                    disabled={sack.status !== "CLOSE"}
-                                    onClick={handleSealSack}
-                                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-gray-800 text-white text-xs font-medium disabled:opacity-50"
-                                >
-                                    <Lock className="w-3 h-3" />
-                                    Seal
-                                </button>
-                            </div>
+                                    <button
+                                        disabled={sack.status !== "CLOSE"}
+                                        onClick={handleSealSack}
+                                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-gray-800 text-white text-xs font-medium disabled:opacity-50"
+                                    >
+                                        <Lock className="w-3 h-3" />
+                                        Seal
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -271,13 +289,15 @@ export default function SackDetailPage() {
                                         </div>
                                     </div>
 
-                                    <button
-                                        disabled={locked}
-                                        onClick={() => handleRemovePackage(item.receipt)}
-                                        className="p-2 rounded-lg hover:bg-red-50 disabled:opacity-40"
-                                    >
-                                        <Trash2 className="w-4 h-4 text-red-500" />
-                                    </button>
+                                    {canManageSackItems && (
+                                        <button
+                                            disabled={locked}
+                                            onClick={() => handleRemovePackage(item.receipt)}
+                                            className="p-2 rounded-lg hover:bg-red-50 disabled:opacity-40"
+                                        >
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                        </button>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -292,7 +312,7 @@ export default function SackDetailPage() {
                 )
             )}
 
-            {confirmation && (
+            {confirmation && canManageSackItems && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
                     <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-lg">
                         <div className="flex justify-between items-center mb-3">

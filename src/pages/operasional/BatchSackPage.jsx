@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 
 import {
     Archive,
@@ -29,6 +30,7 @@ const statusClass = {
 
 export default function BatchSackPage() {
     const navigate = useNavigate();
+    const { authUser } = useAuth();
 
     const [batchType, setBatchType] = useState("SHIP");
     const [batches, setBatches] = useState([]);
@@ -253,13 +255,15 @@ export default function BatchSackPage() {
                 </div>
             )}
 
-            <FloatingActionButton
-                onClick={openCreate}
-                ariaLabel="Tambah batch"
-                title="Tambah batch"
-            >
-                <Plus />
-            </FloatingActionButton>
+            {authUser?.role === "general_manager" && (
+                <FloatingActionButton
+                    onClick={openCreate}
+                    ariaLabel="Tambah batch"
+                    title="Tambah batch"
+                >
+                    <Plus />
+                </FloatingActionButton>
+            )}
 
             {isOpen && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">

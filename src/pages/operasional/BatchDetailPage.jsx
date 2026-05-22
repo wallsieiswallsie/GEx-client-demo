@@ -209,13 +209,18 @@ export default function BatchDetailPage() {
                                 Daftar Karung
                             </h2>
 
-                            <button
-                                onClick={() => setIsOpen(true)}
-                                className="flex items-center gap-1.5 bg-violet-600 text-white px-3 py-2 rounded-xl text-xs font-medium"
-                            >
-                                <Plus className="w-3 h-3" />
-                                Karung
-                            </button>
+                            {(
+                                role === "general_manager" ||
+                                (role === "branch_staff" && user?.is_origin === true)
+                            ) && (
+                                <button
+                                    onClick={() => setIsOpen(true)}
+                                    className="flex items-center gap-1.5 bg-violet-600 text-white px-3 py-2 rounded-xl text-xs font-medium"
+                                >
+                                    <Plus className="w-3 h-3" />
+                                    Karung
+                                </button>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">

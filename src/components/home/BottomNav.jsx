@@ -8,7 +8,6 @@ import { canAccessFinance } from '../../utils/financeAccess';
 const NAV_ITEMS = [
   { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home', roles: ['all'] },
   { id: 'database', icon: Database, label: 'DATABASE', path: '/input', roles: ['general_manager', 'branch_staff', 'branch_manager'] },
-  { id: 'jadwal-kapal', icon: Ship, label: 'JADWAL', path: '/cms/ship-schedules', roles: ['branch_manager'] },
   { id: 'invoice', icon: FileText, label: 'INVOICE', path: '/invoice', roles: ['invoice'] },
   { id: 'keuangan', icon: Wallet, label: 'KEUANGAN', path: '/keuangan', roles: ['finance'] },
   { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },
