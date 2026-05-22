@@ -14,7 +14,7 @@ import { useHomeSummary } from "../../hooks/useHomeSummary";
 /* =========================
    COMPONENT KECIL
 ========================= */
-function InsightItem({ icon: Icon, label, value }) {
+function InsightItem({ icon: label, value }) {
     return (
         <div className="bg-gray-50 rounded-xl p-3 flex gap-2 items-center">
             <Icon className="w-4 h-4 text-violet-600" />
@@ -125,9 +125,6 @@ export default function GeneralManagerHome() {
                                             <p className="text-xs text-sky-600 font-medium">Kapal</p>
                                             <p className="font-bold text-gray-800 mt-1">
                                                 KM. {(item.ship_name || "-").toUpperCase()}
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                Vendor: {item.vendor || "-"}
                                             </p>
                                         </div>
 
