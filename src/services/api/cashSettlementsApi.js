@@ -58,6 +58,26 @@ export const getEligibleCashInvoices = async ({
   return res.data;
 };
 
+export const getEligibleStaffSettlementsForManager = async ({
+  page = 1,
+  limit = 20,
+  search = "",
+  month = "",
+} = {}) => {
+  const params = new URLSearchParams({
+    page,
+    limit,
+    search,
+    month,
+  });
+
+  const res = await apiFetch(`/cash-settlements/branch-manager/eligible-staff-settlements?${params.toString()}`, {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
 export const getCashSettlementById = async (id) => {
   const res = await apiFetch(`/cash-settlements/${id}`, {
     method: "GET",

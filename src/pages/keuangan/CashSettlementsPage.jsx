@@ -28,6 +28,7 @@ import {
   getCashSettlementById,
   getCashSettlements,
   getEligibleCashInvoices,
+  getEligibleStaffSettlementsForManager,
   rejectCashSettlement,
   removeCashSettlementItem,
   submitCashSettlement,
@@ -68,6 +69,10 @@ function getBatchText(batches = []) {
   const suffix = batches.length > 1 ? ` +${batches.length - 1} batch lain` : "";
 
   return `${first.via_name} • ${first.display_name || first.batch_code}${suffix}`;
+}
+
+function isManagerSettlementType(value) {
+  return value === "branch_manager_to_general_manager" || value === "branch_manager";
 }
 
 export default function CashSettlementsPage({ mode = "list" }) {
@@ -235,12 +240,12 @@ function SettlementsListPage() {
               <CashSettlementStatusBadge value={item.status} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-              <InfoBox label={item.source_type === "branch_manager" ? "Jenis" : "Invoice"} value={item.source_type === "branch_manager" ? "Setoran BM" : (item.total_invoice || 0)} />
+              <InfoBox label={isManagerSettlementType(item.source_type) ? "Jenis" : "Invoice"} value={isManagerSettlementType(item.source_type) ? "Setoran BM" : (item.total_invoice || 0)} />
               <InfoBox label="Total" value={formatMoney(item.total_amount)} />
             </div>
             <div className="mt-3 text-xs text-gray-500">
               <span className="mr-2 rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-600">
-                {item.source_type === "branch_manager" ? "Setoran Branch Manager" : "Setoran Staff"}
+                {isManagerSettlementType(item.source_type) ? "Setoran Branch Manager" : "Setoran Staff"}
               </span>
               Oleh {item.submitted_by_name || item.created_by_name || "-"}
             </div>
@@ -322,16 +327,81 @@ function CreateSettlementPage() {
 function CreateBranchManagerSettlementPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [amount, setAmount] = useState("");
+  const [settlements, setSettlements] = useState([]);
+  const [selected, setSelected] = useState({});
+  const [search, setSearch] = useState("");
+  const [month, setMonth] = useState("");
+  const [loadingSettlements, setLoadingSettlements] = useState(false);
+  const [expenses, setExpenses] = useState([]);
   const [note, setNote] = useState("");
   const [proof, setProof] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const normalizedAmount = Number(String(amount).replace(/\D/g, ""));
+  const selectedSettlements = useMemo(() => Object.values(selected), [selected]);
+  const totalStaffSettlement = selectedSettlements.reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
+  const totalExpenses = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const finalTransferAmount = totalStaffSettlement - totalExpenses;
+
+  const fetchEligibleStaffSettlements = useCallback(async () => {
+    try {
+      setLoadingSettlements(true);
+      const res = await getEligibleStaffSettlementsForManager({
+        page: 1,
+        limit: 50,
+        search,
+        month,
+      });
+      setSettlements(res.items || []);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingSettlements(false);
+    }
+  }, [month, search]);
+
+  useEffect(() => {
+    const delay = setTimeout(fetchEligibleStaffSettlements, 300);
+
+    return () => clearTimeout(delay);
+  }, [fetchEligibleStaffSettlements]);
+
+  const toggleSettlement = (item) => {
+    setSelected((prev) => {
+      const next = { ...prev };
+
+      if (next[item.id]) {
+        delete next[item.id];
+      } else {
+        next[item.id] = item;
+      }
+
+      return next;
+    });
+  };
+
+  const addExpense = () => {
+    setExpenses((prev) => [
+      ...prev,
+      {
+        id: `${Date.now()}-${prev.length}`,
+        description: "",
+        amount: "",
+        proof: null,
+      },
+    ]);
+  };
+
+  const updateExpense = (id, patch) => {
+    setExpenses((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  };
+
+  const removeExpense = (id) => {
+    setExpenses((prev) => prev.filter((item) => item.id !== id));
+  };
 
   const handleSubmit = async () => {
-    if (!normalizedAmount || normalizedAmount <= 0) {
-      alert("Nominal setoran wajib lebih dari 0");
+    if (selectedSettlements.length === 0) {
+      alert("Minimal pilih satu setoran staff");
       return;
     }
 
@@ -340,17 +410,47 @@ function CreateBranchManagerSettlementPage() {
       return;
     }
 
-    if (!confirm("Ajukan setoran ke general manager?")) return;
+    for (const expense of expenses) {
+      if (!expense.description.trim()) {
+        alert("Keterangan pengeluaran wajib diisi");
+        return;
+      }
+
+      if (!Number(expense.amount || 0) || Number(expense.amount || 0) <= 0) {
+        alert("Nominal pengeluaran wajib lebih dari 0");
+        return;
+      }
+
+      if (!expense.proof) {
+        alert("Foto nota pengeluaran wajib diupload");
+        return;
+      }
+    }
+
+    if (totalExpenses > totalStaffSettlement) {
+      alert("Total pengeluaran melebihi total setoran.");
+      return;
+    }
+
+    if (!confirm("Teruskan setoran ke general manager?")) return;
 
     try {
       setSaving(true);
       const formData = new FormData();
-      formData.append("total_amount", String(normalizedAmount));
+      formData.append("staff_settlement_ids", JSON.stringify(selectedSettlements.map((item) => item.id)));
+      formData.append("expenses", JSON.stringify(expenses.map((expense, index) => ({
+        description: expense.description.trim(),
+        amount: Number(expense.amount),
+        proof_field: `expense_proof_${index}`,
+      }))));
       formData.append("note", note || "");
       formData.append("proof", proof);
+      expenses.forEach((expense, index) => {
+        formData.append(`expense_proof_${index}`, expense.proof);
+      });
       const created = await createBranchManagerCashSettlement(formData);
 
-      alert("Setoran branch manager berhasil diajukan");
+      alert("Setoran berhasil diteruskan ke general manager");
       navigate(`/cash-settlements/${created.id}`);
     } catch (err) {
       alert(err.message);
@@ -371,16 +471,136 @@ function CreateBranchManagerSettlementPage() {
           <InfoBox label="Tanggal" value={formatDate(new Date().toISOString())} />
         </div>
 
-        <label className="mt-4 block">
-          <span className="mb-1 block text-xs font-semibold text-gray-500">Nominal Setoran</span>
+        <div className="mt-4 flex gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari kode setoran staff..."
+              className="w-full rounded-xl border bg-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+            />
+          </div>
           <input
-            inputMode="numeric"
-            value={amount ? formatMoney(normalizedAmount) : ""}
-            onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
-            placeholder="Rp 0"
-            className="w-full rounded-xl border bg-white px-3 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-violet-200"
+            type="month"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            className="w-32 rounded-xl border bg-white px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-violet-200"
           />
-        </label>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {settlements.map((item) => {
+            const checked = Boolean(selected[item.id]);
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => toggleSettlement(item)}
+                className={`w-full rounded-2xl border bg-white p-3 text-left ${
+                  checked ? "border-violet-600 ring-2 ring-violet-100" : "border-gray-100"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${
+                    checked ? "border-violet-600 bg-violet-600 text-white" : "border-gray-300"
+                  }`}>
+                    {checked && <Check className="h-4 w-4" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-bold text-gray-900">{item.settlement_code}</div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      {formatDate(item.approved_at)} • {item.created_by_name || "-"}
+                    </div>
+                    <div className="mt-2 text-sm font-semibold text-violet-700">{formatMoney(item.total_amount)}</div>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {!loadingSettlements && settlements.length === 0 && (
+          <div className="mt-4 rounded-xl border border-dashed p-4 text-center text-sm text-gray-400">
+            Belum ada setoran staff approved yang bisa diteruskan
+          </div>
+        )}
+
+        {loadingSettlements && <LoadingState variant="section" text="Memuat setoran staff..." />}
+      </section>
+
+      <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-900">Pengeluaran Cabang</h2>
+          <button
+            type="button"
+            onClick={addExpense}
+            className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700"
+          >
+            Tambah
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {expenses.map((expense, index) => (
+            <div key={expense.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <div className="text-xs font-bold text-gray-600">Pengeluaran {index + 1}</div>
+                <button
+                  type="button"
+                  onClick={() => removeExpense(expense.id)}
+                  className="rounded-lg p-1.5 text-red-600"
+                  aria-label="Hapus pengeluaran"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              <input
+                value={expense.description}
+                onChange={(e) => updateExpense(expense.id, { description: e.target.value })}
+                placeholder="Keterangan pengeluaran"
+                className="mb-2 w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+              />
+              <input
+                inputMode="numeric"
+                value={expense.amount ? formatMoney(expense.amount) : ""}
+                onChange={(e) => updateExpense(expense.id, { amount: e.target.value.replace(/\D/g, "") })}
+                placeholder="Rp 0"
+                className="mb-2 w-full rounded-xl border bg-white px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-violet-200"
+              />
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white px-3 py-3 text-sm font-semibold text-gray-700">
+                <Upload className="h-4 w-4" />
+                {expense.proof ? expense.proof.name : "Upload foto nota"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => updateExpense(expense.id, { proof: e.target.files?.[0] || null })}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+
+        {expenses.length === 0 && (
+          <div className="rounded-xl border border-dashed p-4 text-center text-sm text-gray-400">
+            Belum ada pengeluaran cabang
+          </div>
+        )}
+      </section>
+
+      <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-2 text-xs">
+          <InfoBox label="Total Setoran Staff" value={formatMoney(totalStaffSettlement)} />
+          <InfoBox label="Total Pengeluaran" value={formatMoney(totalExpenses)} />
+          <InfoBox label="Nominal Final Transfer" value={formatMoney(Math.max(finalTransferAmount, 0))} />
+        </div>
+
+        {totalExpenses > totalStaffSettlement && (
+          <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700">
+            Total pengeluaran melebihi total setoran.
+          </div>
+        )}
 
         <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border bg-white px-3 py-3 text-sm font-semibold text-gray-700">
           <Upload className="h-4 w-4" />
@@ -405,12 +625,12 @@ function CreateBranchManagerSettlementPage() {
       <div className="fixed bottom-16 left-0 right-0 z-30 mx-auto max-w-[430px] bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)]">
         <Button
           onClick={handleSubmit}
-          disabled={saving || !normalizedAmount || !proof}
+          disabled={saving || selectedSettlements.length === 0 || totalExpenses > totalStaffSettlement || !proof}
           loading={saving}
           loadingText="Mengajukan..."
           fullWidth
         >
-          Ajukan Setoran
+          Teruskan Setoran
         </Button>
       </div>
     </div>
@@ -618,7 +838,7 @@ function SettlementDetailPage() {
   const isRejected = data?.status === "rejected";
   const isSubmitted = data?.status === "submitted";
   const sourceType = data?.source_type || "branch_staff";
-  const isBranchManagerSettlement = sourceType === "branch_manager";
+  const isBranchManagerSettlement = isManagerSettlementType(sourceType);
   const canStaffEdit = role === "branch_staff" && !isBranchManagerSettlement && (isDraft || isRejected);
   const canManagerReview = role === "branch_manager" && !isBranchManagerSettlement && isSubmitted;
   const canGeneralManagerReview = role === "general_manager" && isBranchManagerSettlement && isSubmitted;
@@ -719,12 +939,61 @@ function SettlementDetailPage() {
               <CashSettlementStatusBadge value={data.status} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              <InfoBox label={isBranchManagerSettlement ? "Jenis" : "Invoice"} value={isBranchManagerSettlement ? "Cabang ke GM" : (data.total_invoice || 0)} />
-              <InfoBox label={isBranchManagerSettlement ? "Nominal" : "Total Sistem"} value={formatMoney(data.total_amount)} />
+              <InfoBox label={isBranchManagerSettlement ? "Total Staff" : "Invoice"} value={isBranchManagerSettlement ? formatMoney(data.total_staff_settlement) : (data.total_invoice || 0)} />
+              <InfoBox label={isBranchManagerSettlement ? "Pengeluaran" : "Total Sistem"} value={isBranchManagerSettlement ? formatMoney(data.total_expenses) : formatMoney(data.total_amount)} />
+              {isBranchManagerSettlement && (
+                <InfoBox label="Final Transfer" value={formatMoney(data.total_amount)} />
+              )}
               <InfoBox label="Dibuat" value={formatDate(data.created_at)} />
               <InfoBox label="Diajukan" value={formatDate(data.submitted_at)} />
             </div>
           </section>
+
+          {isBranchManagerSettlement && (
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-sm font-semibold text-gray-900">Setoran Staff Diteruskan</h2>
+              <div className="space-y-2">
+                {(data.forwarded_staff_settlements || []).map((item) => (
+                  <div key={item.id} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                    <div className="truncate text-sm font-bold text-gray-900">{item.settlement_code}</div>
+                    <div className="mt-1 text-xs text-gray-500">{formatDate(item.approved_at)} • {item.created_by_name || "-"}</div>
+                    <div className="mt-2 text-sm font-semibold text-violet-700">{formatMoney(item.total_amount)}</div>
+                  </div>
+                ))}
+              </div>
+              {(data.forwarded_staff_settlements || []).length === 0 && (
+                <div className="rounded-xl border border-dashed p-4 text-center text-sm text-gray-400">
+                  Belum ada setoran staff terhubung
+                </div>
+              )}
+            </section>
+          )}
+
+          {isBranchManagerSettlement && (
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-sm font-semibold text-gray-900">Pengeluaran Cabang</h2>
+              <div className="space-y-2">
+                {(data.expenses || []).map((expense) => (
+                  <button
+                    key={expense.id}
+                    onClick={() => setPreviewImage(expense.proof_url)}
+                    className="flex w-full items-center justify-between gap-3 rounded-xl border border-gray-100 bg-gray-50 p-3 text-left"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-gray-900">{expense.description}</div>
+                      <div className="mt-1 text-xs text-gray-500">{formatDate(expense.created_at)}</div>
+                    </div>
+                    <div className="shrink-0 text-right text-xs font-bold text-gray-700">{formatMoney(expense.amount)}</div>
+                  </button>
+                ))}
+              </div>
+              {(data.expenses || []).length === 0 && (
+                <div className="rounded-xl border border-dashed p-4 text-center text-sm text-gray-400">
+                  Tidak ada pengeluaran
+                </div>
+              )}
+            </section>
+          )}
 
           {!isBranchManagerSettlement && (
           <section className="rounded-2xl bg-white p-4 shadow-sm">

@@ -86,7 +86,7 @@ function BranchManagerFinanceView({ canInvoice }) {
         canInvoice && { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
         { label: "Approval Setoran Tunai", path: "/cash-settlements?approval=1", icon: ShieldCheck, color: "bg-violet-100 text-violet-600" },
         { label: "Ajukan ke GM", path: "/cash-settlements/branch-manager/new", icon: Wallet, color: "bg-emerald-100 text-emerald-600" },
-        { label: "Riwayat Setoran ke GM", path: "/cash-settlements?source_type=branch_manager&mine=1", icon: History, color: "bg-sky-100 text-sky-600" },
+        { label: "Riwayat Setoran ke GM", path: "/cash-settlements?source_type=branch_manager_to_general_manager&mine=1", icon: History, color: "bg-sky-100 text-sky-600" },
     ].filter(Boolean);
 
     return (
