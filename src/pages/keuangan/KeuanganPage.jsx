@@ -51,7 +51,6 @@ function GeneralManagerFinanceView({ canInvoice }) {
         canInvoice && { label: "Invoice", path: "/invoice", icon: FileText, color: "bg-amber-100 text-amber-600" },
         { label: "Payment Method", path: "/payment-methods", icon: CreditCard, color: "bg-violet-100 text-violet-600" },
         { label: "Setoran Tunai", path: "/cash-settlements", icon: Wallet, color: "bg-emerald-100 text-emerald-600" },
-        { label: "Ringkasan", path: "/cash-settlements", icon: BarChart3, color: "bg-sky-100 text-sky-600" },
     ].filter(Boolean);
 
     return (
