@@ -1,4 +1,9 @@
-export default function Header({ initial, onLogout }) {
+import { useState } from 'react';
+import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
+
+export default function Header({ onLogout }) {
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
     // Inline component logo
     function GexLogo({ size = 40 }) {
         return (
@@ -16,11 +21,11 @@ export default function Header({ initial, onLogout }) {
             <GexLogo size={55} />
 
             <div className="flex items-center gap-3">
-                {/* Logout (polos hitam) */}
+                {/* Logout */}
                 <button
                     id="btn-logout"
-                    onClick={onLogout}
-                    className="flex items-center justify-center text-black hover:opacity-60 transition"
+                    onClick={() => setIsLogoutModalOpen(true)}
+                    className="flex items-center justify-center text-red-600 transition hover:text-red-700 hover:opacity-80"
                     aria-label="Keluar dari akun"
                     title="Logout"
                 >
@@ -41,6 +46,12 @@ export default function Header({ initial, onLogout }) {
                     </svg>
                 </button>
             </div>
+
+            <LogoutConfirmationModal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={onLogout}
+            />
         </header>
     );
 }

@@ -4,6 +4,7 @@ import { Lock, LogOut, Phone, Shield, User } from 'lucide-react';
 import Button from '../components/common/Button';
 import InputField from '../components/common/InputField';
 import { LoadingState } from '../components/common/Loading';
+import LogoutConfirmationModal from '../components/common/LogoutConfirmationModal';
 import { useAuth } from '../context/useAuth';
 import { profileApi } from '../services/api/profileApi';
 
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const canEdit = profile?.role === 'customer';
 
@@ -42,7 +44,7 @@ export default function ProfilePage() {
     loadProfile();
   }, [updateUser]);
 
-  const handleLogout = () => {
+  const handleConfirmLogout = () => {
     logout();
     navigate('/login', { replace: true });
   };
@@ -109,8 +111,8 @@ export default function ProfilePage() {
             <h1 className="text-xl font-bold text-gray-900">Profil</h1>
           </div>
           <button
-            onClick={handleLogout}
-            className="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center"
+            onClick={() => setIsLogoutModalOpen(true)}
+            className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center transition hover:bg-red-100"
             aria-label="Logout"
             title="Logout"
           >
@@ -245,6 +247,12 @@ export default function ProfilePage() {
           </>
         )}
       </main>
+
+      <LogoutConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
     </div>
   );
 }
