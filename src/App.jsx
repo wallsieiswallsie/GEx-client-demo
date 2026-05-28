@@ -18,6 +18,7 @@ import { LoadingState } from "./components/common/Loading";
 import MobileAppLayout from "./layouts/MobileAppLayout";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
+import TrackPackagePage from "./pages/customer/TrackPackagePage";
 
 export default function App() {
   return (
@@ -86,6 +87,12 @@ export default function App() {
                   ))}
                 </Route>
               ))}
+
+              <Route
+                element={<MobileAppLayout />}
+              >
+                <Route path="/lacak" element={<TrackPackagePage />} />
+              </Route>
 
               <Route
                 element={

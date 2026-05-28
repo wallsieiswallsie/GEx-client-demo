@@ -1,5 +1,23 @@
 import { apiFetch } from "./apiClient";
 
+export const trackPackageByReceipt = async (receipt) => {
+  const params = new URLSearchParams({ receipt });
+  const res = await apiFetch(`/track-package?${params.toString()}`, {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
+export const claimTrackedPackage = async (receipt) => {
+  const res = await apiFetch("/track-package/claim", {
+    method: "POST",
+    body: JSON.stringify({ receipt }),
+  });
+
+  return res.data;
+};
+
 /**
  * Create claimed package
  */
