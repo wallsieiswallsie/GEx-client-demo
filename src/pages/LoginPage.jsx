@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Phone, User } from 'lucide-react';
 import InputField from '../components/common/InputField';
 import Button from '../components/common/Button';
 import { authApi } from '../services/api/authApi';
@@ -8,6 +9,7 @@ import { useAuth } from '../context/useAuth';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loginMode, setLoginMode] = useState('username');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,11 +23,24 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const normalizedIdentifier = identifier.trim();
+    const phoneNumber = normalizedIdentifier.replace(/\D/g, '');
+
+    if (!normalizedIdentifier) {
+      setError(loginMode === 'phone' ? 'Nomor HP wajib diisi.' : 'Username wajib diisi.');
+      return;
+    }
+
+    if (loginMode === 'phone' && !/^\d{10,15}$/.test(phoneNumber)) {
+      setError('Nomor HP harus berupa angka 10-15 digit.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const res = await authApi.login(identifier, password);
+      const res = await authApi.login(loginMode === 'phone' ? phoneNumber : normalizedIdentifier, password);
 
       if (res.status === 'success') {
         const { user, accessToken, refreshToken } = res.data;
@@ -77,11 +92,44 @@ export default function LoginPage() {
 
       {/* FORM */}
       <form onSubmit={handleLogin} className="space-y-5">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-gray-100 p-1">
+          <button
+            type="button"
+            onClick={() => {
+              setLoginMode('username');
+              setError(null);
+            }}
+            className={`flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${loginMode === 'username'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-gray-500'
+              }`}
+          >
+            <User className="h-4 w-4" />
+            Username
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLoginMode('phone');
+              setError(null);
+            }}
+            className={`flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${loginMode === 'phone'
+              ? 'bg-white text-blue-700 shadow-sm'
+              : 'text-gray-500'
+              }`}
+          >
+            <Phone className="h-4 w-4" />
+            Nomor HP
+          </button>
+        </div>
+
         <InputField
-          label="Username atau WhatsApp"
+          label={loginMode === 'phone' ? 'Nomor HP' : 'Username'}
           value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
-          placeholder="Misal: 08123xxx / abcd"
+          onChange={(e) => setIdentifier(loginMode === 'phone' ? e.target.value.replace(/[^\d+]/g, '') : e.target.value)}
+          placeholder={loginMode === 'phone' ? 'Contoh: 081234567890' : 'Contoh: username'}
+          inputMode={loginMode === 'phone' ? 'tel' : 'text'}
+          autoComplete="username"
           required
         />
 

@@ -135,8 +135,10 @@ export default function FormDaftarPaket() {
   };
 
   const isAnyFilled = fields.some((f) => f.trim() !== "");
+  const visiblePackages = packages.filter((pkg) => pkg.final_status !== "tidak_valid");
+  const pendingPackages = visiblePackages.filter((pkg) => !pkg.is_confirmed);
 
-  const hasPackages = packages.length > 0;
+  const hasPackages = visiblePackages.length > 0;
 
   return (
     <div
@@ -295,15 +297,14 @@ export default function FormDaftarPaket() {
         )}
 
         {/* 🔥 LIST PAKET */}
-        {packages.filter(p => !p.is_confirmed).length > 0 && (
+        {pendingPackages.length > 0 && (
           <div className="mt-6 space-y-4">
 
             <h2 className="text-md font-semibold text-gray-800">
               Paket Menunggu
             </h2>
 
-            {packages
-              .filter((pkg) => !pkg.is_confirmed)
+            {pendingPackages
               .map((pkg) => {
 
                 const formatDate = (date) => {

@@ -4,7 +4,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock3,
-  ImageOff,
   Loader2,
   Package,
   Receipt,
@@ -233,18 +232,6 @@ export default function TrackPackagePage() {
         {!loading && !error && result?.found && packageData && (
           <div className="space-y-4">
             <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-              {packageData.photo_url ? (
-                <img
-                  src={packageData.photo_url}
-                  alt={packageData.name || packageData.receipt}
-                  className="h-52 w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-36 items-center justify-center bg-gray-100 text-gray-400">
-                  <ImageOff className="h-7 w-7" />
-                </div>
-              )}
-
               <div className="p-4">
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700">

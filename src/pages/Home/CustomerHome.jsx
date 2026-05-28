@@ -33,7 +33,7 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="px-4 py-3" role="search">
+    <form onSubmit={handleSubmit} role="search">
       <div className="relative">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -47,7 +47,7 @@ function SearchBar({ onSearch }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Lacak Paket"
-          className="w-full pl-9 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm text-gray-700
+          className="h-10 w-full pl-9 pr-4 bg-gray-100 rounded-xl text-sm text-gray-700
             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300
             focus:bg-white transition-all duration-200"
           aria-label="Lacak nomor resi paket"
@@ -231,15 +231,12 @@ export default function CustomerHome() {
           ).toUpperCase()
         }
         onLogout={handleLogout}
-      />
+      >
+        <SearchBar onSearch={handleSearch} />
+      </Header>
 
       {/* === SCROLLABLE CONTENT === */}
       <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
-        {/* 1. Search */}
-        <div className="bg-white">
-          <SearchBar onSearch={handleSearch} />
-        </div>
-
         <div className="flex flex-col gap-4 pt-3">
           {/* 2. Promo Banner */}
           <PromoBanner banner={firstBanner} isLoading={bannerLoading} />

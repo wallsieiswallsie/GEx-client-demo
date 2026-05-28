@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Calendar, Package, Receipt, Route, Scale, Truck, Wallet, X } from "lucide-react";
+import { Calendar, Package, Receipt, Route, Scale, Truck, Wallet } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
@@ -26,7 +26,6 @@ export default function CustomerPackageDetailPage() {
     const { id } = useParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [previewOpen, setPreviewOpen] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -63,24 +62,7 @@ export default function CustomerPackageDetailPage() {
         <div className="min-h-dvh bg-gray-50 p-4 pb-28">
             <SubPageHeader title="Detail Paket" />
 
-            <div className="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-                {data.photo_url ? (
-                    <button
-                        onClick={() => setPreviewOpen(true)}
-                        className="block w-full"
-                    >
-                        <img
-                            src={data.photo_url}
-                            alt={data.name || data.receipt}
-                            className="h-56 w-full object-cover"
-                        />
-                    </button>
-                ) : (
-                    <div className="flex h-44 items-center justify-center bg-gray-100 text-sm text-gray-400">
-                        Foto belum tersedia
-                    </div>
-                )}
-
+            <div className="mt-4 rounded-2xl border border-gray-100 bg-white shadow-sm">
                 <div className="p-4">
                     <div className="mb-4 inline-flex items-center gap-2 rounded-xl bg-violet-50 px-3 py-2 text-sm font-semibold text-violet-700">
                         <Route className="h-4 w-4" />
@@ -97,22 +79,6 @@ export default function CustomerPackageDetailPage() {
                     </div>
                 </div>
             </div>
-
-            {previewOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
-                    <button
-                        onClick={() => setPreviewOpen(false)}
-                        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                    <img
-                        src={data.photo_url}
-                        alt={data.name || data.receipt}
-                        className="max-h-full max-w-full rounded-2xl object-contain"
-                    />
-                </div>
-            )}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
 
-export default function Header({ onLogout }) {
+export default function Header({ onLogout, children }) {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     // Inline component logo
@@ -17,10 +17,18 @@ export default function Header({ onLogout }) {
     }
 
     return (
-        <header className="flex items-center justify-between px-4 pt-5 pb-3 bg-white sticky top-0 z-40 border-b border-gray-50">
-            <GexLogo size={55} />
+        <header className="flex items-center justify-between gap-3 px-4 pt-5 pb-3 bg-white sticky top-0 z-40 border-b border-gray-50">
+            <div className="shrink-0">
+                <GexLogo size={55} />
+            </div>
 
-            <div className="flex items-center gap-3">
+            {children && (
+                <div className="min-w-0 flex-1">
+                    {children}
+                </div>
+            )}
+
+            <div className="flex shrink-0 items-center gap-3">
                 {/* Logout */}
                 <button
                     id="btn-logout"

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, LogOut, Phone, Shield, User } from 'lucide-react';
+import { Lock, Phone } from 'lucide-react';
 import Button from '../components/common/Button';
 import InputField from '../components/common/InputField';
 import { LoadingState } from '../components/common/Loading';
-import LogoutConfirmationModal from '../components/common/LogoutConfirmationModal';
+import Header from '../components/home/Header';
 import { useAuth } from '../context/useAuth';
 import { profileApi } from '../services/api/profileApi';
 
@@ -22,7 +22,6 @@ export default function ProfilePage() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const canEdit = profile?.role === 'customer';
 
@@ -104,22 +103,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col min-h-dvh bg-gray-50">
-      <header className="bg-white px-4 pt-5 pb-4 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase">Akun</p>
-            <h1 className="text-xl font-bold text-gray-900">Profil</h1>
-          </div>
-          <button
-            onClick={() => setIsLogoutModalOpen(true)}
-            className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center transition hover:bg-red-100"
-            aria-label="Logout"
-            title="Logout"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
+      <Header onLogout={handleConfirmLogout} />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4 scrollbar-hide">
         {loading ? (
@@ -139,8 +123,6 @@ export default function ProfilePage() {
 
               <div className="mt-4 grid gap-3 text-sm">
                 <InfoRow icon={<Phone className="w-4 h-4" />} label="WhatsApp" value={profile?.whatsapp_number || '-'} />
-                <InfoRow icon={<Shield className="w-4 h-4" />} label="Role" value={profile?.role || '-'} />
-                <InfoRow icon={<User className="w-4 h-4" />} label="User ID" value={profile?.id || '-'} />
               </div>
             </section>
 
@@ -247,12 +229,6 @@ export default function ProfilePage() {
           </>
         )}
       </main>
-
-      <LogoutConfirmationModal
-        isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={handleConfirmLogout}
-      />
     </div>
   );
 }
