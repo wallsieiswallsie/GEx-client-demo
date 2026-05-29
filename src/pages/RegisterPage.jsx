@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
+import {
+  ArrowRight,
+  LockKeyhole,
+  Phone,
+  Sparkles,
+  User,
+  UserRoundPlus,
+} from 'lucide-react';
 import InputField from '../components/common/InputField';
-import Button from '../components/common/Button';
 import OtpModal from '../components/auth/OtpModal';
 import { authApi } from '../services/api/authApi';
 import { useAuth } from '../context/useAuth';
@@ -71,79 +78,148 @@ export default function RegisterPage() {
     setFormData(prev => ({ ...prev, [field]: e.target.value }));
   };
 
+  const inputAccentClasses = {
+    labelClassName: 'font-bold text-slate-900',
+    inputClassName:
+      'h-14 rounded-2xl border-slate-200 bg-slate-50/80 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 shadow-inner shadow-slate-100/70 focus:border-violet-500 focus:bg-white focus:ring-4 focus:ring-violet-500/15',
+    iconClassName: 'text-violet-600',
+  };
+
   return (
     <>
-      <div className="w-full mx-auto max-w-[24rem] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 sm:p-10 border border-white">
-        
-        <div className="text-center space-y-2 mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Buat Akun Baru</h1>
-          <p className="text-gray-500 text-sm font-medium">Lengkapi identitas Anda di bawah ini</p>
+      <div className="mx-auto w-full max-w-[24rem] overflow-hidden rounded-[2rem] bg-slate-50 text-slate-950 shadow-2xl shadow-violet-950/10">
+
+        {/* HEADER */}
+        <div
+          className="relative min-h-[16.5rem] overflow-hidden bg-cover bg-center bg-no-repeat px-7 pb-20 pt-10 text-white sm:px-8"
+          style={{ backgroundImage: "url('/images/header_background/login.png')" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-violet-950/85 via-violet-800/65 to-indigo-950/45" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent" />
+          <div className="relative mx-auto flex max-w-xs flex-col items-center text-center">
+            <img
+              src="/images/logo_gex.png"
+              alt="GEx"
+              className="mb-5 h-16 w-auto drop-shadow-[0_12px_24px_rgba(49,10,101,0.55)]"
+            />
+            <h1 className="text-[1.9rem] font-black leading-tight tracking-normal text-white drop-shadow-sm">
+              Buat akun baru
+            </h1>
+            <p className="mt-3 max-w-[17rem] text-sm font-medium leading-6 text-white/85">
+              Mulai pengalaman pengiriman yang lebih cepat dan aman bersama GEx.
+            </p>
+          </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl">
-            {error}
+        <div className="relative z-10 -mt-14 px-4 pb-5">
+          <div className="animate-[fadeIn_0.35s_ease-out] rounded-[1.75rem] border border-white/80 bg-white p-6 shadow-2xl shadow-violet-950/10 sm:p-7">
+            <div className="mb-6 flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-violet-100 text-violet-700 shadow-inner shadow-white">
+                <UserRoundPlus className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <div className="min-w-0 pt-1">
+                <h2 className="text-xl font-black leading-tight text-slate-950">
+                  Daftar Akun GEx
+                </h2>
+                <p className="mt-1 text-sm font-medium leading-5 text-slate-500">
+                  Lengkapi identitas Anda di bawah ini.
+                </p>
+              </div>
+            </div>
+
+            {error && (
+              <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <InputField
+                label="Nama Lengkap"
+                value={formData.name}
+                onChange={(e) => handleChange(e, 'name')}
+                placeholder="Cth: Budi Santoso"
+                icon={UserRoundPlus}
+                required
+                {...inputAccentClasses}
+              />
+              <InputField
+                label="Username"
+                value={formData.username}
+                onChange={(e) => handleChange(e, 'username')}
+                placeholder="Cth: budi123"
+                icon={User}
+                required
+                {...inputAccentClasses}
+              />
+              <InputField
+                label="No WhatsApp Aktif"
+                value={formData.whatsapp_number}
+                onChange={(e) => handleChange(e, 'whatsapp_number')}
+                placeholder="Cth: 0812345678"
+                inputMode="tel"
+                autoComplete="tel"
+                icon={Phone}
+                required
+                {...inputAccentClasses}
+              />
+              <InputField
+                label="Password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleChange(e, 'password')}
+                placeholder="Buat sandi yang aman"
+                autoComplete="new-password"
+                icon={LockKeyhole}
+                required
+                {...inputAccentClasses}
+              />
+
+              <div className="pt-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group flex h-14 w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-red-500 via-fuchsia-600 to-blue-700 px-5 text-base font-black text-white shadow-xl shadow-fuchsia-700/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-fuchsia-700/30 focus:outline-none focus:ring-4 focus:ring-fuchsia-500/25 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                >
+                  <span>{loading ? 'Sabar, sedang sinkronisasi...' : 'Daftar Sekarang'}</span>
+                  {!loading && (
+                    <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <InputField 
-             label="Nama Lengkap" 
-             value={formData.name} 
-             onChange={(e) => handleChange(e, 'name')} 
-             placeholder="Cth: Budi Santoso" 
-             required 
-          />
-          <InputField 
-             label="Username" 
-             value={formData.username} 
-             onChange={(e) => handleChange(e, 'username')} 
-             placeholder="Cth: budi123" 
-             required 
-          />
-          <InputField 
-             label="No WhatsApp Aktif" 
-             value={formData.whatsapp_number} 
-             onChange={(e) => handleChange(e, 'whatsapp_number')} 
-             placeholder="Cth: 0812345678" 
-             required 
-          />
-          <InputField 
-             label="Password" 
-             type="password" 
-             value={formData.password} 
-             onChange={(e) => handleChange(e, 'password')} 
-             placeholder="Buat sandi yang aman" 
-             required 
-          />
-
-          <div className="pt-4">
-            <Button
-              type="submit"
-              disabled={loading}
-              loading={loading}
-              loadingText="Sabar, sedang sinkronisasi..."
-              fullWidth
-            >
-              Daftar Sekarang
-            </Button>
+          <div className="mt-4 rounded-[1.5rem] border border-white/80 bg-white/90 p-4 shadow-xl shadow-violet-950/10 backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                <Sparkles className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-black text-slate-950">
+                  Punya akun?
+                </p>
+                <p className="text-xs font-medium leading-5 text-slate-500">
+                  Masuk dan lanjutkan pengiriman Anda.
+                </p>
+              </div>
+              <a
+                href="/login"
+                className="shrink-0 rounded-full border border-violet-600 px-4 py-2 text-sm font-black text-violet-700 transition-all duration-300 hover:bg-violet-50 hover:shadow-lg hover:shadow-violet-700/10 focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+              >
+                Login
+              </a>
+            </div>
           </div>
-        </form>
-
-        <p className="text-center text-sm text-gray-500 font-medium mt-8">
-          Punya akun?{' '}
-          <a href="/login" className="text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-            Coba login
-          </a>
-        </p>
+        </div>
       </div>
 
-      <OtpModal 
-        isOpen={showOtpModal} 
-        onClose={() => setShowOtpModal(false)} 
-        whatsappNumber={formData.whatsapp_number} 
-        onVerify={handleVerifyOtp} 
-        onResend={handleResendOtp} 
+      <OtpModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        whatsappNumber={formData.whatsapp_number}
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
       />
     </>
   );
