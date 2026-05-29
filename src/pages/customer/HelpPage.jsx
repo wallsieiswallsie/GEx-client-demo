@@ -48,19 +48,19 @@ const categoryColors = [
 
 function EmptyState({ title, text, action, onAction }) {
   return (
-    <div className="rounded-[24px] border border-slate-100 bg-white p-6 text-center shadow-sm">
-      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[28px] bg-violet-50 text-violet-700">
-        <Search className="h-9 w-9" />
+    <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 text-violet-700">
+        <Search className="h-6 w-6" />
       </div>
-      <h3 className="font-bold text-slate-950">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">{text}</p>
+      <h3 className="text-sm font-semibold text-slate-950">{title}</h3>
+      <p className="mt-1.5 text-xs leading-relaxed text-slate-500">{text}</p>
       {action && (
         <button
           type="button"
           onClick={onAction}
-          className="mx-auto mt-5 flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-700 to-blue-600 px-6 font-bold text-white shadow-lg shadow-violet-500/20"
+          className="mx-auto mt-4 flex h-10 items-center justify-center gap-2 rounded-xl bg-violet-700 px-4 text-sm font-semibold text-white shadow-sm"
         >
-          <Search className="h-5 w-5" />
+          <Search className="h-4 w-4" />
           {action}
         </button>
       )}
@@ -72,7 +72,7 @@ function FaqList({ items, onOpen }) {
   const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {safeItems.map((faq, index) => (
         <button
           key={faq?.id || index}
@@ -80,17 +80,17 @@ function FaqList({ items, onOpen }) {
           onClick={() => {
             if (faq?.id) onOpen(faq.id);
           }}
-          className="w-full rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          className="w-full rounded-2xl border border-slate-100 bg-white p-3.5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow"
         >
-          <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
-              <PackageSearch className="h-5 w-5" />
+          <div className="flex items-start gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
+              <PackageSearch className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-bold leading-snug text-slate-900">
+              <span className="block text-sm font-semibold leading-snug text-slate-900">
                 {faq?.question || "Pertanyaan bantuan"}
               </span>
-              <span className="mt-1 line-clamp-2 block text-sm leading-relaxed text-slate-500">
+              <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-slate-500">
                 {faq?.answer || ""}
               </span>
             </span>
@@ -193,9 +193,9 @@ export default function HelpPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-28 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-32 text-slate-900">
       <section
-        className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
+        className="relative overflow-hidden px-6 pb-12 pt-7 text-white"
         style={{
           backgroundImage: "url('/images/header_background/bantuan.png')",
           backgroundSize: "cover",
@@ -203,34 +203,34 @@ export default function HelpPage() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute bottom-0 left-0 right-0 h-10 rounded-t-[50%] bg-gray-50" />
+        <div className="absolute bottom-0 left-0 right-0 h-8 rounded-t-[50%] bg-gray-50" />
         <div className="relative z-10">
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur transition hover:bg-white/25"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur transition hover:bg-white/25"
               aria-label="Kembali"
             >
-              <ArrowLeft className="h-6 w-6" />
+              <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-3xl font-black">Bantuan</h1>
+            <h1 className="text-2xl font-bold">Bantuan</h1>
           </div>
 
-          <div className="mt-9 max-w-[250px]">
-            <p className="text-lg font-medium text-white/90">Halo,</p>
-            <h2 className="mt-1 text-2xl font-black leading-tight">
+          <div className="mt-7 max-w-[240px]">
+            <p className="text-base font-medium text-white/90">Halo,</p>
+            <h2 className="mt-1 text-xl font-bold leading-tight">
               {safeSettings?.header_title || "Ada yang bisa GEx bantu?"}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-white/85">{headerSubtitle}</p>
+            <p className="mt-2 text-xs leading-relaxed text-white/85">{headerSubtitle}</p>
           </div>
         </div>
       </section>
 
-      <main className="relative -mt-10 space-y-6 px-4">
-        <div className="rounded-[28px] border border-white bg-white p-3 shadow-[0_14px_40px_rgba(15,23,42,0.12)]">
+      <main className="relative -mt-8 space-y-5 px-4">
+        <div className="rounded-[24px] border border-white bg-white p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.10)]">
           <label className="relative block">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-violet-700" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-violet-700" />
             <input
               type="text"
               value={search}
@@ -239,16 +239,16 @@ export default function HelpPage() {
                 setShowAll(true);
               }}
               placeholder="Masukkan kata kunci pencarian"
-              className="h-14 w-full rounded-2xl border border-slate-200 bg-white pl-14 pr-12 text-base font-semibold text-slate-700 outline-none transition placeholder:font-medium placeholder:text-slate-400 focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-11 text-sm font-medium text-slate-700 outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
             />
             {search && (
               <button
                 type="button"
                 onClick={clearSearch}
-                className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-violet-700 transition hover:bg-violet-50"
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-xl text-violet-700 transition hover:bg-violet-50"
                 aria-label="Hapus pencarian"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4.5 w-4.5" />
               </button>
             )}
           </label>
@@ -259,51 +259,23 @@ export default function HelpPage() {
         )}
 
         <section>
-          <h2 className="text-xl font-black text-slate-950">Kategori Pertanyaan</h2>
-          <p className="mt-1 text-sm text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
-          <div className="mt-4 grid grid-cols-4 gap-2">
-            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
-              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
-              const active = Boolean(category?.id && selectedCategory?.id === category?.id);
-              const color = categoryColors[index % categoryColors.length];
-              return (
-                <button
-                  key={loading ? index : category?.id || category?.slug || index}
-                  type="button"
-                  disabled={loading}
-                  onClick={() => selectCategory(category)}
-                  className={`min-h-[94px] rounded-2xl border bg-white px-1.5 py-3 text-center shadow-sm transition hover:-translate-y-0.5 ${active ? `${color.active} ring-4` : "border-slate-100"}`}
-                >
-                  <span className={`mx-auto flex h-10 w-10 items-center justify-center rounded-2xl ${color.bg} ${color.text}`}>
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="mt-2 block text-[11px] font-extrabold leading-tight text-slate-700">
-                    {loading ? "Memuat" : category?.name || "Kategori"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section>
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-xl font-black leading-tight text-slate-950">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <h2 className="text-base font-bold leading-tight text-slate-950">
               {showingSearchResult ? "Hasil Pencarian" : "Pertanyaan Paling Sering Dicari"}
             </h2>
             <button
               type="button"
               onClick={() => setShowAll(true)}
-              className="shrink-0 text-sm font-extrabold text-violet-700"
+              className="shrink-0 text-xs font-semibold text-violet-700"
             >
               Lihat semua
             </button>
           </div>
 
           {loading || searching ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[1, 2, 3].map((item) => (
-                <div key={item} className="h-24 animate-pulse rounded-2xl bg-white shadow-sm" />
+                <div key={item} className="h-20 animate-pulse rounded-2xl bg-white shadow-sm" />
               ))}
             </div>
           ) : visibleFaqs.length > 0 ? (
@@ -325,14 +297,42 @@ export default function HelpPage() {
           )}
         </section>
 
-        <section className="rounded-[24px] bg-gradient-to-r from-violet-100 via-white to-blue-50 p-4 shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-violet-700 shadow-sm">
-              <Headphones className="h-9 w-9" />
+        <section>
+          <h2 className="text-base font-bold text-slate-950">Kategori Pertanyaan</h2>
+          <p className="mt-1 text-xs text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
+              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
+              const active = Boolean(category?.id && selectedCategory?.id === category?.id);
+              const color = categoryColors[index % categoryColors.length];
+              return (
+                <button
+                  key={loading ? index : category?.id || category?.slug || index}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => selectCategory(category)}
+                  className={`min-h-[78px] rounded-2xl border bg-white px-1.5 py-2 text-center shadow-sm transition hover:-translate-y-0.5 ${active ? `${color.active} ring-2` : "border-slate-100"}`}
+                >
+                  <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-xl ${color.bg} ${color.text}`}>
+                    <Icon className="h-4.5 w-4.5" />
+                  </span>
+                  <span className="mt-1.5 line-clamp-2 block text-[10px] font-semibold leading-tight text-slate-700">
+                    {loading ? "Memuat" : category?.name || "Kategori"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-2xl bg-gradient-to-r from-violet-100 via-white to-blue-50 p-3.5 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-violet-700 shadow-sm">
+              <Headphones className="h-7 w-7" />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 className="font-black text-slate-950">Masih butuh bantuan?</h2>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600">
+              <h2 className="text-sm font-bold text-slate-950">Masih butuh bantuan?</h2>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600">
                 Hubungi tim CS kami, siap membantu kapan pun kamu butuhkan.
               </p>
             </div>
@@ -341,9 +341,9 @@ export default function HelpPage() {
             type="button"
             disabled={!supportUrl}
             onClick={() => window.open(supportUrl, "_blank", "noopener,noreferrer")}
-            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white font-extrabold text-violet-700 disabled:opacity-50"
+            className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-violet-200 bg-white text-sm font-semibold text-violet-700 disabled:opacity-50"
           >
-            <Headphones className="h-5 w-5" />
+            <Headphones className="h-4 w-4" />
             Hubungi CS
           </button>
         </section>
