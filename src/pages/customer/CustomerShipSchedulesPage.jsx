@@ -54,6 +54,11 @@ const getDurationLabel = (departDate, arrivalDate) => {
   return `${diffDays} Hari`;
 };
 
+const formatShipName = (name) => {
+  const normalized = (name || "-").replace(/^KM\.?\s*/i, "").trim();
+  return `KM. ${normalized.toUpperCase()}`;
+};
+
 const getAvailabilityLabel = (item) => {
   if (typeof item?.is_available === "boolean") {
     return item.is_available ? "Tersedia" : "Tidak Tersedia";
@@ -154,27 +159,27 @@ function ScheduleCard({ item }) {
   const durationLabel = getDurationLabel(item.depart_date, item.estimated_arrival);
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.08)]">
-      <div className="flex items-start gap-3">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-          <Ship className="h-9 w-9" />
+    <article className="overflow-hidden rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-[0_10px_28px_rgba(15,23,42,0.08)]">
+      <div className="flex items-start gap-2.5">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <Ship className="h-7 w-7" />
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h2 className="truncate text-xl font-black text-slate-950">
-                {item.ship_name || "-"}
+              <h2 className="truncate text-lg font-black leading-tight text-slate-950">
+                {formatShipName(item.ship_name)}
               </h2>
-              <p className="mt-2 flex items-center gap-2 text-sm font-medium text-slate-500">
-                <CalendarDays className="h-4 w-4 text-slate-400" />
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium leading-tight text-slate-500">
+                <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
                 Closing: {formatDate(item.closing_date)}
               </p>
             </div>
 
             {availabilityLabel && (
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600">
-                <CheckCircle2 className="h-4 w-4" />
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold leading-tight text-emerald-600">
+                <CheckCircle2 className="h-3.5 w-3.5" />
                 {availabilityLabel}
               </span>
             )}
@@ -182,7 +187,7 @@ function ScheduleCard({ item }) {
         </div>
       </div>
 
-      <div className="my-4 border-t border-slate-100" />
+      <div className="my-3 border-t border-slate-100" />
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <RoutePoint
@@ -194,8 +199,8 @@ function ScheduleCard({ item }) {
         />
 
         <div className="flex items-center justify-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-50 text-violet-700">
-            <ArrowRight className="h-6 w-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 text-violet-700">
+            <ArrowRight className="h-5 w-5" />
           </div>
         </div>
 
@@ -208,7 +213,7 @@ function ScheduleCard({ item }) {
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-2xl bg-violet-50/70">
+      <div className="mt-3 grid grid-cols-2 overflow-hidden rounded-2xl bg-violet-50/70">
         <ScheduleMeta Icon={Clock3} label="Estimasi Durasi" value={durationLabel} />
         <ScheduleMeta Icon={Ship} label="Jenis Kapal" value="Kapal Pelni" withDivider />
       </div>
@@ -221,26 +226,26 @@ function RoutePoint({ label, city, dateLabel, date, accent }) {
 
   return (
     <div className="min-w-0">
-      <p className="text-xs font-bold text-slate-400">{label}</p>
-      <p className="mt-2 truncate text-lg font-black text-slate-950">{city}</p>
-      <p className={`mt-5 flex items-center gap-2 text-sm font-bold ${accentClass}`}>
-        <CalendarDays className="h-4 w-4" />
+      <p className="text-[11px] font-bold leading-tight text-slate-400">{label}</p>
+      <p className="mt-1.5 truncate text-base font-black leading-tight text-slate-950">{city}</p>
+      <p className={`mt-3.5 flex items-center gap-1.5 text-xs font-bold leading-tight ${accentClass}`}>
+        <CalendarDays className="h-3.5 w-3.5" />
         {dateLabel}
       </p>
-      <p className="mt-2 text-base font-semibold text-slate-800">{date}</p>
+      <p className="mt-1.5 text-sm font-semibold leading-tight text-slate-800">{date}</p>
     </div>
   );
 }
 
 function ScheduleMeta({ Icon, label, value, withDivider = false }) {
   return (
-    <div className={`flex min-w-0 items-center gap-3 p-4 ${withDivider ? "border-l border-violet-200/70" : ""}`}>
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700">
-        {createElement(Icon, { className: "h-6 w-6" })}
+    <div className={`flex min-w-0 items-center gap-2.5 px-3 py-2.5 ${withDivider ? "border-l border-violet-200/70" : ""}`}>
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700">
+        {createElement(Icon, { className: "h-5 w-5" })}
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-bold text-slate-500">{label}</p>
-        <p className="mt-1 truncate text-sm font-bold text-slate-950">{value}</p>
+        <p className="text-[11px] font-bold leading-tight text-slate-500">{label}</p>
+        <p className="mt-1 truncate text-sm font-bold leading-tight text-slate-950">{value}</p>
       </div>
     </div>
   );
