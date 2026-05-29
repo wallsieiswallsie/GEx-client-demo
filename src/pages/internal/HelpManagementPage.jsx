@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 import { LoadingState } from "../../components/common/Loading";
 import { useAuth } from "../../context/useAuth";
 import {
@@ -338,7 +339,7 @@ export default function HelpManagementPage() {
     fetchAll();
   }, []);
 
-  if (role !== "general_manager") {
+  if (!isGeneralManagerRole(role)) {
     return <Navigate to="/home" replace />;
   }
 

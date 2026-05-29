@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import MobileAppLayout from '../layouts/MobileAppLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { INTERNAL_ROLES } from '../utils/roleAccess';
 
 import OperasionalPage from "../pages/operasional/OperasionalPage";
 import LogistikPage from "../pages/logistik/LogistikPage";
@@ -29,6 +30,10 @@ import CashSettlementsPage from "../pages/keuangan/CashSettlementsPage";
 const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 
+const internalOnly = (element) => (
+  <ProtectedRoute allowedRoles={INTERNAL_ROLES}>{element}</ProtectedRoute>
+);
+
 export const homeRoutes = [
   {
     element: (
@@ -43,79 +48,79 @@ export const homeRoutes = [
       },
       {
         path: "/operasional",
-        element: <OperasionalPage />
+        element: internalOnly(<OperasionalPage />)
       },
       {
         path: "/logistik",
-        element: <LogistikPage />
+        element: internalOnly(<LogistikPage />)
       },
       {
         path: "/keuangan",
-        element: <KeuanganPage />
+        element: internalOnly(<KeuanganPage />)
       },
       {
         path: "/payment-methods",
-        element: <PaymentMethodPage />
+        element: internalOnly(<PaymentMethodPage />)
       },
       {
         path: "/cash-settlements",
-        element: <CashSettlementsPage />
+        element: internalOnly(<CashSettlementsPage />)
       },
       {
         path: "/cash-settlements/new",
-        element: <CashSettlementsPage mode="new" />
+        element: internalOnly(<CashSettlementsPage mode="new" />)
       },
       {
         path: "/cash-settlements/branch-manager/new",
-        element: <CashSettlementsPage mode="branch-manager-new" />
+        element: internalOnly(<CashSettlementsPage mode="branch-manager-new" />)
       },
       {
         path: "/cash-settlements/:id/select",
-        element: <CashSettlementsPage mode="select" />
+        element: internalOnly(<CashSettlementsPage mode="select" />)
       },
       {
         path: "/cash-settlements/:id",
-        element: <CashSettlementsPage mode="detail" />
+        element: internalOnly(<CashSettlementsPage mode="detail" />)
       },
       {
         path: "/invoice",
-        element: <InvoiceDashboardPage />
+        element: internalOnly(<InvoiceDashboardPage />)
       },
       {
         path: "/invoice/list",
-        element: <InvoiceListPage />
+        element: internalOnly(<InvoiceListPage />)
       },
       {
         path: "/invoice/create",
-        element: <CreateInvoicePage />
+        element: internalOnly(<CreateInvoicePage />)
       },
       {
         path: "/invoice/:id/payment",
-        element: <UploadInvoicePaymentPage />
+        element: internalOnly(<UploadInvoicePaymentPage />)
       },
       {
         path: "/invoice/:id/receipt",
-        element: <UploadInvoiceReceiptPage />
+        element: internalOnly(<UploadInvoiceReceiptPage />)
       },
       {
         path: "/invoice/:id",
-        element: <InvoiceDetailPage />
+        element: internalOnly(<InvoiceDetailPage />)
       },
       {
         path: "/relasi",
-        element: <RelasiPage />
+        element: internalOnly(<RelasiPage />)
       },
       {
         path: "/cms",
-        element: <CMSPage />
+        element: internalOnly(<CMSPage />)
       },
       {
         path: "/cms/instagram",
-        element: <InstagramContentPage />
+        element: internalOnly(<InstagramContentPage />)
       },
       {
         path: "/cms/:section",
-        element: <CMSPage />
+        element: internalOnly(<CMSPage />)
       },
       {
         path: "/jadwal",
@@ -143,7 +148,7 @@ export const homeRoutes = [
       },
       {
         path: "/internal/help",
-        element: <HelpManagementPage />
+        element: internalOnly(<HelpManagementPage />)
       },
       {
         path: "/paketku",

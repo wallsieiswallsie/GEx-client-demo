@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import PackagesPage from "../pages/operasional/PackagesPage";
 import PackageDetailPage from "../pages/operasional/PackageDetailPage";
@@ -14,7 +15,7 @@ import ProblematicConfirmationPage from "../pages/operasional/ProblematicConfirm
 export const operasionalRoutes = [
     {
         element: (
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
                 <MobileAppLayout />
             </ProtectedRoute>
         ),

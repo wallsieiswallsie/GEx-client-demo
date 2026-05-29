@@ -1,5 +1,7 @@
+import { isGeneralManagerRole } from "./roleAccess";
+
 export function canAccessFinance(user, role) {
-  if (role === "general_manager") {
+  if (isGeneralManagerRole(role)) {
     return true;
   }
 

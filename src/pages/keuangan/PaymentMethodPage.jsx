@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { CheckCircle2, Pencil, Plus, Search, ToggleLeft, X } from "lucide-react";
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 import { LoadingState } from "../../components/common/Loading";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
 import { useAuth } from "../../context/useAuth";
@@ -59,12 +60,12 @@ export default function PaymentMethodPage() {
   }, [debouncedSearch]);
 
   useEffect(() => {
-    if (role === "general_manager") {
+    if (isGeneralManagerRole(role)) {
       fetchData();
     }
   }, [fetchData, role]);
 
-  if (role !== "general_manager") {
+  if (!isGeneralManagerRole(role)) {
     return <Navigate to="/home" replace />;
   }
 

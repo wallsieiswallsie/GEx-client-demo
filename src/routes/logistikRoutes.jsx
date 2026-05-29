@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import EkspedisiPage from "../pages/logistik/EkspedisiPage";
 import GudangPage from "../pages/logistik/gudang/GudangPage";
@@ -11,7 +12,7 @@ import ItemCategoriesPage from "../pages/logistik/ItemCategoriesPage";
 export const logistikRoutes = [
     {
         element: (
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
                 <MobileAppLayout />
             </ProtectedRoute>
         ),

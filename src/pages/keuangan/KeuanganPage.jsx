@@ -5,6 +5,7 @@ import SubPageHeader from "../../components/layout/SubPageHeader";
 import { useAuth } from "../../context/useAuth";
 import { canAccessInvoice } from "../../utils/invoiceAccess";
 import { canAccessFinance } from "../../utils/financeAccess";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 
 function MenuGrid({ items }) {
     const navigate = useNavigate();
@@ -107,7 +108,7 @@ export default function KeuanganPage() {
         return <Navigate to="/home" replace />;
     }
 
-    if (role === "general_manager") {
+    if (isGeneralManagerRole(role)) {
         return <GeneralManagerFinanceView canInvoice={canInvoice} />;
     }
 

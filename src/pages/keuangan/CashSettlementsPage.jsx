@@ -21,6 +21,7 @@ import Button from "../../components/common/Button";
 import FilterInvoiceSheet from "../invoices/FilterInvoiceSheet";
 import { useAuth } from "../../context/useAuth";
 import { canAccessFinance } from "../../utils/financeAccess";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 import {
   addCashSettlementItems,
   approveCashSettlement,
@@ -151,7 +152,7 @@ function SettlementsListPage() {
   const [branchMissing, setBranchMissing] = useState(false);
 
   const isStaff = role === "branch_staff";
-  const isGeneralManager = role === "general_manager";
+  const isGeneralManager = isGeneralManagerRole(role);
   const title = approvalOnly ? "Approval Setoran Tunai" : "Setoran Tunai";
 
   const fetchData = useCallback(async () => {
@@ -193,7 +194,7 @@ function SettlementsListPage() {
     <div className="min-h-dvh bg-gray-50 p-4">
       <div className="mb-5">
         <SubPageHeader title={title} />
-        {role !== "general_manager" && user?.branch_code && (
+        {!isGeneralManagerRole(role) && user?.branch_code && (
           <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
             Cabang {user.branch_code}
           </div>
@@ -1112,7 +1113,7 @@ function SettlementDetailPage() {
   const isBranchManagerSettlement = isManagerSettlementType(sourceType);
   const canStaffEdit = role === "branch_staff" && !isBranchManagerSettlement && (isDraft || isRejected);
   const canManagerReview = role === "branch_manager" && !isBranchManagerSettlement && isSubmitted;
-  const canGeneralManagerReview = role === "general_manager" && isBranchManagerSettlement && isSubmitted;
+  const canGeneralManagerReview = isGeneralManagerRole(role) && isBranchManagerSettlement && isSubmitted;
 
   const handleRemove = async (itemId) => {
     if (!confirm("Hapus invoice dari draft setoran?")) return;

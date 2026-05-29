@@ -7,7 +7,7 @@ import { canAccessFinance } from '../../utils/financeAccess';
 
 const NAV_ITEMS = [
   { id: 'beranda', icon: Home, label: 'BERANDA', path: '/home', roles: ['all'] },
-  { id: 'database', icon: Database, label: 'DATABASE', path: '/input', roles: ['general_manager', 'branch_staff', 'branch_manager'] },
+  { id: 'database', icon: Database, label: 'DATABASE', path: '/input', roles: ['general_manager', 'super_admin', 'branch_staff', 'branch_manager'] },
   { id: 'invoice', icon: FileText, label: 'INVOICE', path: '/invoice', roles: ['invoice'] },
   { id: 'keuangan', icon: Wallet, label: 'KEUANGAN', path: '/keuangan', roles: ['finance'] },
   { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },

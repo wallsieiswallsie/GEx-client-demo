@@ -14,6 +14,7 @@ import SubPageHeader from "../../components/layout/SubPageHeader";
 import { useAuth } from "../../context/useAuth";
 import { LoadingState } from "../../components/common/Loading";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 import {
     getAllUsersInternal,
     deleteUserInternal,
@@ -30,7 +31,7 @@ export default function UsersInternalPage() {
     const [openId, setOpenId] = useState(null);
 
     const fetchData = async () => {
-        if (role !== "general_manager") {
+        if (!isGeneralManagerRole(role)) {
             return;
         }
 
@@ -98,7 +99,7 @@ export default function UsersInternalPage() {
                 />
             </div>
 
-            {role !== "general_manager" ? (
+            {!isGeneralManagerRole(role) ? (
                 <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
                     Anda tidak memiliki akses pengaturan PIC cabang.
                 </div>

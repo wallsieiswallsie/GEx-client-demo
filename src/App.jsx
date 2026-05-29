@@ -16,6 +16,7 @@ import { relasiRoutes } from "./routes/relasiRoutes";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { LoadingState } from "./components/common/Loading";
 import MobileAppLayout from "./layouts/MobileAppLayout";
+import { INTERNAL_ROLES } from "./utils/roleAccess";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
 import TrackPackagePage from "./pages/customer/TrackPackagePage";
@@ -106,7 +107,7 @@ export default function App() {
 
               {/* === LEGACY DASHBOARD === */}
               <Route path="/dashboard" element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
                   <div className="min-h-screen flex items-center justify-center bg-gray-100">
                     <h1 className="text-2xl font-bold text-gray-800">
                       Tampilan Dashboard Sementara

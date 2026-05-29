@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import UsersInternalPage from "../pages/relasi/UsersInternalPage";
 import UsersInternalForm from "../pages/relasi/UsersInternalForm";
@@ -8,7 +9,7 @@ import CustomerPage from "../pages/relasi/CustomerPage";
 export const relasiRoutes = [
     {
         element: (
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
                 <MobileAppLayout />
             </ProtectedRoute>
         ),

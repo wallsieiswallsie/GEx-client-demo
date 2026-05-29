@@ -10,6 +10,7 @@ import SubPageHeader from "../../components/layout/SubPageHeader";
 import { useAuth } from "../../context/useAuth";
 import { ButtonLoading } from "../../components/common/Loading";
 import { getAllBranches } from "../../services/api/logistik/branchApi";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 
 import {
     createUserInternal,
@@ -65,7 +66,7 @@ export default function UsersInternalForm() {
     };
 
     useEffect(() => {
-        if (role === "general_manager") {
+        if (isGeneralManagerRole(role)) {
             loadBranches();
         }
     }, [role]);
@@ -171,7 +172,7 @@ export default function UsersInternalForm() {
                 />
             </div>
 
-            {role !== "general_manager" ? (
+            {!isGeneralManagerRole(role) ? (
                 <div className="bg-white rounded-2xl p-5 text-center text-sm text-gray-500 shadow-sm">
                     Anda tidak memiliki akses pengaturan PIC cabang.
                 </div>

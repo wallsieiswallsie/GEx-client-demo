@@ -14,6 +14,7 @@ import {
   Play,
 } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { isGeneralManagerRole } from "../../utils/roleAccess";
 import { LoadingState } from "../../components/common/Loading";
 import { useAuth } from "../../context/useAuth";
 import {
@@ -127,7 +128,7 @@ const configs = {
 };
 
 const canAccessSection = (role, section) => {
-  if (role === "general_manager") return true;
+  if (isGeneralManagerRole(role)) return true;
   return role === "branch_manager" && section === "ship-schedules";
 };
 
@@ -285,7 +286,7 @@ export default function CMSPage() {
     fetchData();
   }, [activeSection]);
 
-  if (!["general_manager", "branch_manager"].includes(role)) {
+  if (!["general_manager", "super_admin", "branch_manager"].includes(role)) {
     return <Navigate to="/home" replace />;
   }
 
