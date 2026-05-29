@@ -6,12 +6,14 @@ import {
   ExternalLink,
   FileText,
   Instagram,
+  ImageIcon,
   MapPin,
   Pencil,
   Save,
   Ship,
   Sparkles,
   Play,
+  Video,
 } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { isGeneralManagerRole } from "../../utils/roleAccess";
@@ -26,6 +28,7 @@ import {
   getDisplayedBranches,
   getDisplayedShipSchedules,
   getTermsAndConditions,
+  reorderBannerDashboard,
   reorderDisplayedBranches,
   reorderDisplayedShipSchedules,
   reorderTermsAndConditions,
@@ -34,7 +37,11 @@ import {
   updateDisplayedShipSchedule,
   updateTermsAndConditions,
 } from "../../services/api/content/contentApi";
-import { extractYoutubeVideoId, getYoutubeThumbnail } from "../../utils/youtube";
+import {
+  getBannerYoutubeThumbnail,
+  isValidBannerUrlForType,
+  normalizeBannerContentType,
+} from "../../utils/bannerContent";
 
 const sections = [
   { key: "banner-dashboard", title: "Banner Dashboard", icon: Sparkles, color: "bg-sky-100 text-sky-700" },
@@ -47,15 +54,31 @@ const sections = [
 const configs = {
   "banner-dashboard": {
     title: "Banner Dashboard",
-    emptyForm: { content_url: "", title: "", description: "", is_active: true },
+    emptyForm: {
+      content_type: "youtube",
+      content_url: "",
+      redirect_url: "",
+      title: "",
+      description: "",
+      is_active: true,
+      order_number: 0,
+    },
     fetch: getBannerDashboard,
     create: createBannerDashboard,
     update: updateBannerDashboard,
+    reorder: reorderBannerDashboard,
     fields: [
-      ["content_url", "URL Video YouTube", "url", "https://youtu.be/xxxxx", "Masukkan link video YouTube"],
+      ["content_type", "Tipe Konten", "select", "", "", [
+        ["youtube", "YouTube"],
+        ["video", "Video URL"],
+        ["image", "Image URL"],
+      ]],
+      ["content_url", "URL Konten", "url", "https://youtu.be/xxxxx", "Masukkan URL sesuai tipe konten"],
+      ["redirect_url", "URL Tujuan", "url", "https://example.com", "Opsional. Jika kosong, banner membuka URL konten."],
       ["title", "Judul", "text"],
       ["description", "Deskripsi", "textarea"],
       ["is_active", "Aktif", "checkbox"],
+      ["order_number", "Urutan", "number"],
     ],
   },
   "ship-schedules": {
@@ -135,7 +158,7 @@ const canAccessSection = (role, section) => {
 const toDateInput = (value) => (value ? String(value).slice(0, 10) : "");
 
 function Field({ field, form, setForm }) {
-  const [name, label, type, placeholder, helperText] = field;
+  const [name, label, type, placeholder, helperText, options] = field;
   const value = type === "date" ? toDateInput(form[name]) : form[name] ?? "";
 
   if (type === "checkbox") {
@@ -167,6 +190,23 @@ function Field({ field, form, setForm }) {
     );
   }
 
+  if (type === "select") {
+    return (
+      <div>
+        <select
+          value={value}
+          onChange={(e) => setForm({ ...form, [name]: e.target.value })}
+          className="w-full rounded-xl border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        >
+          {(options || []).map(([optionValue, optionLabel]) => (
+            <option key={optionValue} value={optionValue}>{optionLabel}</option>
+          ))}
+        </select>
+        {helperText && <p className="mt-1 px-1 text-xs text-gray-500">{helperText}</p>}
+      </div>
+    );
+  }
+
   return (
     <div>
       <input
@@ -182,27 +222,27 @@ function Field({ field, form, setForm }) {
 }
 
 function BannerPreview({ form }) {
-  const [thumbnailError, setThumbnailError] = useState(false);
+  const [mediaError, setMediaError] = useState(false);
 
   useEffect(() => {
-    setThumbnailError(false);
-  }, [form.content_url]);
+    setMediaError(false);
+  }, [form.content_url, form.content_type]);
 
   if (!("content_url" in form)) return null;
 
-  const videoId = extractYoutubeVideoId(form.content_url);
-  const thumbnail = getYoutubeThumbnail(form.content_url);
-  const canPreview = videoId && thumbnail && !thumbnailError;
+  const type = normalizeBannerContentType(form);
+  const thumbnail = getBannerYoutubeThumbnail(form);
+  const canPreviewYoutube = type === "youtube" && thumbnail && !mediaError;
 
   return (
     <div className="overflow-hidden rounded-xl border bg-gray-900 text-white">
-      {canPreview ? (
+      {canPreviewYoutube ? (
         <div className="relative h-32">
           <img
             src={thumbnail}
             alt={form.title || "Thumbnail YouTube"}
             className="h-full w-full object-cover"
-            onError={() => setThumbnailError(true)}
+            onError={() => setMediaError(true)}
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/20">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm">
@@ -210,12 +250,30 @@ function BannerPreview({ form }) {
             </div>
           </div>
         </div>
+      ) : type === "video" && form.content_url && !mediaError ? (
+        <video
+          src={form.content_url}
+          className="h-32 w-full bg-black object-cover"
+          muted
+          playsInline
+          controls
+          preload="metadata"
+          onError={() => setMediaError(true)}
+        />
+      ) : type === "image" && form.content_url && !mediaError ? (
+        <img
+          src={form.content_url}
+          alt={form.title || "Preview gambar banner"}
+          className="h-32 w-full object-cover"
+          onError={() => setMediaError(true)}
+        />
       ) : form.content_url ? (
-        <div className="flex h-32 items-center justify-center bg-gray-200 px-4 text-center text-sm text-gray-500">
-          Thumbnail YouTube tidak tersedia
+        <div className="flex h-32 flex-col items-center justify-center bg-gray-200 px-4 text-center text-sm text-gray-500">
+          {type === "video" ? <Video className="mb-2 h-6 w-6" /> : <ImageIcon className="mb-2 h-6 w-6" />}
+          Preview konten tidak tersedia
         </div>
       ) : (
-        <div className="flex h-32 items-center justify-center bg-gray-200 text-sm text-gray-500">Preview thumbnail YouTube</div>
+        <div className="flex h-32 items-center justify-center bg-gray-200 text-sm text-gray-500">Preview banner</div>
       )}
       <div className="p-3">
         <p className="text-sm font-semibold">{form.title || "Judul banner"}</p>
@@ -230,7 +288,9 @@ function CardSummary({ section, item }) {
     return (
       <>
         <p className="font-semibold text-gray-800">{item.title || "Tanpa judul"}</p>
-        <p className="text-xs text-gray-500">{item.is_active ? "Aktif" : "Nonaktif"}</p>
+        <p className="text-xs text-gray-500">
+          {normalizeBannerContentType(item)} - {item.is_active ? "Aktif" : "Nonaktif"}
+        </p>
       </>
     );
   }
@@ -342,6 +402,19 @@ export default function CMSPage() {
     try {
       setSaving(true);
       const payload = { ...form };
+      if (activeSection === "banner-dashboard") {
+        const contentType = normalizeBannerContentType(payload);
+        payload.content_type = contentType;
+
+        if (!isValidBannerUrlForType(contentType, payload.content_url)) {
+          throw new Error(
+            contentType === "youtube"
+              ? "URL konten harus berupa link video YouTube yang valid"
+              : "URL konten harus berupa URL http/https yang valid"
+          );
+        }
+      }
+
       Object.keys(payload).forEach((key) => {
         if (payload[key] === "") payload[key] = null;
         if (key === "order_number" || key === "phone_number" || key === "latitude" || key === "longitude") {
@@ -363,7 +436,11 @@ export default function CMSPage() {
 
   const edit = (item) => {
     setEditingId(item.id);
-    setForm({ ...config.emptyForm, ...item });
+    const nextForm = { ...config.emptyForm, ...item };
+    if (activeSection === "banner-dashboard") {
+      nextForm.content_type = normalizeBannerContentType(nextForm);
+    }
+    setForm(nextForm);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
