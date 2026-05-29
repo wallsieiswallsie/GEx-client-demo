@@ -7,8 +7,8 @@ import OperasionalPage from "../pages/operasional/OperasionalPage";
 import LogistikPage from "../pages/logistik/LogistikPage";
 import KeuanganPage from "../pages/keuangan/KeuanganPage";
 import RelasiPage from "../pages/relasi/RelasiPage";
-import CMSPage from "../pages/cms/CMSPage";
-import InstagramContentPage from "../pages/cms/InstagramContentPage";
+import CustomerContentManagementPage from "../pages/content/CustomerContentManagementPage";
+import InstagramContentPage from "../pages/content/InstagramContentPage";
 import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPage";
 import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
 import PaketkuPage from "../pages/customer/PaketkuPage";
@@ -116,16 +116,16 @@ export const homeRoutes = [
         element: internalOnly(<RelasiPage />)
       },
       {
-        path: "/cms",
-        element: internalOnly(<CMSPage />)
+        path: "/konten-customer",
+        element: internalOnly(<CustomerContentManagementPage />)
       },
       {
-        path: "/cms/instagram",
+        path: "/konten-customer/instagram",
         element: internalOnly(<InstagramContentPage />)
       },
       {
-        path: "/cms/:section",
-        element: internalOnly(<CMSPage />)
+        path: "/konten-customer/:section",
+        element: internalOnly(<CustomerContentManagementPage />)
       },
       {
         path: "/jadwal",

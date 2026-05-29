@@ -32,11 +32,3 @@ export const updateDisplayedBranch = (id, payload) =>
   request(`/content/branches/${id}`, jsonOptions("PATCH", payload));
 export const reorderDisplayedBranches = (items) =>
   request("/content/branches/reorder", jsonOptions("PATCH", { items }));
-
-export const getTermsAndConditions = () => request("/content/terms");
-export const createTermsAndConditions = (payload) =>
-  request("/content/terms", jsonOptions("POST", payload));
-export const updateTermsAndConditions = (id, payload) =>
-  request(`/content/terms/${id}`, jsonOptions("PATCH", payload));
-export const reorderTermsAndConditions = (items) =>
-  request("/content/terms/reorder", jsonOptions("PATCH", { items }));

@@ -4,7 +4,7 @@ import {
   ArrowDown,
   ArrowUp,
   ExternalLink,
-  FileText,
+  Headphones,
   Instagram,
   ImageIcon,
   MapPin,
@@ -23,19 +23,15 @@ import {
   createBannerDashboard,
   createDisplayedBranch,
   createDisplayedShipSchedule,
-  createTermsAndConditions,
   getBannerDashboard,
   getDisplayedBranches,
   getDisplayedShipSchedules,
-  getTermsAndConditions,
   reorderBannerDashboard,
   reorderDisplayedBranches,
   reorderDisplayedShipSchedules,
-  reorderTermsAndConditions,
   updateBannerDashboard,
   updateDisplayedBranch,
   updateDisplayedShipSchedule,
-  updateTermsAndConditions,
 } from "../../services/api/content/contentApi";
 import {
   getBannerYoutubeThumbnail,
@@ -47,7 +43,7 @@ const sections = [
   { key: "banner-dashboard", title: "Banner Dashboard", icon: Sparkles, color: "bg-sky-100 text-sky-700" },
   { key: "ship-schedules", title: "Jadwal Kapal", icon: Ship, color: "bg-indigo-100 text-indigo-700" },
   { key: "branches", title: "Lokasi Gerai", icon: MapPin, color: "bg-emerald-100 text-emerald-700" },
-  { key: "terms", title: "Bantuan / Syarat & Ketentuan", icon: FileText, color: "bg-amber-100 text-amber-700" },
+  { key: "help", title: "Bantuan", icon: Headphones, color: "bg-violet-100 text-violet-700", path: "/internal/help" },
   { key: "instagram", title: "Instagram Content", icon: Instagram, color: "bg-pink-100 text-pink-700" },
 ];
 
@@ -135,25 +131,14 @@ const configs = {
       ["order_number", "Urutan", "number"],
     ],
   },
-  terms: {
-    title: "Bantuan / Syarat & Ketentuan",
-    emptyForm: { title: "", content: "", order_number: 0 },
-    fetch: getTermsAndConditions,
-    create: createTermsAndConditions,
-    update: updateTermsAndConditions,
-    reorder: reorderTermsAndConditions,
-    fields: [
-      ["title", "Judul", "text"],
-      ["content", "Konten", "textarea"],
-      ["order_number", "Urutan", "number"],
-    ],
-  },
 };
 
 const canAccessSection = (role, section) => {
   if (isGeneralManagerRole(role)) return true;
   return role === "branch_manager" && section === "ship-schedules";
 };
+
+const CONTENT_CUSTOMER_PATH = "/konten-customer";
 
 const toDateInput = (value) => (value ? String(value).slice(0, 10) : "");
 
@@ -321,7 +306,7 @@ function CardSummary({ section, item }) {
   );
 }
 
-export default function CMSPage() {
+export default function CustomerContentManagementPage() {
   const { role } = useAuth();
   const navigate = useNavigate();
   const { section } = useParams();
@@ -351,12 +336,12 @@ export default function CMSPage() {
   }
 
   if (section && !canAccessSection(role, section)) {
-    return <Navigate to={role === "branch_manager" ? "/cms/ship-schedules" : "/cms"} replace />;
+    return <Navigate to={role === "branch_manager" ? `${CONTENT_CUSTOMER_PATH}/ship-schedules` : CONTENT_CUSTOMER_PATH} replace />;
   }
 
   if (!section) {
     if (role === "branch_manager") {
-      return <Navigate to="/cms/ship-schedules" replace />;
+      return <Navigate to={`${CONTENT_CUSTOMER_PATH}/ship-schedules`} replace />;
     }
 
     return (
@@ -366,7 +351,7 @@ export default function CMSPage() {
           {accessibleSections.map((item) => (
             <button
               key={item.key}
-              onClick={() => navigate(`/cms/${item.key}`)}
+              onClick={() => navigate(item.path || `${CONTENT_CUSTOMER_PATH}/${item.key}`)}
               className="rounded-xl border bg-white p-4 text-left shadow-sm transition hover:shadow-md"
             >
               <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl ${item.color}`}>
@@ -380,7 +365,7 @@ export default function CMSPage() {
     );
   }
 
-  if (!config) return <Navigate to="/cms" replace />;
+  if (!config) return <Navigate to={CONTENT_CUSTOMER_PATH} replace />;
 
   async function fetchData() {
     try {

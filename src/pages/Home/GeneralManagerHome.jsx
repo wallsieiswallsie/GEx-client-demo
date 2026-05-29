@@ -295,8 +295,7 @@ const FEATURE_GROUPS = [
             { label: "Logistik", path: "/logistik", icon: Truck, color: "bg-orange-100 text-orange-600" },
             { label: "Keuangan", path: "/keuangan", icon: Wallet, color: "bg-lime-100 text-lime-600" },
             { label: "Relasi", path: "/relasi", icon: Users, color: "bg-indigo-100 text-indigo-600" },
-            { label: "Konten", path: "/cms", icon: FileText, color: "bg-sky-100 text-sky-600" },
-            { label: "Bantuan", path: "/internal/help", icon: Headphones, color: "bg-violet-100 text-violet-600" },
+            { label: "Konten", path: "/konten-customer", icon: FileText, color: "bg-sky-100 text-sky-600" },
         ]
     }
 ];
