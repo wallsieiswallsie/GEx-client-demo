@@ -10,11 +10,13 @@ import CMSPage from "../pages/cms/CMSPage";
 import InstagramContentPage from "../pages/cms/InstagramContentPage";
 import CustomerShipSchedulesPage from "../pages/customer/CustomerShipSchedulesPage";
 import CustomerBranchesPage from "../pages/customer/CustomerBranchesPage";
-import CustomerTermsPage from "../pages/customer/CustomerTermsPage";
 import PaketkuPage from "../pages/customer/PaketkuPage";
 import CustomerPackageDetailPage from "../pages/customer/CustomerPackageDetailPage";
 import CustomerShippingRatePage from "../pages/customer/CustomerShippingRatePage";
 import CustomerPartnershipPage from "../pages/customer/CustomerPartnershipPage";
+import HelpPage from "../pages/customer/HelpPage";
+import HelpDetailPage from "../pages/customer/HelpDetailPage";
+import HelpManagementPage from "../pages/internal/HelpManagementPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -133,7 +135,15 @@ export const homeRoutes = [
       },
       {
         path: "/bantuan",
-        element: <CustomerTermsPage />
+        element: <HelpPage />
+      },
+      {
+        path: "/bantuan/:faqId",
+        element: <HelpDetailPage />
+      },
+      {
+        path: "/internal/help",
+        element: <HelpManagementPage />
       },
       {
         path: "/paketku",
