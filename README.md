@@ -15,7 +15,7 @@
      - Nomor resi.
      - Panjang, lebar, tinggi (cm).
      - Berat aktual (kg).
-     - Kode pengiriman (kapal / pesawat).
+     - Kode pengiriman.
 
 4. **Display Data Paket** (`DisplayDetailPackage.jsx`)
    - Menampilkan seluruh data paket dari database.
