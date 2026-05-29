@@ -7,11 +7,19 @@ import { getTermsAndConditions } from "../../services/api/content/contentApi";
 export default function CustomerTermsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getTermsAndConditions()
-      .then((data) => setItems(data || []))
-      .catch(() => setItems([]))
+      .then((data) => {
+        setError(null);
+        setItems(data || []);
+      })
+      .catch((err) => {
+        console.error("Gagal memuat bantuan customer:", err);
+        setError(err.message || "Bantuan belum dapat dimuat");
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -21,6 +29,10 @@ export default function CustomerTermsPage() {
 
       {loading ? (
         <LoadingState variant="list" rows={4} />
+      ) : error ? (
+        <div className="rounded-xl border border-red-100 bg-white p-5 text-center text-sm text-red-500">
+          {error}
+        </div>
       ) : items.length === 0 ? (
         <div className="rounded-xl border bg-white p-5 text-center text-sm text-gray-400">Belum ada bantuan tersedia</div>
       ) : (

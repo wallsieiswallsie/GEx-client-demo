@@ -49,11 +49,19 @@ export default function CustomerBranchesPage() {
   const [userLocation, setUserLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState("idle");
   const [locationMessage, setLocationMessage] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getDisplayedBranches()
-      .then((data) => setItems(data || []))
-      .catch(() => setItems([]))
+      .then((data) => {
+        setError(null);
+        setItems(data || []);
+      })
+      .catch((err) => {
+        console.error("Gagal memuat lokasi gerai customer:", err);
+        setError(err.message || "Lokasi gerai belum dapat dimuat");
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -193,6 +201,10 @@ export default function CustomerBranchesPage() {
 
         {loading ? (
           <BranchesSkeleton />
+        ) : error ? (
+          <div className="rounded-[24px] border border-red-100 bg-white p-6 text-center text-sm text-red-500 shadow-sm">
+            {error}
+          </div>
         ) : (
           <>
             <section className="space-y-3">

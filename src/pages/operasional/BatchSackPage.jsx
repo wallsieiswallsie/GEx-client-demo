@@ -15,6 +15,7 @@ import {
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { ButtonLoading, LoadingState } from "../../components/common/Loading";
 import FloatingActionButton from "../../components/common/FloatingActionButton";
+import { hasAllowedRole } from "../../utils/roleAccess";
 
 import {
     createPlaneBatch,
@@ -30,7 +31,7 @@ const statusClass = {
 
 export default function BatchSackPage() {
     const navigate = useNavigate();
-    const { authUser } = useAuth();
+    const { user, role } = useAuth();
 
     const [batchType, setBatchType] = useState("SHIP");
     const [batches, setBatches] = useState([]);
@@ -38,6 +39,9 @@ export default function BatchSackPage() {
     const [loading, setLoading] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const canCreateBatch =
+        hasAllowedRole(role, ["general_manager", "super_admin"]) ||
+        (hasAllowedRole(role, ["branch_staff", "branch_manager"]) && user?.is_origin === true);
 
     const [form, setForm] = useState({
         ship_name: "",
@@ -255,7 +259,7 @@ export default function BatchSackPage() {
                 </div>
             )}
 
-            {authUser?.role === "general_manager" && (
+            {canCreateBatch && (
                 <FloatingActionButton
                     onClick={openCreate}
                     ariaLabel="Tambah batch"

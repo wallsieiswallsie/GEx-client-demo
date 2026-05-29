@@ -58,7 +58,7 @@ function SearchBar({ onSearch }) {
 }
 
 // Banner video/gambar promo dari banner_dashboard
-function PromoBanner({ banner, isLoading }) {
+function PromoBanner({ banner, isLoading, error }) {
   const [thumbnailError, setThumbnailError] = useState(false);
 
   useEffect(() => {
@@ -75,8 +75,8 @@ function PromoBanner({ banner, isLoading }) {
 
   if (!banner) {
     return (
-      <div className="mx-4 rounded-2xl border bg-white p-5 text-center text-sm text-gray-400 shadow-sm">
-        Belum ada banner aktif
+      <div className={`mx-4 rounded-2xl border bg-white p-5 text-center text-sm shadow-sm ${error ? "text-red-500" : "text-gray-400"}`}>
+        {error ? "Banner belum dapat dimuat" : "Belum ada banner aktif"}
       </div>
     );
   }
@@ -145,15 +145,17 @@ export default function CustomerHome() {
 
   // Data isolation via custom hooks — komponen tidak fetch langsung
   const { data: summaryData, isLoading: summaryLoading } = useHomeSummary();
-  const { schedules, isLoading: schedulesLoading } = useShipSchedules();
+  const { schedules, isLoading: schedulesLoading, error: schedulesError } = useShipSchedules();
 
   //  state untuk claimed_packages
   const [statusCounts, setStatusCounts] = useState(null);
   const [pendingProblematic, setPendingProblematic] = useState([]);
   const [banners, setBanners] = useState([]);
   const [bannerLoading, setBannerLoading] = useState(true);
+  const [bannerError, setBannerError] = useState(null);
   const [instagramContents, setInstagramContents] = useState([]);
   const [instagramLoading, setInstagramLoading] = useState(true);
+  const [instagramError, setInstagramError] = useState(null);
 
   //  fetch jumlah status paket
   useEffect(() => {
@@ -175,10 +177,12 @@ export default function CustomerHome() {
     const fetchBanners = async () => {
       try {
         setBannerLoading(true);
+        setBannerError(null);
         const data = await getBannerDashboard();
         setBanners(data || []);
       } catch (err) {
         console.error("Gagal ambil banner:", err);
+        setBannerError(err.message || "Banner belum dapat dimuat");
         setBanners([]);
       } finally {
         setBannerLoading(false);
@@ -192,10 +196,12 @@ export default function CustomerHome() {
     const fetchInstagramContents = async () => {
       try {
         setInstagramLoading(true);
+        setInstagramError(null);
         const data = await getInstagramContents();
         setInstagramContents(data || []);
       } catch (err) {
         console.error("Gagal ambil konten Instagram:", err);
+        setInstagramError(err.message || "Konten belum dapat dimuat");
         setInstagramContents([]);
       } finally {
         setInstagramLoading(false);
@@ -239,7 +245,7 @@ export default function CustomerHome() {
       <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
         <div className="flex flex-col gap-4 pt-3">
           {/* 2. Promo Banner */}
-          <PromoBanner banner={firstBanner} isLoading={bannerLoading} />
+          <PromoBanner banner={firstBanner} isLoading={bannerLoading} error={bannerError} />
 
           {/* 3. Status Paketmu */}
           <PackageStatusWidget
@@ -275,6 +281,7 @@ export default function CustomerHome() {
           <ShipScheduleSection
             schedules={schedules}
             isLoading={schedulesLoading}
+            error={schedulesError}
             onViewAll={() => navigate('/jadwal')}
           />
 
@@ -282,7 +289,13 @@ export default function CustomerHome() {
           <ServiceMenuGrid />
 
           {/* 6. Berita */}
-          <NewsBanner banners={instagramContents} isLoading={instagramLoading} />
+          {instagramError ? (
+            <section className="mx-4 rounded-2xl border bg-white p-4 text-center text-sm text-red-500 shadow-sm">
+              Konten belum dapat dimuat
+            </section>
+          ) : (
+            <NewsBanner banners={instagramContents} isLoading={instagramLoading} />
+          )}
         </div>
       </main>
     </div>

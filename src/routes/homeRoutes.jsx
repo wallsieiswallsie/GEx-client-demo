@@ -15,6 +15,7 @@ import PaketkuPage from "../pages/customer/PaketkuPage";
 import CustomerPackageDetailPage from "../pages/customer/CustomerPackageDetailPage";
 import CustomerShippingRatePage from "../pages/customer/CustomerShippingRatePage";
 import CustomerPartnershipPage from "../pages/customer/CustomerPartnershipPage";
+import CustomerContentPage from "../pages/customer/CustomerContentPage";
 import HelpPage from "../pages/customer/HelpPage";
 import HelpDetailPage from "../pages/customer/HelpDetailPage";
 import HelpManagementPage from "../pages/internal/HelpManagementPage";
@@ -44,6 +45,10 @@ export const homeRoutes = [
     children: [
       {
         path: '/home',
+        element: <HomeContainer />,
+      },
+      {
+        path: '/beranda',
         element: <HomeContainer />,
       },
       {
@@ -137,6 +142,10 @@ export const homeRoutes = [
       {
         path: "/kemitraan",
         element: <CustomerPartnershipPage />
+      },
+      {
+        path: "/konten",
+        element: <CustomerContentPage />
       },
       {
         path: "/bantuan",

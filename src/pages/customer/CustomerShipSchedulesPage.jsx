@@ -84,11 +84,19 @@ export default function CustomerShipSchedulesPage() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getDisplayedShipSchedules()
-      .then((data) => setItems(data || []))
-      .catch(() => setItems([]))
+      .then((data) => {
+        setError(null);
+        setItems(data || []);
+      })
+      .catch((err) => {
+        console.error("Gagal memuat halaman jadwal kapal customer:", err);
+        setError(err.message || "Jadwal belum dapat dimuat");
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -140,6 +148,8 @@ export default function CustomerShipSchedulesPage() {
 
         {loading ? (
           <LoadingState variant="list" rows={4} />
+        ) : error ? (
+          <ErrorState message={error} />
         ) : items.length === 0 ? (
           <EmptyScheduleState />
         ) : (
@@ -150,6 +160,14 @@ export default function CustomerShipSchedulesPage() {
           </section>
         )}
       </main>
+    </div>
+  );
+}
+
+function ErrorState({ message }) {
+  return (
+    <div className="rounded-2xl border border-red-100 bg-white p-6 text-center text-sm text-red-500 shadow-sm">
+      {message}
     </div>
   );
 }

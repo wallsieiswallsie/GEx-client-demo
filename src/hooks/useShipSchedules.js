@@ -36,6 +36,7 @@ export function useShipSchedules() {
       const schedules = await getDisplayedShipSchedules();
       dispatch({ type: 'SUCCESS', payload: schedules || [] });
     } catch (err) {
+      console.error('Gagal ambil jadwal kapal customer:', err);
       dispatch({ type: 'ERROR', payload: err.message });
     }
   }, []);

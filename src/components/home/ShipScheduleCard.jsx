@@ -33,7 +33,7 @@ function DateMetric({ icon: Icon, label, value, emphasis = false }) {
   return (
     <div className={`min-w-0 rounded-xl px-3 py-2 ${emphasis ? 'bg-sky-50' : 'bg-gray-50'}`}>
       <div className="mb-1 flex items-center gap-1 text-[10px] font-medium text-gray-400">
-        <Icon className="h-3 w-3 shrink-0" />
+        {React.createElement(Icon, { className: "h-3 w-3 shrink-0" })}
         <span>{label}</span>
       </div>
       <p className={`whitespace-nowrap text-xs font-bold ${emphasis ? 'text-sky-700' : 'text-gray-700'}`}>
@@ -98,7 +98,7 @@ function Card({ schedule }) {
   );
 }
 
-export default function ShipScheduleSection({ schedules, isLoading, onViewAll }) {
+export default function ShipScheduleSection({ schedules, isLoading, error, onViewAll }) {
   const displayedSchedules = (schedules || []).slice(0, 5);
 
   return (
@@ -115,6 +115,10 @@ export default function ShipScheduleSection({ schedules, isLoading, onViewAll })
 
       {isLoading ? (
         <SkeletonCard height="156px" rounded="rounded-2xl" />
+      ) : error ? (
+        <div className="rounded-xl bg-red-50 p-4 text-center text-sm text-red-500">
+          Jadwal kapal belum dapat dimuat
+        </div>
       ) : displayedSchedules.length === 0 ? (
         <div className="rounded-xl bg-gray-50 p-4 text-center text-sm text-gray-400">
           Belum ada jadwal kapal
