@@ -26,7 +26,10 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await authApi.requestOtp(formData.whatsapp_number);
+      const res = await authApi.requestOtp({
+        username: formData.username,
+        whatsapp_number: formData.whatsapp_number,
+      });
       // Di klien kita tak perlu peduli berhasil dikirim via WA Provider / Error. 
       // Kalau berhasil ke generate, kita asumsikan server sedang Push, dan kita Pop Window:
       if (res.status === 'success') {
@@ -47,7 +50,10 @@ export default function RegisterPage() {
 
   const handleResendOtp = async () => {
     try {
-      await authApi.requestOtp(formData.whatsapp_number);
+      await authApi.requestOtp({
+        username: formData.username,
+        whatsapp_number: formData.whatsapp_number,
+      });
       const pesanTrigger = encodeURIComponent(`Halo admin GEX, mohon kirim ulang kode akses OTP saya.`);
       window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${pesanTrigger}`, '_blank');
     } catch (err) {

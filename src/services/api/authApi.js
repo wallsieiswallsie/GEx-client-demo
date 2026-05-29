@@ -2,10 +2,10 @@ import { apiFetch } from "./apiClient";
 
 /** endpoints module */
 export const authApi = {
-  requestOtp: async (whatsapp_number) =>
+  requestOtp: async (payload) =>
     apiFetch("/otp", {
       method: "POST",
-      body: JSON.stringify({ whatsapp_number }),
+      body: JSON.stringify(payload),
     }),
 
   register: async (payload) =>
