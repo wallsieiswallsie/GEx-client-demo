@@ -1,7 +1,17 @@
 import React from 'react';
 import { ButtonLoading } from './Loading';
 
-export default function Button({ children, onClick, type = "button", variant = "primary", disabled = false, fullWidth = false, loading = false, loadingText = "Memproses..." }) {
+export default function Button({
+  children,
+  onClick,
+  type = "button",
+  variant = "primary",
+  disabled = false,
+  fullWidth = false,
+  loading = false,
+  loadingText = "Memproses...",
+  className = "",
+}) {
   const baseStyle = "min-w-32 py-2.5 px-4 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]";
   
   const variants = {
@@ -15,7 +25,7 @@ export default function Button({ children, onClick, type = "button", variant = "
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={` ${baseStyle} ${variants[variant]} ${fullWidth ? 'w-full' : ''}`}
+      className={` ${baseStyle} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
       {loading ? <ButtonLoading text={loadingText} /> : children}
     </button>

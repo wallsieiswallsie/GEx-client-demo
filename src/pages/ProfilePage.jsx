@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Phone } from 'lucide-react';
+import { Lock, Phone, Save } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import Button from '../components/common/Button';
 import InputField from '../components/common/InputField';
 import { LoadingState } from '../components/common/Loading';
@@ -102,38 +103,40 @@ export default function ProfilePage() {
   ).toUpperCase();
 
   return (
-    <div className="flex flex-col min-h-dvh bg-gray-50">
-      <Header onLogout={handleConfirmLogout} />
+    <div className="flex min-h-dvh flex-col bg-[#F6F7FB]">
+      <Header onLogout={handleConfirmLogout} variant="profile" />
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4 scrollbar-hide">
+      <main className="relative z-10 -mt-[60px] flex-1 space-y-5 overflow-y-auto px-4 pb-8 scrollbar-hide">
         {loading ? (
-          <LoadingState variant="section" text="Memuat profil..." />
+          <div className="rounded-[24px] bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+            <LoadingState variant="section" text="Memuat profil..." />
+          </div>
         ) : (
           <>
-            <section className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl">
+            <section className="rounded-[24px] border border-white/70 bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+              <div className="flex items-center gap-4">
+                <div className="flex h-[68px] w-[68px] items-center justify-center rounded-[20px] bg-gradient-to-br from-[#7B2FF7] to-[#3A6BFF] text-3xl font-extrabold text-white shadow-lg shadow-violet-500/25">
                   {initial}
                 </div>
                 <div className="min-w-0">
-                  <h2 className="font-bold text-gray-900 truncate">{profile?.name || '-'}</h2>
-                  <p className="text-sm text-gray-500 truncate">@{profile?.username || '-'}</p>
+                  <h2 className="truncate text-lg font-extrabold leading-tight text-gray-900">{profile?.name || '-'}</h2>
+                  <p className="mt-1 truncate text-sm font-medium text-gray-500">@{profile?.username || '-'}</p>
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-3 text-sm">
-                <InfoRow icon={<Phone className="w-4 h-4" />} label="WhatsApp" value={profile?.whatsapp_number || '-'} />
+              <div className="mt-6 grid gap-3 text-sm">
+                <InfoRow icon={<FaWhatsapp className="h-5 w-5" />} label="WhatsApp" value={profile?.whatsapp_number || '-'} />
               </div>
             </section>
 
             {message && (
-              <div className="p-3 rounded-xl bg-green-50 text-green-700 text-sm border border-green-100">
+              <div className="rounded-2xl border border-green-100 bg-green-50 p-3 text-sm font-medium text-green-700">
                 {message}
               </div>
             )}
 
             {error && (
-              <div className="p-3 rounded-xl bg-red-50 text-red-700 text-sm border border-red-100">
+              <div className="rounded-2xl border border-red-100 bg-red-50 p-3 text-sm font-medium text-red-700">
                 {error}
               </div>
             )}
@@ -142,18 +145,22 @@ export default function ProfilePage() {
               <>
                 <form
                   onSubmit={handleUpdateProfile}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4"
+                  className="space-y-5 rounded-[24px] border border-white/70 bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]"
                 >
                   <div>
-                    <h3 className="font-bold text-gray-900">Edit Profil</h3>
-                    <p className="text-xs text-gray-500 mt-1">Ubah nomor WhatsApp akun customer Anda.</p>
+                    <h3 className="text-lg font-bold text-gray-900">Edit Profil</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-gray-500">Ubah nomor WhatsApp akun customer Anda.</p>
                   </div>
 
                   <InputField
                     label="Nomor WhatsApp"
+                    icon={Phone}
                     value={whatsappNumber}
                     onChange={(e) => setWhatsappNumber(e.target.value.replace(/\D/g, ''))}
                     placeholder="628123456789"
+                    labelClassName="font-semibold text-gray-900"
+                    iconClassName="text-green-500"
+                    inputClassName="h-[52px] rounded-2xl border-gray-200 bg-white text-[15px] text-gray-900 focus:border-[#7B2FF7] focus:ring-4 focus:ring-[#7B2FF7]/10"
                     required
                   />
 
@@ -163,18 +170,22 @@ export default function ProfilePage() {
                     disabled={savingProfile}
                     loading={savingProfile}
                     loadingText="Menyimpan..."
+                    className="h-[54px] rounded-2xl bg-gradient-to-br from-[#7B2FF7] to-[#3A6BFF] text-base font-bold text-white shadow-lg shadow-violet-500/30 hover:opacity-95 focus:ring-[#7B2FF7]"
                   >
-                    Simpan Profil
+                    <span className="inline-flex items-center justify-center gap-3">
+                      <Save className="h-5 w-5" />
+                      Simpan Profil
+                    </span>
                   </Button>
                 </form>
 
                 <form
                   onSubmit={handleChangePassword}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4"
+                  className="space-y-5 rounded-[24px] border border-white/70 bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]"
                 >
                   <div className="flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-gray-500" />
-                    <h3 className="font-bold text-gray-900">Ganti Password</h3>
+                    <Lock className="h-5 w-5 text-[#7B2FF7]" />
+                    <h3 className="text-lg font-bold text-gray-900">Ganti Password</h3>
                   </div>
 
                   <InputField
@@ -187,6 +198,8 @@ export default function ProfilePage() {
                         current_password: e.target.value,
                       }))
                     }
+                    labelClassName="font-semibold text-gray-900"
+                    inputClassName="h-[52px] rounded-2xl border-gray-200 bg-white text-[15px] text-gray-900 focus:border-[#7B2FF7] focus:ring-4 focus:ring-[#7B2FF7]/10"
                     required
                   />
 
@@ -200,11 +213,14 @@ export default function ProfilePage() {
                         new_password: e.target.value,
                       }))
                     }
+                    labelClassName="font-semibold text-gray-900"
+                    inputClassName="h-[52px] rounded-2xl border-gray-200 bg-white text-[15px] text-gray-900 focus:border-[#7B2FF7] focus:ring-4 focus:ring-[#7B2FF7]/10"
                     required
                   />
 
                   <Button
                     type="submit"
+                    variant="secondary"
                     fullWidth
                     loading={savingPassword}
                     loadingText="Menyimpan..."
@@ -213,15 +229,19 @@ export default function ProfilePage() {
                       !passwordForm.current_password ||
                       !passwordForm.new_password
                     }
+                    className="h-[54px] rounded-2xl bg-violet-100 text-base font-bold text-[#6D28D9] shadow-none hover:bg-violet-200 focus:ring-[#7B2FF7]"
                   >
-                    Ganti Password
+                    <span className="inline-flex items-center justify-center gap-3">
+                      <Lock className="h-5 w-5" />
+                      Ganti Password
+                    </span>
                   </Button>
                 </form>
               </>
             ) : (
-              <section className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-                <h3 className="font-bold text-gray-900">Akses Profil</h3>
-                <p className="text-sm text-gray-500 mt-1">
+              <section className="rounded-[24px] border border-white/70 bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+                <h3 className="text-lg font-bold text-gray-900">Akses Profil</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">
                   Akun internal hanya dapat melihat informasi profil.
                 </p>
               </section>
@@ -235,12 +255,14 @@ export default function ProfilePage() {
 
 function InfoRow({ icon, label, value }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2">
-      <div className="flex items-center gap-2 text-gray-500">
-        {icon}
-        <span>{label}</span>
+    <div className="flex min-h-[64px] items-center justify-between gap-3 rounded-2xl bg-[#F8F8FA] px-4 py-3">
+      <div className="flex items-center gap-3 text-gray-500">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-green-500 shadow-sm">
+          {icon}
+        </span>
+        <span className="text-[15px] font-medium">{label}</span>
       </div>
-      <span className="font-semibold text-gray-800 text-right break-all">{value}</span>
+      <span className="break-all text-right text-[15px] font-bold text-gray-900">{value}</span>
     </div>
   );
 }
