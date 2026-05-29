@@ -116,7 +116,7 @@ function BannerSlide({ banner }) {
   );
 
   const className =
-    "group relative block h-[180px] w-full overflow-hidden rounded-2xl bg-gray-100 text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+    "group relative block h-[180px] w-full overflow-hidden rounded-2xl bg-gray-100 text-left shadow-[0_8px_24px_rgba(0,0,0,0.05)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 
   if (!destination) {
     return <div className={className}>{content}</div>;
@@ -198,7 +198,7 @@ export default function CustomerBannerCarousel({ banners, isLoading, error }) {
 
   if (activeBanners.length === 0) {
     return (
-      <div className={`mx-4 rounded-2xl border bg-white p-5 text-center text-sm shadow-sm ${error ? "text-red-500" : "text-gray-400"}`}>
+      <div className={`mx-4 rounded-2xl border bg-white p-5 text-center text-sm shadow-[0_8px_24px_rgba(0,0,0,0.05)] ${error ? "text-red-500" : "text-gray-400"}`}>
         {error ? "Banner belum dapat dimuat" : "Belum ada banner aktif"}
       </div>
     );
@@ -226,7 +226,7 @@ export default function CustomerBannerCarousel({ banners, isLoading, error }) {
               type="button"
               onClick={() => goToSlide(index)}
               className={`h-2 rounded-full transition-all duration-200 ${
-                index === activeIndex ? "w-5 bg-blue-600" : "w-2 bg-gray-300"
+                index === activeIndex ? "w-5 bg-[#2563eb]" : "w-2 bg-gray-300"
               }`}
               aria-label={`Tampilkan banner ${index + 1}`}
               aria-current={index === activeIndex ? "true" : undefined}

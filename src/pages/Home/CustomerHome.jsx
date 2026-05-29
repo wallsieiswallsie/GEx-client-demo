@@ -48,7 +48,8 @@ function SearchBar({ onSearch }) {
           placeholder="Lacak Paket"
           className="h-10 w-full pl-9 pr-4 bg-gray-100 rounded-xl text-sm text-gray-700
             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300
-            focus:bg-white transition-all duration-200"
+            shadow-[0_4px_16px_rgba(0,0,0,0.08)] focus:bg-white
+            focus:shadow-[0_6px_20px_rgba(0,0,0,0.10)] transition-all duration-200"
           aria-label="Lacak nomor resi paket"
         />
       </div>
@@ -143,7 +144,7 @@ export default function CustomerHome() {
   };
 
   return (
-    <div className="flex flex-col min-h-dvh bg-gray-50">
+    <div className="flex flex-col min-h-dvh bg-gradient-to-b from-white via-[#f8f4ff] to-[#f1ebff]">
       {/* === HEADER === */}
       <Header
         initial={
@@ -161,7 +162,7 @@ export default function CustomerHome() {
 
       {/* === SCROLLABLE CONTENT === */}
       <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
-        <div className="flex flex-col gap-4 pt-3">
+        <div className="flex flex-col gap-5 pt-3">
           {/* 2. Promo Banner */}
           <CustomerBannerCarousel banners={banners} isLoading={bannerLoading} error={bannerError} />
 
@@ -172,7 +173,7 @@ export default function CustomerHome() {
           />
 
           {pendingProblematic.length > 0 && (
-            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-sm">
+            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                   <AlertCircle className="h-5 w-5" />
@@ -208,7 +209,7 @@ export default function CustomerHome() {
 
           {/* 6. Berita */}
           {instagramError ? (
-            <section className="mx-4 rounded-2xl border bg-white p-4 text-center text-sm text-red-500 shadow-sm">
+            <section className="mx-4 rounded-2xl border bg-white p-4 text-center text-sm text-red-500 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
               Konten belum dapat dimuat
             </section>
           ) : (
