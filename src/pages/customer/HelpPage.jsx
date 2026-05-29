@@ -59,13 +59,17 @@ function EmptyState({ title, text, action, onAction }) {
 }
 
 function FaqList({ items, onOpen }) {
+  const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+
   return (
     <div className="space-y-3">
-      {items.map((faq) => (
+      {safeItems.map((faq, index) => (
         <button
-          key={faq.id}
+          key={faq?.id || index}
           type="button"
-          onClick={() => onOpen(faq.id)}
+          onClick={() => {
+            if (faq?.id) onOpen(faq.id);
+          }}
           className="w-full rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
         >
           <div className="flex items-start gap-3">
@@ -73,9 +77,11 @@ function FaqList({ items, onOpen }) {
               <PackageSearch className="h-5 w-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-bold leading-snug text-slate-900">{faq.question}</span>
+              <span className="block font-bold leading-snug text-slate-900">
+                {faq?.question || "Pertanyaan bantuan"}
+              </span>
               <span className="mt-1 line-clamp-2 block text-sm leading-relaxed text-slate-500">
-                {faq.answer}
+                {faq?.answer || ""}
               </span>
             </span>
           </div>
@@ -107,11 +113,14 @@ export default function HelpPage() {
           getHelpFaqs({ popular: true, limit: 5 }),
           getHelpSettings(),
         ]);
-        setCategories(categoryData || []);
-        setPopularFaqs(popularData || []);
-        setSettings(settingsData || null);
+        setCategories(Array.isArray(categoryData) ? categoryData.filter(Boolean) : []);
+        setPopularFaqs(Array.isArray(popularData) ? popularData.filter(Boolean) : []);
+        setSettings(settingsData && typeof settingsData === "object" ? settingsData : {});
       } catch (err) {
-        setError(err.message || "Gagal mengambil data bantuan.");
+        setCategories([]);
+        setPopularFaqs([]);
+        setSettings({});
+        setError("Bantuan belum dapat dimuat. Silakan coba lagi.");
       } finally {
         setLoading(false);
       }
@@ -135,9 +144,9 @@ export default function HelpPage() {
           category_id: selectedCategory?.id,
           limit: 50,
         });
-        setFaqs(data || []);
+        setFaqs(Array.isArray(data) ? data.filter(Boolean) : []);
       } catch (err) {
-        setError(err.message || "Gagal mencari FAQ.");
+        setError("Bantuan belum dapat dimuat. Silakan coba lagi.");
         setFaqs([]);
       } finally {
         setSearching(false);
@@ -147,18 +156,23 @@ export default function HelpPage() {
     return () => clearTimeout(timeout);
   }, [search, selectedCategory, showAll]);
 
-  const headerSubtitle = settings?.header_subtitle || "Temukan jawaban atau solusi dari pertanyaanmu di sini.";
-  const visibleFaqs = showAll || search || selectedCategory ? faqs : popularFaqs;
+  const safeCategories = Array.isArray(categories) ? categories.filter(Boolean) : [];
+  const safeFaqs = Array.isArray(faqs) ? faqs.filter(Boolean) : [];
+  const safePopularFaqs = Array.isArray(popularFaqs) ? popularFaqs.filter(Boolean) : [];
+  const safeSettings = settings && typeof settings === "object" ? settings : {};
+  const headerSubtitle = safeSettings?.header_subtitle || "Temukan jawaban atau solusi dari pertanyaanmu di sini.";
+  const visibleFaqs = showAll || search || selectedCategory ? safeFaqs : safePopularFaqs;
   const showingSearchResult = showAll || search || selectedCategory;
 
   const supportUrl = useMemo(() => {
-    if (!settings?.support_whatsapp) return "";
-    const text = encodeURIComponent(settings.support_message || "Halo GEx, saya membutuhkan bantuan.");
-    return `https://wa.me/${settings.support_whatsapp}?text=${text}`;
-  }, [settings]);
+    if (!safeSettings?.support_whatsapp) return "";
+    const text = encodeURIComponent(safeSettings.support_message || "Halo GEx, saya membutuhkan bantuan.");
+    return `https://wa.me/${safeSettings.support_whatsapp}?text=${text}`;
+  }, [safeSettings]);
 
   const selectCategory = (category) => {
-    setSelectedCategory((current) => (current?.id === category.id ? null : category));
+    if (!category?.id) return;
+    setSelectedCategory((current) => (current?.id === category?.id ? null : category));
     setShowAll(true);
   };
 
@@ -189,7 +203,7 @@ export default function HelpPage() {
             <div className="min-w-0 flex-1">
               <p className="text-lg font-medium text-white/90">Halo,</p>
               <h2 className="mt-1 max-w-[250px] text-2xl font-black leading-tight">
-                {settings?.header_title || "Ada yang bisa GEx bantu?"}
+                {safeSettings?.header_title || "Ada yang bisa GEx bantu?"}
               </h2>
               <p className="mt-3 max-w-[260px] text-sm leading-relaxed text-white/85">{headerSubtitle}</p>
             </div>
@@ -234,12 +248,12 @@ export default function HelpPage() {
           <h2 className="text-xl font-black text-slate-950">Kategori Pertanyaan</h2>
           <p className="mt-1 text-sm text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
           <div className="mt-4 grid grid-cols-2 gap-3 min-[380px]:grid-cols-4">
-            {(loading ? Array.from({ length: 8 }) : categories).map((category, index) => {
-              const Icon = loading ? Grid2X2 : iconMap[category.icon] || fallbackIcons[index % fallbackIcons.length];
-              const active = selectedCategory?.id === category.id;
+            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
+              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
+              const active = Boolean(category?.id && selectedCategory?.id === category?.id);
               return (
                 <button
-                  key={loading ? index : category.id}
+                  key={loading ? index : category?.id || category?.slug || index}
                   type="button"
                   disabled={loading}
                   onClick={() => selectCategory(category)}
@@ -249,7 +263,7 @@ export default function HelpPage() {
                     <Icon className="h-7 w-7" />
                   </span>
                   <span className="mt-3 block text-sm font-extrabold leading-tight text-slate-700">
-                    {loading ? "Memuat" : category.name}
+                    {loading ? "Memuat" : category?.name || "Kategori"}
                   </span>
                 </button>
               );

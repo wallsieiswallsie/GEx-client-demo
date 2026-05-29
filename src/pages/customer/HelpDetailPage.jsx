@@ -19,10 +19,12 @@ export default function HelpDetailPage() {
           getHelpFaqDetail(faqId),
           getHelpSettings(),
         ]);
-        setFaq(faqData);
-        setSettings(settingsData);
+        setFaq(faqData && typeof faqData === "object" ? faqData : {});
+        setSettings(settingsData && typeof settingsData === "object" ? settingsData : {});
       } catch (err) {
-        setError(err.message || "FAQ tidak ditemukan.");
+        setError("Bantuan belum dapat dimuat. Silakan coba lagi.");
+        setFaq({});
+        setSettings({});
       } finally {
         setLoading(false);
       }
@@ -31,8 +33,11 @@ export default function HelpDetailPage() {
     fetchData();
   }, [faqId]);
 
-  const supportUrl = settings?.support_whatsapp
-    ? `https://wa.me/${settings.support_whatsapp}?text=${encodeURIComponent(settings.support_message || "Halo GEx, saya membutuhkan bantuan.")}`
+  const safeFaq = faq && typeof faq === "object" ? faq : {};
+  const safeSettings = settings && typeof settings === "object" ? settings : {};
+
+  const supportUrl = safeSettings?.support_whatsapp
+    ? `https://wa.me/${safeSettings.support_whatsapp}?text=${encodeURIComponent(safeSettings.support_message || "Halo GEx, saya membutuhkan bantuan.")}`
     : "";
 
   return (
@@ -68,17 +73,21 @@ export default function HelpDetailPage() {
         ) : (
           <>
             <article className="rounded-[24px] border border-slate-100 bg-white p-5 shadow-sm">
-              {faq.category_name && (
+              {safeFaq?.category_name && (
                 <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">
-                  {faq.category_name}
+                  {safeFaq.category_name}
                 </span>
               )}
-              <h2 className="mt-4 text-2xl font-black leading-tight text-slate-950">{faq.question}</h2>
+              <h2 className="mt-4 text-2xl font-black leading-tight text-slate-950">
+                {safeFaq?.question || "Pertanyaan bantuan"}
+              </h2>
               <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-400">
                 <Eye className="h-4 w-4" />
-                Dilihat {Number(faq.view_count || 0).toLocaleString("id-ID")} kali
+                Dilihat {Number(safeFaq?.view_count || 0).toLocaleString("id-ID")} kali
               </div>
-              <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-slate-600">{faq.answer}</p>
+              <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-slate-600">
+                {safeFaq?.answer || ""}
+              </p>
             </article>
 
             <section className="rounded-[24px] bg-gradient-to-r from-violet-100 via-white to-blue-50 p-4 shadow-sm">
