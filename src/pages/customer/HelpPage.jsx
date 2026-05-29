@@ -325,14 +325,16 @@ export default function HelpPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-gradient-to-r from-violet-100 via-white to-blue-50 p-3.5 shadow-sm">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-violet-700 shadow-sm">
-              <Headphones className="h-7 w-7" />
-            </span>
-            <div className="min-w-0 flex-1">
+        <section className="flex items-center gap-3 rounded-[20px] bg-violet-50 px-4 py-3.5 shadow-sm">
+          <img
+            src="/images/faq.png"
+            alt=""
+            className="h-16 w-16 shrink-0 object-contain min-[390px]:h-20 min-[390px]:w-20"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <h2 className="text-sm font-bold text-slate-950">Masih butuh bantuan?</h2>
-              <p className="mt-1 text-xs leading-relaxed text-slate-600">
+              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-600">
                 Hubungi tim CS kami, siap membantu kapan pun kamu butuhkan.
               </p>
             </div>
@@ -341,10 +343,11 @@ export default function HelpPage() {
             type="button"
             disabled={!supportUrl}
             onClick={() => window.open(supportUrl, "_blank", "noopener,noreferrer")}
-            className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-violet-200 bg-white text-sm font-semibold text-violet-700 disabled:opacity-50"
+            className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-violet-200 bg-white px-3 text-xs font-semibold text-violet-700 disabled:opacity-50 min-[390px]:gap-2 min-[390px]:px-4 min-[390px]:text-sm"
           >
             <Headphones className="h-4 w-4" />
-            Hubungi CS
+            <span className="hidden min-[345px]:inline">Hubungi CS</span>
+            <span className="min-[345px]:hidden">CS</span>
           </button>
         </section>
       </main>
