@@ -96,7 +96,7 @@ function StatusChip({ count, config, onClick }) {
       </div>
 
       {/* Label */}
-      <span className="text-[10px] text-gray-500 mt-2 whitespace-pre-line leading-tight">
+      <span className="text-[10px] font-semibold text-[#212740] mt-2 whitespace-pre-line leading-tight">
         {config.label}
       </span>
     </button>

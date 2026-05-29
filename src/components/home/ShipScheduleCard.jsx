@@ -42,12 +42,12 @@ function DateMetric({ icon: Icon, label, value, emphasis = false }) {
       : 'border-slate-100 bg-gradient-to-br from-[#fafafa] to-[#f1f5f9] text-slate-700 shadow-[0_3px_10px_rgba(15,23,42,0.04)]';
 
   return (
-    <div className={`min-w-0 rounded-2xl border px-3 py-2 ${className}`}>
-      <div className={`mb-1 flex items-center gap-1 text-[10px] font-semibold ${emphasis ? 'text-blue-600' : 'text-gray-500'}`}>
+    <div className={`min-w-0 overflow-hidden rounded-2xl border px-2 py-2 ${className}`}>
+      <div className={`mb-1 flex min-w-0 items-center gap-1 text-[9px] font-semibold ${emphasis ? 'text-blue-600' : 'text-gray-500'}`}>
         {React.createElement(Icon, { className: "h-3 w-3 shrink-0" })}
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
       </div>
-      <p className={`whitespace-nowrap text-xs font-bold ${emphasis ? 'text-blue-700' : ''}`}>
+      <p className={`truncate text-[11px] font-bold ${emphasis ? 'text-blue-700' : ''}`}>
         {value}
       </p>
     </div>
@@ -62,10 +62,10 @@ function Card({ schedule }) {
   const viaType = schedule.via_type || (isKapal ? 'Kapal' : 'Pesawat');
 
   return (
-    <div className="min-w-[320px] max-w-[320px] rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/70 to-blue-50 p-3.5 text-left shadow-[0_8px_24px_rgba(37,99,235,0.08)] transition duration-200 hover:-translate-y-0.5 active:scale-[0.98]">
-      <div className="flex items-start justify-between gap-3">
+    <div className="box-border w-full max-w-full overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/70 to-blue-50 p-3 text-left shadow-[0_8px_24px_rgba(37,99,235,0.08)] transition duration-200 hover:-translate-y-0.5 active:scale-[0.98]">
+      <div className="flex min-w-0 items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="mb-2 flex items-center gap-2">
+          <div className="mb-2 flex min-w-0 items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-semibold text-blue-700 shadow-sm">
               <Icon className="h-3 w-3" />
               {viaType}
@@ -84,13 +84,13 @@ function Card({ schedule }) {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white/85 p-2.5 shadow-[inset_0_0_0_1px_rgba(37,99,235,0.08)]">
-        <div className="grid grid-cols-[minmax(74px,1fr)_auto_minmax(74px,1fr)] items-center gap-2 text-xs">
+      <div className="box-border max-w-full overflow-hidden rounded-2xl bg-white/85 p-1.5 shadow-[inset_0_0_0_1px_rgba(37,99,235,0.08)]">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(54px,0.8fr)_minmax(0,1fr)] items-center gap-1.5 text-xs">
           <div className="min-w-0 rounded-xl border border-gray-100 bg-white px-2 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
             <p className="text-[10px] font-medium text-gray-400">Asal</p>
             <p className="truncate font-bold text-gray-800">{schedule.origin_city || '-'}</p>
           </div>
-          <div className="flex min-w-[124px] items-center gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
             <span className="h-px flex-1 border-t-2 border-dotted border-blue-200" />
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
               <ArrowRight className="h-4 w-4" />
@@ -104,7 +104,7 @@ function Card({ schedule }) {
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-3 grid min-w-0 grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
         <DateMetric label="Closing" value={formatDate(schedule.closing_date)} icon={Clock3} />
         <DateMetric label="Berangkat" value={formatDate(schedule.depart_date)} icon={CalendarDays} emphasis />
         <DateMetric label="Est. Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
@@ -126,13 +126,13 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
   };
 
   return (
-    <div className="bg-white mx-4 rounded-2xl p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border border-gray-100">
-      <div className="flex items-center justify-between mb-4">
-        <div>
+    <div className="box-border mx-4 max-w-full overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+      <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-sm font-bold tracking-[-0.2px] text-gray-800">Jadwal Kapal</h2>
           <p className="mt-0.5 text-[11px] text-gray-400">Kloter terdekat untuk pengirimanmu</p>
         </div>
-        <button onClick={onViewAll} className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700 active:text-blue-800">
+        <button onClick={onViewAll} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700 active:text-blue-800">
           <span>Lihat Semua</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
@@ -150,9 +150,9 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
         </div>
       ) : (
         <>
-          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide" onScroll={handleScroll}>
+          <div className="box-border flex w-full max-w-full gap-3 overflow-x-auto pb-1 scrollbar-hide" onScroll={handleScroll}>
             {displayedSchedules.map((s) => (
-              <div key={s.id} data-schedule-card>
+              <div key={s.id} data-schedule-card className="box-border min-w-full max-w-full">
                 <Card schedule={s} />
               </div>
             ))}
