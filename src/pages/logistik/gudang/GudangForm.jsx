@@ -33,6 +33,8 @@ export default function GudangForm() {
         village: null,
         postal_code: "",
         gmap_link: "",
+        latitude: "",
+        longitude: "",
     });
 
     const [provinces, setProvinces] = useState([]);
@@ -115,6 +117,8 @@ export default function GudangForm() {
                 village: villageMatch,
                 postal_code: data.postal_code,
                 gmap_link: data.gmap_link,
+                latitude: data.latitude ?? "",
+                longitude: data.longitude ?? "",
             });
 
         } catch (err) {
@@ -168,6 +172,8 @@ export default function GudangForm() {
                 city: form.city?.label,
                 district: form.district?.label,
                 village: form.village?.label,
+                latitude: form.latitude === "" ? null : Number(form.latitude),
+                longitude: form.longitude === "" ? null : Number(form.longitude),
             };
 
             if (id) {
@@ -265,6 +271,26 @@ export default function GudangForm() {
                     onChange={(e) => handleChange("gmap_link", e.target.value)}
                     className="w-full border rounded-xl px-3 py-2 text-sm"
                 />
+
+                <div className="grid grid-cols-2 gap-3">
+                    <input
+                        type="number"
+                        step="any"
+                        placeholder="Latitude"
+                        value={form.latitude}
+                        onChange={(e) => handleChange("latitude", e.target.value)}
+                        className="w-full border rounded-xl px-3 py-2 text-sm"
+                    />
+
+                    <input
+                        type="number"
+                        step="any"
+                        placeholder="Longitude"
+                        value={form.longitude}
+                        onChange={(e) => handleChange("longitude", e.target.value)}
+                        className="w-full border rounded-xl px-3 py-2 text-sm"
+                    />
+                </div>
 
                 <button
                     type="submit"

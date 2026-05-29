@@ -14,6 +14,12 @@ import {
   Store,
 } from "lucide-react";
 import { getDisplayedBranches } from "../../services/api/content/contentApi";
+import {
+  buildWhatsAppLink,
+  calculateDistanceKm,
+  formatDistanceFromUser,
+  sortBranchesByDistance,
+} from "../../utils/branchLocation";
 
 const normalizeText = (value) => String(value || "").toLowerCase();
 
@@ -22,17 +28,10 @@ const getBranchName = (item) =>
 
 const getMapLink = (item) => item.gmap_link || item.map_url || item.maps_url || item.google_maps_url || "";
 
-const getPhoneNumber = (item) => item.phone_number || item.phone || item.telephone || item.whatsapp_number || "";
+const getPhoneNumber = (item) =>
+  item.whatsapp_number || item.hp || item.phone_number || item.phone || item.telephone || "";
 
-const getWhatsAppLink = (item) => {
-  if (item.whatsapp_url) return item.whatsapp_url;
-
-  const digits = String(getPhoneNumber(item)).replace(/\D/g, "");
-  if (!digits) return "";
-
-  const normalized = digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
-  return `https://wa.me/${normalized}`;
-};
+const getWhatsAppLink = (item) => buildWhatsAppLink(getPhoneNumber(item), getBranchName(item));
 
 const isBranchActive = (item) => {
   if (typeof item.is_active === "boolean") return item.is_active;
@@ -47,6 +46,9 @@ export default function CustomerBranchesPage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("latest");
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationStatus, setLocationStatus] = useState("idle");
+  const [locationMessage, setLocationMessage] = useState("");
 
   useEffect(() => {
     getDisplayedBranches()
@@ -55,10 +57,54 @@ export default function CustomerBranchesPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const requestUserLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus("unsupported");
+      setLocationMessage("Browser Anda belum mendukung lokasi otomatis.");
+      return;
+    }
+
+    setLocationStatus("loading");
+    setLocationMessage("");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationStatus("granted");
+        setLocationMessage("");
+      },
+      () => {
+        setUserLocation(null);
+        setLocationStatus("denied");
+        setLocationMessage("Aktifkan lokasi untuk melihat gerai terdekat");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  };
+
+  const branchesWithDistance = useMemo(
+    () =>
+      items.map((item) => {
+        const distanceKm = userLocation
+          ? calculateDistanceKm(userLocation.latitude, userLocation.longitude, item.latitude, item.longitude)
+          : null;
+
+        return {
+          ...item,
+          distanceKm,
+          distanceText: formatDistanceFromUser(distanceKm),
+        };
+      }),
+    [items, userLocation]
+  );
+
   const filteredItems = useMemo(() => {
     const keyword = normalizeText(query).trim();
     const filtered = keyword
-      ? items.filter((item) => {
+      ? branchesWithDistance.filter((item) => {
           const haystack = [
             item.branch_name,
             item.name,
@@ -72,16 +118,27 @@ export default function CustomerBranchesPage() {
 
           return haystack.includes(keyword);
         })
-      : [...items];
+      : [...branchesWithDistance];
 
     return filtered.sort((a, b) => {
+      if (sortBy === "distance") {
+        if (a.distanceKm === null && b.distanceKm === null) return 0;
+        if (a.distanceKm === null) return 1;
+        if (b.distanceKm === null) return -1;
+        return a.distanceKm - b.distanceKm;
+      }
       if (sortBy === "name") return getBranchName(a).localeCompare(getBranchName(b), "id");
       if (sortBy === "oldest") return Number(a.order_number || a.id || 0) - Number(b.order_number || b.id || 0);
       return Number(b.order_number || b.id || 0) - Number(a.order_number || a.id || 0);
     });
-  }, [items, query, sortBy]);
+  }, [branchesWithDistance, query, sortBy]);
 
-  const nearestBranch = filteredItems[0] || items[0];
+  const nearestBranch = useMemo(() => {
+    const byDistance = sortBranchesByDistance(filteredItems, userLocation);
+    return byDistance[0] || null;
+  }, [filteredItems, userLocation]);
+
+  const nearestFallback = locationMessage || "Gunakan lokasi Anda untuk melihat gerai terdekat";
 
   return (
     <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900">
@@ -139,7 +196,14 @@ export default function CustomerBranchesPage() {
         ) : (
           <>
             <section className="space-y-3">
-              <NearestBranchCard item={nearestBranch} hasLocation={false} />
+              <NearestBranchCard
+                item={nearestBranch}
+                hasLocation={Boolean(userLocation)}
+                isLoadingLocation={locationStatus === "loading"}
+                fallbackMessage={nearestFallback}
+                onUseLocation={requestUserLocation}
+                showLocationButton={locationStatus !== "granted"}
+              />
             </section>
 
             <section className="space-y-3">
@@ -157,6 +221,7 @@ export default function CustomerBranchesPage() {
                     className="h-10 appearance-none rounded-full border border-slate-200 bg-white pl-4 pr-9 text-xs font-bold text-slate-700 shadow-sm outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
                     aria-label="Urutkan gerai"
                   >
+                    {userLocation && <option value="distance">Terdekat</option>}
                     <option value="latest">Terbaru</option>
                     <option value="oldest">Terlama</option>
                     <option value="name">A-Z</option>
@@ -182,7 +247,14 @@ export default function CustomerBranchesPage() {
   );
 }
 
-function NearestBranchCard({ item, hasLocation }) {
+function NearestBranchCard({
+  item,
+  hasLocation,
+  isLoadingLocation,
+  fallbackMessage,
+  onUseLocation,
+  showLocationButton,
+}) {
   if (!item) {
     return (
       <div className="rounded-[28px] border border-dashed border-violet-200 bg-white p-5 shadow-sm">
@@ -196,8 +268,11 @@ function NearestBranchCard({ item, hasLocation }) {
             </span>
             <h2 className="mt-3 text-lg font-black text-slate-950">Belum ada gerai tersedia</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-500">
-              Lokasi gerai akan muncul di sini setelah data tersedia.
+              {fallbackMessage || "Lokasi gerai akan muncul di sini setelah data tersedia."}
             </p>
+            {showLocationButton && (
+              <LocationButton isLoading={isLoadingLocation} onClick={onUseLocation} />
+            )}
           </div>
         </div>
       </div>
@@ -205,6 +280,7 @@ function NearestBranchCard({ item, hasLocation }) {
   }
 
   const mapLink = getMapLink(item);
+  const whatsappLink = getWhatsAppLink(item);
 
   return (
     <article className="overflow-hidden rounded-[28px] border border-violet-100 bg-white shadow-[0_12px_30px_rgba(124,58,237,0.12)]">
@@ -217,23 +293,50 @@ function NearestBranchCard({ item, hasLocation }) {
           <div className="mt-3 space-y-2 text-sm text-slate-600">
             <p className="flex items-center gap-2">
               <Navigation className="h-4 w-4 text-violet-700" />
-              {hasLocation && item.distance ? `${item.distance} dari lokasimu` : "Aktifkan lokasi untuk estimasi jarak"}
+              {hasLocation && item.distanceKm !== null
+                ? formatDistanceFromUser(item.distanceKm)
+                : "Aktifkan lokasi untuk estimasi jarak"}
             </p>
             <p className="flex items-center gap-2">
               <Store className="h-4 w-4 text-emerald-600" />
               {isBranchActive(item) ? "Gerai aktif" : "Gerai belum aktif"}
             </p>
           </div>
-          {mapLink && (
-            <a
-              href={mapLink}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-700 px-4 text-sm font-bold text-white shadow-lg shadow-violet-700/20"
-            >
-              Buka Maps
-              <ExternalLink className="h-4 w-4" />
-            </a>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {mapLink && (
+              <a
+                href={mapLink}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-700 px-4 text-sm font-bold text-white shadow-lg shadow-violet-700/20"
+              >
+                Buka Maps
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+            {whatsappLink ? (
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-emerald-50 px-4 text-sm font-bold text-emerald-700"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="inline-flex h-11 cursor-not-allowed items-center gap-2 rounded-2xl bg-slate-50 px-4 text-sm font-bold text-slate-400"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Nomor belum tersedia
+              </button>
+            )}
+          </div>
+          {showLocationButton && !hasLocation && (
+            <LocationButton isLoading={isLoadingLocation} onClick={onUseLocation} />
           )}
         </div>
         <MapPreview item={item} compact />
@@ -277,6 +380,13 @@ function BranchCard({ item }) {
               {phoneNumber}
             </p>
           )}
+
+          {item.distanceText && (
+            <p className="mt-2 flex items-center gap-2 text-xs font-bold text-violet-700">
+              <Navigation className="h-4 w-4" />
+              {item.distanceText}
+            </p>
+          )}
         </div>
       </div>
 
@@ -318,15 +428,29 @@ function BranchCard({ item }) {
             <button
               type="button"
               disabled
-              className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-slate-50 px-3 text-sm font-black text-slate-400"
+              className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-slate-50 px-3 text-xs font-black text-slate-400 sm:text-sm"
             >
               <MessageCircle className="h-4 w-4" />
-              Chat WhatsApp
+              Nomor belum tersedia
             </button>
           )}
         </div>
       </div>
     </article>
+  );
+}
+
+function LocationButton({ isLoading, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={isLoading}
+      className="mt-4 inline-flex h-10 items-center gap-2 rounded-full border border-violet-200 bg-white px-4 text-xs font-black text-violet-700 shadow-sm transition hover:bg-violet-50 disabled:cursor-wait disabled:opacity-70"
+    >
+      <MapPin className="h-4 w-4" />
+      {isLoading ? "Meminta lokasi..." : "Gunakan lokasi saya"}
+    </button>
   );
 }
 

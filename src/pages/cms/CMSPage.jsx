@@ -92,6 +92,8 @@ const configs = {
       map_url: "",
       phone_number: "",
       whatsapp_url: "",
+      latitude: "",
+      longitude: "",
       order_number: 0,
     },
     fetch: getDisplayedBranches,
@@ -104,6 +106,8 @@ const configs = {
       ["map_url", "URL Maps", "url"],
       ["phone_number", "Nomor Telepon", "number"],
       ["whatsapp_url", "URL WhatsApp", "url"],
+      ["latitude", "Latitude", "number"],
+      ["longitude", "Longitude", "number"],
       ["order_number", "Urutan", "number"],
     ],
   },
@@ -339,7 +343,7 @@ export default function CMSPage() {
       const payload = { ...form };
       Object.keys(payload).forEach((key) => {
         if (payload[key] === "") payload[key] = null;
-        if (key === "order_number" || key === "phone_number") {
+        if (key === "order_number" || key === "phone_number" || key === "latitude" || key === "longitude") {
           payload[key] = payload[key] === null ? null : Number(payload[key]);
         }
       });
