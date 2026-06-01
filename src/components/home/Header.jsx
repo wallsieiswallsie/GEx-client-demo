@@ -85,7 +85,7 @@ export default function Header({ onLogout, children, variant = 'default' }) {
                     <button
                         type="button"
                         onClick={() => navigate('/login')}
-                        className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-violet-600 px-3 text-xs font-bold text-white shadow-sm shadow-violet-600/20 transition active:scale-95"
+                        className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-[#4d148c] px-3 text-xs font-bold text-white shadow-sm shadow-violet-600/20 transition active:scale-95"
                         aria-label="Masuk ke akun"
                     >
                         <LogIn className="h-4 w-4" />
