@@ -7,9 +7,9 @@ const MENU_ITEMS = [
   { id: 'daftar-paket', image: '/images/customer_home/daftarkan_paket.png', label: 'Daftarkan\nPaket', path: '/daftar-paket' },
   { id: 'lokasi-gerai', image: '/images/customer_home/lokasi_gerai.png', label: 'Lokasi Gerai', path: '/gerai' },
   { id: 'kemitraan', image: '/images/customer_home/kemitraan.png', label: 'Kemitraan', path: '/kemitraan' },
-  { id: 'bantuan', image: '/images/customer_home/bantuan.png', label: 'Bantuan', path: '/bantuan' },
-  { id: 'saran-masukan', image: '/images/customer_home/saran_masukan.png', label: 'Saran\nMasukan', path: '/saran-masukan' },
+  { id: 'saran-masukan', image: '/images/customer_home/saran_masukan.png', label: 'Saran &\nMasukan', path: '/saran-masukan', imageClass: 'h-[68px] w-[68px] -right-3 -bottom-4' },
   { id: 'jadwal-kapal', image: '/images/customer_home/jadwal_kapal.png', label: 'Jadwal\nKapal', path: '/jadwal' },
+  { id: 'bantuan', image: '/images/customer_home/bantuan.png', label: 'Bantuan', path: '/bantuan' },
 ];
 
 function MenuItem({ item, onClick }) {
@@ -22,7 +22,7 @@ function MenuItem({ item, onClick }) {
         <img
           src={item.image}
           alt={item.label.replace('\n', ' ')}
-          className="absolute -right-2 -bottom-3 h-14 w-14 object-contain transition-transform duration-200 drop-shadow-[0_20px_30px_rgba(99,102,241,0.18)] group-hover:scale-105"
+          className={`absolute object-contain transition-transform duration-200 drop-shadow-[0_20px_30px_rgba(99,102,241,0.18)] group-hover:scale-105 ${item.imageClass || '-right-2 -bottom-3 h-14 w-14'}`}
         />
       </div>
       <span className="min-h-[28px] text-center text-[12px] font-medium leading-tight text-gray-700 whitespace-pre-line">
