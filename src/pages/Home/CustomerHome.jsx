@@ -168,7 +168,7 @@ export default function CustomerHome() {
 
       {/* === SCROLLABLE CONTENT === */}
       <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
-        <div className="flex flex-col gap-5 pt-3">
+        <div className="flex flex-col gap-5 pt-2">
           {/* 2. Promo Banner */}
           <CustomerBannerCarousel banners={banners} isLoading={bannerLoading} error={bannerError} />
 
