@@ -36,7 +36,6 @@ const icons = {
 const initialForm = {
   category: feedbackCategories[0],
   message: "",
-  tracking_number: "",
   contact_number: "",
   attachment: null,
 };
@@ -92,7 +91,6 @@ export default function CustomerFeedbackPage() {
       const data = new FormData();
       data.append("category", form.category);
       data.append("message", form.message.trim());
-      data.append("tracking_number", form.tracking_number.trim());
       data.append("contact_number", String(form.contact_number || "").trim());
       if (form.attachment) data.append("attachment", form.attachment);
 
@@ -168,7 +166,7 @@ export default function CustomerFeedbackPage() {
           <section className="rounded-[24px] border border-white bg-white p-5 shadow-[0_14px_36px_rgba(15,23,42,0.10)]">
             <h2 className="text-lg font-black text-slate-950">1. Pilih topik</h2>
             <p className="mt-1 text-sm text-slate-500">Pilih topik yang sesuai dengan saran atau masukan Anda.</p>
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-4 gap-2">
               {feedbackCategories.map((category) => {
                 const Icon = icons[category] || Sparkles;
                 const active = form.category === category;
@@ -177,19 +175,19 @@ export default function CustomerFeedbackPage() {
                     key={category}
                     type="button"
                     onClick={() => update("category", category)}
-                    className={`relative min-h-[118px] rounded-2xl border p-3 text-center transition ${
-                      active ? "border-violet-600 bg-violet-50 text-violet-700 ring-4 ring-violet-100" : "border-slate-200 bg-white text-slate-700"
+                    className={`relative min-h-[86px] rounded-2xl border px-1.5 py-2 text-center shadow-sm transition ${
+                      active ? "border-violet-600 bg-violet-50 text-violet-700 ring-2 ring-violet-100" : "border-slate-200 bg-white text-slate-700"
                     }`}
                   >
                     {active && (
-                      <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-violet-700 text-white">
-                        <Check className="h-4 w-4" />
+                      <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-violet-700 text-white">
+                        <Check className="h-3 w-3" />
                       </span>
                     )}
-                    <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-violet-700 shadow-sm">
-                      <Icon className="h-6 w-6" />
+                    <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-white text-violet-700 shadow-sm">
+                      <Icon className="h-4 w-4" />
                     </span>
-                    <span className="mt-3 block text-sm font-black leading-tight">{category}</span>
+                    <span className="mt-2 line-clamp-2 block text-[10px] font-black leading-tight">{category}</span>
                   </button>
                 );
               })}
@@ -218,16 +216,7 @@ export default function CustomerFeedbackPage() {
 
           <section className="rounded-[24px] border border-white bg-white p-5 shadow-sm">
             <h2 className="text-lg font-black text-slate-950">3. Detail tambahan (opsional)</h2>
-            <p className="mt-1 text-sm text-slate-500">Detail tambahan membantu kami memahami masukan Anda.</p>
-            <label className="mt-4 block">
-              <span className="mb-2 block text-xs font-bold text-slate-600">Nomor Resi</span>
-              <input
-                value={form.tracking_number}
-                onChange={(event) => update("tracking_number", event.target.value.toUpperCase())}
-                placeholder="Contoh: JKSOQA123456"
-                className="h-13 w-full rounded-2xl border border-slate-200 px-4 text-sm font-semibold outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
-              />
-            </label>
+            <p className="mt-1 text-sm text-slate-500">Tambahkan lampiran jika dibutuhkan.</p>
             <label className="mt-4 flex min-h-[56px] cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 px-4 text-sm font-bold text-slate-700">
               <Paperclip className="h-5 w-5 text-violet-700" />
               <span className="min-w-0 flex-1 truncate">

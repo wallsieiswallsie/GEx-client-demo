@@ -108,7 +108,6 @@ export default function FeedbackDetailPage() {
           <dl className="grid grid-cols-2 gap-4 rounded-2xl bg-slate-50 p-4">
             <InfoRow label="Customer" value={feedback.customer_name} />
             <InfoRow label="Nomor HP" value={feedback.contact_number} />
-            <InfoRow label="Nomor Resi" value={feedback.tracking_number} />
             <InfoRow label="Update Status" value={formatDate(feedback.status_updated_at)} />
           </dl>
 

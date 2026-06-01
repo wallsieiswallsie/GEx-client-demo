@@ -88,7 +88,7 @@ export default function FeedbackListPage() {
               setSearch(event.target.value);
               setPage(1);
             }}
-            placeholder="Cari nama, nomor resi, atau isi feedback"
+            placeholder="Cari nama customer atau isi feedback"
             className="h-11 w-full rounded-xl border border-slate-200 pl-9 pr-3 text-sm outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
           />
         </label>
@@ -128,7 +128,7 @@ export default function FeedbackListPage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-slate-400">{formatDate(item.created_at)}</p>
                   <h2 className="mt-1 truncate font-black text-slate-950">{item.customer_name}</h2>
-                  <p className="mt-1 text-xs font-semibold text-slate-500">{item.category} • {item.tracking_number || "Tanpa resi"}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-500">{item.category}</p>
                   <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-500">{item.message}</p>
                 </div>
                 <StatusBadge status={item.status} />

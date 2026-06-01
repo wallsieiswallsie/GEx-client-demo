@@ -21,7 +21,6 @@ import HelpDetailPage from "../pages/customer/HelpDetailPage";
 import HelpCategoryPage from "../pages/customer/HelpCategoryPage";
 import HelpManagementPage from "../pages/internal/HelpManagementPage";
 import CustomerFeedbackPage from "../pages/customer/CustomerFeedbackPage";
-import CustomerFeedbackHistoryPage from "../pages/customer/CustomerFeedbackHistoryPage";
 import FeedbackListPage from "../pages/internal/FeedbackListPage";
 import FeedbackDetailPage from "../pages/internal/FeedbackDetailPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
@@ -163,14 +162,6 @@ export const homeRoutes = [
       {
         path: "/saran-masukan",
         element: <CustomerFeedbackPage />
-      },
-      {
-        path: "/riwayat-masukan",
-        element: <CustomerFeedbackHistoryPage />
-      },
-      {
-        path: "/riwayat-masukan/:id",
-        element: <CustomerFeedbackHistoryPage />
       },
       {
         path: "/bantuan/:faqId",

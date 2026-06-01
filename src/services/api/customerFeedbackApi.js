@@ -32,23 +32,11 @@ export const statusLabels = {
   resolved: "Resolved",
 };
 
-export const statusMessages = {
-  new: "Masukan Anda telah diterima.",
-  reviewed: "Masukan Anda sedang ditinjau oleh tim GEx.",
-  resolved: "Masukan Anda telah selesai ditindaklanjuti.",
-};
-
 export const createCustomerFeedback = (formData) =>
   request("/customer/feedbacks", {
     method: "POST",
     body: formData,
   });
-
-export const getMyFeedbacks = (params) =>
-  request(`/customer/feedbacks${toQuery(params)}`);
-
-export const getMyFeedbackDetail = (id) =>
-  request(`/customer/feedbacks/${id}`);
 
 export const getInternalFeedbacks = (params) =>
   request(`/internal/feedbacks${toQuery(params)}`);

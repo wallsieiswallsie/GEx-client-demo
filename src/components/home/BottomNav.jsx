@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Package, PlayCircle, User, Database, FileText, Wallet, MessageSquareText } from 'lucide-react';
+import { Home, Package, PlayCircle, User, Database, FileText, Wallet } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import { canAccessInvoice } from '../../utils/invoiceAccess';
 import { canAccessFinance } from '../../utils/financeAccess';
@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { id: 'database', icon: Database, label: 'DATABASE', path: '/input', roles: ['general_manager', 'super_admin', 'branch_staff', 'branch_manager'] },
   { id: 'invoice', icon: FileText, label: 'INVOICE', path: '/invoice', roles: ['invoice'] },
   { id: 'keuangan', icon: Wallet, label: 'KEUANGAN', path: '/keuangan', roles: ['finance'] },
-  { id: 'feedbacks', icon: MessageSquareText, label: 'MASUKAN', path: '/feedbacks', roles: ['general_manager'] },
   { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },
   { id: 'konten', icon: PlayCircle, label: 'KONTEN', path: '/konten', roles: ['customer'] },
   { id: 'profil', icon: User, label: 'PROFIL', path: '/profil', roles: ['all'] },
