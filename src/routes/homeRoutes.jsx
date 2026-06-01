@@ -18,6 +18,7 @@ import CustomerPartnershipPage from "../pages/customer/CustomerPartnershipPage";
 import CustomerContentPage from "../pages/customer/CustomerContentPage";
 import HelpPage from "../pages/customer/HelpPage";
 import HelpDetailPage from "../pages/customer/HelpDetailPage";
+import HelpCategoryPage from "../pages/customer/HelpCategoryPage";
 import HelpManagementPage from "../pages/internal/HelpManagementPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
@@ -154,6 +155,10 @@ export const homeRoutes = [
       {
         path: "/bantuan/:faqId",
         element: <HelpDetailPage />
+      },
+      {
+        path: "/help/category/:slug",
+        element: <HelpCategoryPage />
       },
       {
         path: "/internal/help",

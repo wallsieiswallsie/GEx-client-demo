@@ -6,7 +6,6 @@ import {
   Calculator,
   CreditCard,
   Grid2X2,
-  Headphones,
   MapPin,
   PackageSearch,
   Rocket,
@@ -15,6 +14,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
+import HelpSupportCard from "../../components/help/HelpSupportCard";
 import {
   getHelpCategories,
   getHelpFaqs,
@@ -180,12 +180,6 @@ export default function HelpPage() {
     return `https://wa.me/${safeSettings.support_whatsapp}?text=${text}`;
   }, [safeSettings]);
 
-  const selectCategory = (category) => {
-    if (!category?.id) return;
-    setSelectedCategory((current) => (current?.id === category?.id ? null : category));
-    setShowAll(true);
-  };
-
   const clearSearch = () => {
     setSearch("");
     setSelectedCategory(null);
@@ -259,6 +253,35 @@ export default function HelpPage() {
         )}
 
         <section>
+          <h2 className="text-base font-bold text-slate-950">Kategori Pertanyaan</h2>
+          <p className="mt-1 text-xs text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
+              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
+              const color = categoryColors[index % categoryColors.length];
+              return (
+                <button
+                  key={loading ? index : category?.id || category?.slug || index}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => {
+                    if (category?.slug) navigate(`/help/category/${category.slug}`);
+                  }}
+                  className="min-h-[78px] rounded-2xl border border-slate-100 bg-white px-1.5 py-2 text-center shadow-sm transition hover:-translate-y-0.5 disabled:cursor-default"
+                >
+                  <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-xl ${color.bg} ${color.text}`}>
+                    <Icon className="h-4.5 w-4.5" />
+                  </span>
+                  <span className="mt-1.5 line-clamp-2 block text-[10px] font-semibold leading-tight text-slate-700">
+                    {loading ? "Memuat" : category?.name || "Kategori"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
           <div className="mb-3 flex items-center justify-between gap-4">
             <h2 className="text-base font-bold leading-tight text-slate-950">
               {showingSearchResult ? "Hasil Pencarian" : "Pertanyaan Paling Sering Dicari"}
@@ -297,59 +320,7 @@ export default function HelpPage() {
           )}
         </section>
 
-        <section>
-          <h2 className="text-base font-bold text-slate-950">Kategori Pertanyaan</h2>
-          <p className="mt-1 text-xs text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
-              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
-              const active = Boolean(category?.id && selectedCategory?.id === category?.id);
-              const color = categoryColors[index % categoryColors.length];
-              return (
-                <button
-                  key={loading ? index : category?.id || category?.slug || index}
-                  type="button"
-                  disabled={loading}
-                  onClick={() => selectCategory(category)}
-                  className={`min-h-[78px] rounded-2xl border bg-white px-1.5 py-2 text-center shadow-sm transition hover:-translate-y-0.5 ${active ? `${color.active} ring-2` : "border-slate-100"}`}
-                >
-                  <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-xl ${color.bg} ${color.text}`}>
-                    <Icon className="h-4.5 w-4.5" />
-                  </span>
-                  <span className="mt-1.5 line-clamp-2 block text-[10px] font-semibold leading-tight text-slate-700">
-                    {loading ? "Memuat" : category?.name || "Kategori"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="flex items-center gap-3 rounded-[20px] bg-violet-50 px-4 py-3.5 shadow-sm">
-          <img
-            src="/images/faq.png"
-            alt=""
-            className="h-16 w-16 shrink-0 object-contain min-[390px]:h-20 min-[390px]:w-20"
-          />
-          <div className="min-w-0 flex-1">
-            <div className="min-w-0">
-              <h2 className="text-sm font-bold text-slate-950">Masih butuh bantuan?</h2>
-              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-600">
-                Hubungi tim CS kami, siap membantu kapan pun kamu butuhkan.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            disabled={!supportUrl}
-            onClick={() => window.open(supportUrl, "_blank", "noopener,noreferrer")}
-            className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-violet-200 bg-white px-3 text-xs font-semibold text-violet-700 disabled:opacity-50 min-[390px]:gap-2 min-[390px]:px-4 min-[390px]:text-sm"
-          >
-            <Headphones className="h-4 w-4" />
-            <span className="hidden min-[345px]:inline">Hubungi CS</span>
-            <span className="min-[345px]:hidden">CS</span>
-          </button>
-        </section>
+        <HelpSupportCard supportUrl={supportUrl} />
       </main>
     </div>
   );
