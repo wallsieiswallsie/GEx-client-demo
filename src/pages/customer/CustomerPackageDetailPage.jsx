@@ -72,44 +72,43 @@ export default function CustomerPackageDetailPage() {
             <SubPageHeader title="Detail Paket" />
 
             <section
-                className="relative mt-5 overflow-hidden rounded-[24px] bg-[#4f2e78] px-5 py-8 text-white shadow-[0_18px_40px_rgba(79,46,120,0.22)]"
+                className="relative mt-5 overflow-hidden rounded-[24px] bg-[#4f2e78] px-5 py-8 text-white shadow-[0_12px_26px_rgba(79,46,120,0.16)]"
                 style={{
-                    backgroundImage:
-                        "linear-gradient(90deg, rgba(79,46,120,0.94) 0%, rgba(79,46,120,0.72) 48%, rgba(79,46,120,0.28) 100%), url('/images/header_background/detail_package.png')",
+                    backgroundImage: "url('/images/header_background/detail_package.png')",
                     backgroundPosition: "center",
                     backgroundSize: "cover",
                 }}
             >
                 <div className="relative z-10">
-                    <div className="inline-flex max-w-full items-center gap-2 rounded-2xl bg-white/92 px-4 py-3 text-sm font-extrabold text-[#4f2e78] shadow-sm backdrop-blur">
-                        <Route className="h-5 w-5 flex-shrink-0" />
+                    <div className="inline-flex max-w-full items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-xs font-semibold text-[#4f2e78] shadow-[0_8px_20px_rgba(15,23,42,0.12)]">
+                        <Route className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{data.route_code || "-"}</span>
                     </div>
 
                     <div className="mt-12">
-                        <p className="text-sm font-bold text-white/90">Nama Paket</p>
-                        <h1 className="mt-2 break-words text-3xl font-extrabold leading-tight tracking-normal">
+                        <p className="text-xs font-medium text-white/90">Nama Paket</p>
+                        <h1 className="mt-2 break-words text-[26px] font-semibold leading-tight tracking-normal">
                             {data.name?.toUpperCase() || "-"}
                         </h1>
                     </div>
                 </div>
             </section>
 
-            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white px-4 py-5 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
-                <h2 className="text-base font-extrabold text-gray-950">Progres Pengiriman</h2>
+            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white px-3 py-6 shadow-[0_8px_22px_rgba(15,23,42,0.06)]">
+                <h2 className="px-1 text-[20px] font-semibold text-gray-950">Progres Pengiriman</h2>
                 <ProgressSteps status={data.final_status} />
             </section>
 
-            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white p-4 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
-                <h2 className="text-base font-extrabold text-gray-950">Informasi Paket</h2>
+            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white p-4 shadow-[0_8px_22px_rgba(15,23,42,0.06)]">
+                <h2 className="text-[20px] font-semibold text-gray-950">Informasi Paket</h2>
 
-                <div className="mt-5">
-                    <Info icon={<Package className="h-6 w-6" />} label="Nama Paket" value={data.name?.toUpperCase()} />
-                    <Info icon={<Receipt className="h-6 w-6" />} label="Resi" value={data.receipt?.toUpperCase()} />
-                    <Info icon={<Calendar className="h-6 w-6" />} label="Tanggal Tiba" value={formatDate(data.arrived_origin_at)} />
-                    <Info icon={<Truck className="h-6 w-6" />} label="Ekspedisi" value={data.expedition} />
-                    <Info icon={<Scale className="h-6 w-6" />} label="Berat" value={data.used_weight ? `${data.used_weight} kg` : "-"} />
-                    <Info icon={<Wallet className="h-6 w-6" />} label="Tarif" value={formatFee(data.fee)} isLast />
+                <div className="mt-4">
+                    <Info icon={<Package className="h-5 w-5" />} label="Nama Paket" value={data.name?.toUpperCase()} />
+                    <Info icon={<Receipt className="h-5 w-5" />} label="Resi" value={data.receipt?.toUpperCase()} />
+                    <Info icon={<Calendar className="h-5 w-5" />} label="Tanggal Tiba" value={formatDate(data.arrived_origin_at)} />
+                    <Info icon={<Truck className="h-5 w-5" />} label="Ekspedisi" value={data.expedition} />
+                    <Info icon={<Scale className="h-5 w-5" />} label="Berat" value={data.used_weight ? `${data.used_weight} kg` : "-"} />
+                    <Info icon={<Wallet className="h-5 w-5" />} label="Tarif" value={formatFee(data.fee)} isLast />
                 </div>
             </section>
         </div>
@@ -123,7 +122,7 @@ function ProgressSteps({ status }) {
     );
 
     return (
-        <div className="mt-6 grid grid-cols-6">
+        <div className="mt-7 grid grid-cols-6 gap-x-3">
             {PROGRESS_STEPS.map((step, index) => {
                 const isDone = index < activeIndex;
                 const isActive = index === activeIndex;
@@ -133,7 +132,7 @@ function ProgressSteps({ status }) {
                     <div key={step.key} className="relative flex min-w-0 flex-col items-center">
                         {index < PROGRESS_STEPS.length - 1 && (
                             <span
-                                className={`absolute left-1/2 top-[15px] h-1 w-full ${
+                                className={`absolute left-1/2 top-[13px] h-0.5 w-[calc(100%+0.75rem)] ${
                                     lineDone ? "bg-[#4f2e78]" : "bg-gray-200"
                                 }`}
                                 aria-hidden="true"
@@ -141,19 +140,19 @@ function ProgressSteps({ status }) {
                         )}
 
                         <div
-                            className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full transition ${
+                            className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full transition ${
                                 isDone
                                     ? "bg-[#4f2e78] text-white"
                                     : isActive
-                                        ? "border-[4px] border-[#4f2e78] bg-white shadow-[0_0_0_5px_rgba(79,46,120,0.10),0_6px_16px_rgba(79,46,120,0.22)]"
-                                        : "border-[3px] border-gray-300 bg-white"
+                                        ? "border-[3px] border-[#4f2e78] bg-white shadow-[0_0_0_4px_rgba(79,46,120,0.10),0_5px_12px_rgba(79,46,120,0.16)]"
+                                        : "border-2 border-gray-300 bg-white"
                             }`}
                         >
-                            {isDone && <Check className="h-5 w-5" strokeWidth={3} />}
+                            {isDone && <Check className="h-4 w-4" strokeWidth={3} />}
                         </div>
 
                         <span
-                            className={`mt-3 max-w-[58px] text-center text-[10px] font-extrabold leading-[1.15] ${
+                            className={`mt-3 min-h-[28px] max-w-[64px] text-center text-[10px] font-semibold leading-[1.15] ${
                                 isDone || isActive ? "text-[#4f2e78]" : "text-gray-400"
                             }`}
                         >
@@ -168,13 +167,13 @@ function ProgressSteps({ status }) {
 
 function Info({ icon, label, value, isLast = false }) {
     return (
-        <div className={`flex items-center gap-4 py-4 ${isLast ? "" : "border-b border-gray-100"}`}>
-            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-[#f1e9ff] text-[#4f2e78]">
+        <div className={`flex items-center gap-3.5 py-3.5 ${isLast ? "" : "border-b border-gray-100/80"}`}>
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#f1e9ff] text-[#4f2e78]">
                 {icon}
             </div>
             <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-gray-400">{label}</div>
-                <div className="mt-1 break-words text-base font-extrabold text-gray-950">
+                <div className="text-[13px] font-normal text-[#94A3B8]">{label}</div>
+                <div className="mt-1 break-words text-[17px] font-semibold text-gray-950">
                     {value || "-"}
                 </div>
             </div>
