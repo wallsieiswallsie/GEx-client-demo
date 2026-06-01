@@ -1,4 +1,6 @@
-export const SITE_URL = "https://YOUR_DOMAIN";
+const fallbackOrigin = typeof window !== "undefined" ? window.location.origin : "";
+
+export const SITE_URL = (import.meta.env?.VITE_SITE_URL || fallbackOrigin).replace(/\/+$/, "");
 
 export const DEFAULT_SEO = {
   title: "GEx Express - Jasa Pengiriman Barang ke Sorong Papua",
@@ -85,5 +87,54 @@ export const PUBLIC_SEO = {
     path: "/bantuan",
   },
 };
+
+export const PUBLIC_SITEMAP_ROUTES = [
+  PUBLIC_SEO.tracking,
+];
+
+export const ROBOTS_DISALLOW_ROUTES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/home",
+  "/beranda",
+  "/dashboard",
+  "/operasional",
+  "/logistik",
+  "/keuangan",
+  "/payment-methods",
+  "/cash-settlements",
+  "/invoice",
+  "/relasi",
+  "/konten-customer",
+  "/internal",
+  "/feedbacks",
+  "/ekspedisi",
+  "/item-categories",
+  "/gudang",
+  "/via",
+  "/rute",
+  "/input",
+  "/packages",
+  "/belum-packing",
+  "/kloter",
+  "/mispacked-packages",
+  "/problematic-confirmations",
+  "/xray-failed-packages",
+  "/users-internal",
+  "/users-internal-form",
+  "/kontak-customer",
+  "/paketku",
+  "/profil",
+  "/daftar-paket",
+  "/cek-ongkir",
+  "/jadwal",
+  "/gerai",
+  "/kemitraan",
+  "/konten",
+  "/bantuan",
+  "/help/category",
+  "/saran-masukan",
+];
 
 export const NOINDEX_ROBOTS = "noindex,nofollow";

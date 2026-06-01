@@ -74,6 +74,7 @@ export default function SEO({
     upsertMeta("name", "twitter:title", nextTitle);
     upsertMeta("name", "twitter:description", nextDescription);
     upsertMeta("name", "twitter:image", nextImage);
+    upsertMeta("name", "twitter:url", nextCanonical);
   }, [canonicalPath, description, image, robots, siteName, title, twitterCard, type]);
 
   return null;

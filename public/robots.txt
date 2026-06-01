@@ -4,6 +4,8 @@ Allow: /
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
+Disallow: /home
+Disallow: /beranda
 Disallow: /dashboard
 Disallow: /operasional
 Disallow: /logistik
@@ -32,5 +34,14 @@ Disallow: /users-internal-form
 Disallow: /kontak-customer
 Disallow: /paketku
 Disallow: /profil
+Disallow: /daftar-paket
+Disallow: /cek-ongkir
+Disallow: /jadwal
+Disallow: /gerai
+Disallow: /kemitraan
+Disallow: /konten
+Disallow: /bantuan
+Disallow: /help/category
+Disallow: /saran-masukan
 
-Sitemap: https://YOUR_DOMAIN/sitemap.xml
+Sitemap: https://gex-client-2-production.up.railway.app/sitemap.xml
