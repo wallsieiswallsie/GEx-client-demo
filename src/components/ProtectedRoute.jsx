@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { LoadingState } from './common/Loading';
 import { hasAllowedRole } from '../utils/roleAccess';
+import GuestRestrictionPage from '../pages/GuestRestrictionPage';
 
 const ProtectedRoute = ({ children, allowedRoles = [], unauthorizedTo = '/home' }) => {
   const { isAuthenticated, isLoading, role } = useAuth();
@@ -13,9 +14,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], unauthorizedTo = '/home' 
   }
 
   if (!isAuthenticated) {
-    // Jika belum login, redirect ke halaman login dengan membawa path asal (state)
-    // agar bisa dikembalikan ke path tersebut setelah login sukses
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <GuestRestrictionPage from={location} />;
   }
 
   if (!hasAllowedRole(role, allowedRoles)) {

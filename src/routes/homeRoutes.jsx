@@ -3,7 +3,7 @@ import MobileAppLayout from '../layouts/MobileAppLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import SEO, { NoIndexSEO } from '../components/SEO';
 import { PUBLIC_SEO } from '../config/seo';
-import { INTERNAL_ROLES } from '../utils/roleAccess';
+import { CUSTOMER_ROLES, INTERNAL_ROLES } from '../utils/roleAccess';
 
 import OperasionalPage from "../pages/operasional/OperasionalPage";
 import LogistikPage from "../pages/logistik/LogistikPage";
@@ -44,6 +44,13 @@ const internalOnly = (element) => (
   </>
 );
 
+const customerOnly = (element) => (
+  <>
+    <NoIndexSEO />
+    <ProtectedRoute allowedRoles={CUSTOMER_ROLES}>{element}</ProtectedRoute>
+  </>
+);
+
 const generalManagerOnly = (element) => (
   <>
     <NoIndexSEO />
@@ -60,12 +67,12 @@ const withSeo = (seo, element) => (
 
 export const homeRoutes = [
   {
-    element: (
-      <ProtectedRoute>
-        <MobileAppLayout />
-      </ProtectedRoute>
-    ),
+    element: <MobileAppLayout />,
     children: [
+      {
+        path: '/',
+        element: withSeo(PUBLIC_SEO.home, <HomeContainer />),
+      },
       {
         path: '/home',
         element: withSeo(PUBLIC_SEO.home, <HomeContainer />),
@@ -156,7 +163,7 @@ export const homeRoutes = [
       },
       {
         path: "/gerai",
-        element: withSeo(PUBLIC_SEO.branches, <CustomerBranchesPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.branches, <CustomerBranchesPage />))
       },
       {
         path: "/cek-ongkir",
@@ -164,27 +171,27 @@ export const homeRoutes = [
       },
       {
         path: "/kemitraan",
-        element: withSeo(PUBLIC_SEO.partnership, <CustomerPartnershipPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.partnership, <CustomerPartnershipPage />))
       },
       {
         path: "/konten",
-        element: withSeo(PUBLIC_SEO.content, <CustomerContentPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.content, <CustomerContentPage />))
       },
       {
         path: "/bantuan",
-        element: withSeo(PUBLIC_SEO.help, <HelpPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.help, <HelpPage />))
       },
       {
         path: "/saran-masukan",
-        element: withSeo(PUBLIC_SEO.feedback, <CustomerFeedbackPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.feedback, <CustomerFeedbackPage />))
       },
       {
         path: "/bantuan/:faqId",
-        element: withSeo(PUBLIC_SEO.helpDetail, <HelpDetailPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.helpDetail, <HelpDetailPage />))
       },
       {
         path: "/help/category/:slug",
-        element: withSeo(PUBLIC_SEO.helpCategory, <HelpCategoryPage />)
+        element: customerOnly(withSeo(PUBLIC_SEO.helpCategory, <HelpCategoryPage />))
       },
       {
         path: "/internal/help",
@@ -200,28 +207,20 @@ export const homeRoutes = [
       },
       {
         path: "/paketku",
-        element: (
-          <>
-            <NoIndexSEO />
-            <PaketkuPage />
-          </>
-        )
+        element: customerOnly(<PaketkuPage />)
       },
       {
         path: "/paketku/:id",
-        element: (
-          <>
-            <NoIndexSEO />
-            <CustomerPackageDetailPage />
-          </>
-        )
+        element: customerOnly(<CustomerPackageDetailPage />)
       },
       {
         path: "/profil",
         element: (
           <>
             <NoIndexSEO />
-            <ProfilePage />
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
           </>
         )
       },

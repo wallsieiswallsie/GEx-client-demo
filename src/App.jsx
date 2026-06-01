@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Providers
 import { AuthProvider } from "./context/AuthContext";
@@ -18,10 +18,11 @@ import SEO, { NoIndexSEO } from "./components/SEO";
 import { LoadingState } from "./components/common/Loading";
 import MobileAppLayout from "./layouts/MobileAppLayout";
 import { PUBLIC_SEO } from "./config/seo";
-import { INTERNAL_ROLES } from "./utils/roleAccess";
+import { CUSTOMER_ROLES, INTERNAL_ROLES } from "./utils/roleAccess";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
 import TrackPackagePage from "./pages/customer/TrackPackagePage";
+import GuestRestrictionPage from "./pages/GuestRestrictionPage";
 
 export default function App() {
   return (
@@ -44,7 +45,7 @@ export default function App() {
                 </Route>
               ))}
 
-              {/* === PRIVATE HOME ROUTES === */}
+              {/* === HOME, PUBLIC CUSTOMER, AND PROTECTED APP ROUTES === */}
               {homeRoutes.map((route, index) => (
                 <Route key={`home-${index}`} element={route.element}>
                   {route.children.map((child, childIndex) => (
@@ -111,7 +112,7 @@ export default function App() {
 
               <Route
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={CUSTOMER_ROLES}>
                     <MobileAppLayout />
                   </ProtectedRoute>
                 }
@@ -131,6 +132,16 @@ export default function App() {
                 />
               </Route>
 
+              <Route
+                path="/guest-restriction"
+                element={
+                  <>
+                    <NoIndexSEO />
+                    <GuestRestrictionPage />
+                  </>
+                }
+              />
+
               {/* === LEGACY DASHBOARD === */}
               <Route path="/dashboard" element={
                 <>
@@ -145,9 +156,18 @@ export default function App() {
                 </>
               } />
 
-              {/* === REDIRECT === */}
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              <Route path="*" element={<Navigate to="/home" replace />} />
+              {/* === FALLBACK PROTECTION === */}
+              <Route
+                path="*"
+                element={
+                  <>
+                    <NoIndexSEO />
+                    <ProtectedRoute>
+                      <GuestRestrictionPage />
+                    </ProtectedRoute>
+                  </>
+                }
+              />
 
             </Routes>
           </Suspense>

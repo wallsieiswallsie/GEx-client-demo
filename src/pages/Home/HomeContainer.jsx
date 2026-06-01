@@ -17,11 +17,15 @@ const CourierHome = React.lazy(() => import('./CourierHome'));
  * Data filtering dilakukan sepenuhnya di backend berdasarkan JWT credentials.
  */
 export default function HomeContainer() {
-  const { role, isLoading } = useAuth();
+  const { isAuthenticated, role, isLoading } = useAuth();
 
   // Masih loading auth
   if (isLoading) {
     return <LoadingState text="Memuat..." />;
+  }
+
+  if (!isAuthenticated) {
+    return <CustomerHome />;
   }
 
   // Role switcher

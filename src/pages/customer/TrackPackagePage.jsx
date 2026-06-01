@@ -133,8 +133,7 @@ export default function TrackPackagePage() {
     if (!packageData?.receipt) return;
 
     if (!isAuthenticated) {
-      setToast("Silakan login terlebih dahulu untuk claim paket");
-      navigate("/login", { state: { from: location } });
+      navigate("/guest-restriction", { state: { from: location } });
       return;
     }
 

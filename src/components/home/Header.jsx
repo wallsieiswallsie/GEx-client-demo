@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
+import { LogIn, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
+import { useAuth } from '../../context/useAuth';
 
 export default function Header({ onLogout, children, variant = 'default' }) {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
     // Inline component logo
     function GexLogo({ size = 40 }) {
@@ -32,15 +36,17 @@ export default function Header({ onLogout, children, variant = 'default' }) {
                         </h1>
                     </div>
 
-                    <button
-                        id="btn-logout"
-                        onClick={() => setIsLogoutModalOpen(true)}
-                        className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-white shadow-lg shadow-black/10 backdrop-blur-[10px] transition hover:bg-white/20 active:scale-95"
-                        aria-label="Keluar dari akun"
-                        title="Logout"
-                    >
-                        <LogOut className="h-7 w-7" strokeWidth={2.2} />
-                    </button>
+                    {isAuthenticated && (
+                        <button
+                            id="btn-logout"
+                            onClick={() => setIsLogoutModalOpen(true)}
+                            className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-white shadow-lg shadow-black/10 backdrop-blur-[10px] transition hover:bg-white/20 active:scale-95"
+                            aria-label="Keluar dari akun"
+                            title="Logout"
+                        >
+                            <LogOut className="h-7 w-7" strokeWidth={2.2} />
+                        </button>
+                    )}
                 </div>
 
                 <LogoutConfirmationModal
@@ -65,30 +71,27 @@ export default function Header({ onLogout, children, variant = 'default' }) {
             )}
 
             <div className="flex shrink-0 items-center gap-3">
-                {/* Logout */}
-                <button
-                    id="btn-logout"
-                    onClick={() => setIsLogoutModalOpen(true)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-transparent text-black transition hover:text-gray-800 active:scale-95"
-                    aria-label="Keluar dari akun"
-                    title="Logout"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                {isAuthenticated ? (
+                    <button
+                        id="btn-logout"
+                        onClick={() => setIsLogoutModalOpen(true)}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-transparent text-black transition hover:text-gray-800 active:scale-95"
+                        aria-label="Keluar dari akun"
+                        title="Logout"
                     >
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                </button>
+                        <LogOut className="h-[22px] w-[22px]" />
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-violet-600 px-3 text-xs font-bold text-white shadow-sm shadow-violet-600/20 transition active:scale-95"
+                        aria-label="Masuk ke akun"
+                    >
+                        <LogIn className="h-4 w-4" />
+                        Login
+                    </button>
+                )}
             </div>
 
             <LogoutConfirmationModal

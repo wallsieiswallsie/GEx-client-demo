@@ -62,7 +62,7 @@ function SearchBar({ onSearch }) {
 // Mereplikasi UI dari screen.jpg
 // ================================================
 export default function CustomerHome() {
-  const { user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
   // Data isolation via custom hooks — komponen tidak fetch langsung
@@ -82,6 +82,12 @@ export default function CustomerHome() {
   //  fetch jumlah status paket
   useEffect(() => {
     const fetchStatusCounts = async () => {
+      if (!isAuthenticated) {
+        setStatusCounts(null);
+        setPendingProblematic([]);
+        return;
+      }
+
       try {
         const counts = await getMyPackageStatusCounts();
         const pending = await getPendingProblematicClaims();
@@ -93,7 +99,7 @@ export default function CustomerHome() {
     };
 
     fetchStatusCounts();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -167,10 +173,12 @@ export default function CustomerHome() {
           <CustomerBannerCarousel banners={banners} isLoading={bannerLoading} error={bannerError} />
 
           {/* 3. Status Paketmu */}
-          <PackageStatusWidget
-            summary={statusCounts}
-            isLoading={summaryLoading || !statusCounts}
-          />
+          {isAuthenticated && (
+            <PackageStatusWidget
+              summary={statusCounts}
+              isLoading={summaryLoading || !statusCounts}
+            />
+          )}
 
           {pendingProblematic.length > 0 && (
             <section className="mx-4 rounded-2xl border bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
