@@ -231,9 +231,14 @@ export default function TrackPackagePage() {
 
         {!loading && !error && result?.found && packageData && (
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {packageData.is_xray_failed && (
+                <span className="absolute right-3 top-3 z-10 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                  Tidak Lolos X-Ray
+                </span>
+              )}
               <div className="p-4">
-                <div className="mb-4 flex flex-wrap items-center gap-2">
+                <div className="mb-4 flex flex-wrap items-center gap-2 pr-24">
                   <span className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700">
                     <Truck className="h-4 w-4" />
                     {packageData.status || "Terdata"}
@@ -242,12 +247,6 @@ export default function TrackPackagePage() {
                     <ShieldCheck className="h-4 w-4" />
                     {claimText}
                   </span>
-                  {packageData.is_xray_failed && (
-                    <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
-                      <AlertCircle className="h-4 w-4" />
-                      Tidak Lolos X-Ray
-                    </span>
-                  )}
                 </div>
 
                 <h2 className="text-lg font-bold text-gray-900">

@@ -176,9 +176,15 @@ export default function PaketkuPage() {
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm"
+                className="relative rounded-2xl border border-gray-100 bg-white p-3 shadow-sm"
               >
-                <div className="flex items-center gap-1 text-xs font-semibold text-violet-700">
+                {item.is_xray_failed && (
+                  <div className="absolute right-3 top-3 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                    Tidak Lolos X-Ray
+                  </div>
+                )}
+
+                <div className="flex items-center gap-1 pr-24 text-xs font-semibold text-violet-700">
                   <Route className="h-4 w-4 flex-shrink-0" />
 
                   <span className="truncate">
@@ -195,12 +201,6 @@ export default function PaketkuPage() {
                 <div className="mt-1 text-xs text-gray-500">
                   {item.receipt?.toUpperCase() || "Nomor Resi Tidak Tersedia"}
                 </div>
-
-                {item.is_xray_failed && (
-                  <div className="mt-2 inline-flex rounded-full border border-red-100 bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700">
-                    Tidak Lolos X-Ray
-                  </div>
-                )}
 
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
                   <Wallet className="h-4 w-4" />

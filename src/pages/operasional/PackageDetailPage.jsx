@@ -100,9 +100,14 @@ export default function PackageDetailPage() {
             </div>
 
             {/* PHOTO CARD */}
-            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+            <section className="relative bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                {data.is_xray_failed && (
+                    <div className="absolute right-3 top-3 z-10 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                        Gagal X-Ray
+                    </div>
+                )}
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 pr-20">
                         <StatusBadge
                             icon={<Package className="w-4 h-4" />}
                             value={packageName}
@@ -123,13 +128,6 @@ export default function PackageDetailPage() {
                             value={finishStatus}
                             tone={data.is_finished ? "green" : "blue"}
                         />
-                        {data.is_xray_failed && (
-                            <StatusBadge
-                                icon={<ShieldCheck className="w-4 h-4" />}
-                                value="Gagal X-Ray"
-                                tone="red"
-                            />
-                        )}
                     </div>
                 </div>
 
@@ -268,14 +266,6 @@ export default function PackageDetailPage() {
                     value={fee}
                     tone="green"
                 />
-                {data.is_xray_failed && (
-                    <InfoItem
-                        icon={<ShieldCheck className="w-4 h-4" />}
-                        label="X-Ray"
-                        value="Gagal X-Ray"
-                        tone="red"
-                    />
-                )}
                 <InfoItem
                     icon={<ShieldCheck className="w-4 h-4" />}
                     label="Status Klaim"

@@ -79,16 +79,16 @@ export default function CustomerPackageDetailPage() {
                     backgroundSize: "cover",
                 }}
             >
+                {data.is_xray_failed && (
+                    <div className="absolute right-3 top-3 z-20 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600 shadow-[0_6px_14px_rgba(15,23,42,0.10)]">
+                        Tidak Lolos X-Ray
+                    </div>
+                )}
                 <div className="relative z-10">
                     <div className="inline-flex max-w-full items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-xs font-semibold text-[#4f2e78] shadow-[0_8px_20px_rgba(15,23,42,0.12)]">
                         <Route className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{data.route_code || "-"}</span>
                     </div>
-                    {data.is_xray_failed && (
-                        <div className="mt-3 inline-flex rounded-2xl bg-red-50 px-3.5 py-2 text-xs font-bold text-red-700 shadow-[0_8px_20px_rgba(15,23,42,0.10)]">
-                            Tidak Lolos X-Ray
-                        </div>
-                    )}
 
                     <div className="mt-12">
                         <p className="text-xs font-medium text-white/90">Nama Paket</p>
