@@ -69,3 +69,15 @@ export const deletePackage = async (id) => {
 
     return res.data;
 };
+
+/**
+ * Mark package as X-Ray failed
+ */
+export const markPackageXrayFailed = async (id, payload) => {
+    const res = await apiFetch(`/packages/${id}/xray-failed`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+
+    return res.data;
+};

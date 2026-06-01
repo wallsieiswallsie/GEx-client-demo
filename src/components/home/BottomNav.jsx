@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { id: 'invoice', icon: FileText, label: 'INVOICE', path: '/invoice', roles: ['invoice'] },
   { id: 'keuangan', icon: Wallet, label: 'KEUANGAN', path: '/keuangan', roles: ['finance'] },
   { id: 'paketku', icon: Package, label: 'PAKETKU', path: '/paketku', roles: ['customer'] },
-  { id: 'konten', icon: PlayCircle, label: 'KONTEN', path: '/konten', roles: ['customer'] },
   { id: 'profil', icon: User, label: 'PROFIL', path: '/profil', roles: ['all'] },
 ];
 

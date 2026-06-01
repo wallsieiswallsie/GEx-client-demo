@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
     Package,
@@ -15,6 +15,8 @@ import {
     ShieldCheck,
     Flag,
     UserRound,
+    AlertTriangle,
+    ScanLine,
 } from "lucide-react";
 
 import {
@@ -23,23 +25,36 @@ import {
 
 import SubPageHeader from "../../components/layout/SubPageHeader";
 import { LoadingState } from "../../components/common/Loading";
+import Button from "../../components/common/Button";
+import { useAuth } from "../../context/useAuth";
 
 import {
     getPackageById,
+    markPackageXrayFailed,
 } from "../../services/api/operasional/packagesApi";
+import { getAllShipmentRoutes } from "../../services/api/logistik/shipmentRouteApi";
 
 export default function PackageDetailPage() {
 
     const { id } = useParams();
+    const { user, role } = useAuth();
 
     const [data, setData] = useState(null);
 
     const [loading, setLoading] = useState(true);
+    const [routes, setRoutes] = useState([]);
+    const [xrayModalOpen, setXrayModalOpen] = useState(false);
+    const [xrayForm, setXrayForm] = useState({
+        route_code: "",
+        jenis_barang: "",
+    });
+    const [submittingXray, setSubmittingXray] = useState(false);
+    const [toast, setToast] = useState("");
 
     const [previewOpen, setPreviewOpen] =
         useState(false);
 
-    const fetchDetail = async () => {
+    const fetchDetail = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -52,11 +67,19 @@ export default function PackageDetailPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchDetail();
-    }, [id]);
+    }, [fetchDetail]);
+
+    useEffect(() => {
+        if (!toast) return undefined;
+
+        const timer = window.setTimeout(() => setToast(""), 3000);
+
+        return () => window.clearTimeout(timer);
+    }, [toast]);
 
     if (loading) {
         return <LoadingState text="Memuat detail paket..." />;
@@ -85,10 +108,57 @@ export default function PackageDetailPage() {
     const realWeight = formatWeight(data.real_weight);
     const volumeWeight = formatWeight(data.volume_weight);
     const usedWeight = formatWeight(data.used_weight);
+    const via = data.via || "-";
     const length = formatDimension(data.length);
     const width = formatDimension(data.width);
     const height = formatDimension(data.height);
-    const plt = `${length} x ${width} x ${height}`;
+    const isOriginBranchStaff =
+        role === "branch_staff" &&
+        user?.is_origin === true;
+    const xraySubmitDisabled =
+        !xrayForm.route_code ||
+        !xrayForm.jenis_barang.trim() ||
+        submittingXray;
+
+    const openXrayModal = async () => {
+        try {
+            if (routes.length === 0) {
+                const routesRes = await getAllShipmentRoutes();
+
+                setRoutes(routesRes || []);
+            }
+
+            setXrayForm({
+                route_code: "",
+                jenis_barang: "",
+            });
+            setXrayModalOpen(true);
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const submitXrayFailed = async () => {
+        if (xraySubmitDisabled) return;
+
+        try {
+            setSubmittingXray(true);
+
+            const updatedPackage = await markPackageXrayFailed(id, {
+                route_code: xrayForm.route_code,
+                jenis_barang: xrayForm.jenis_barang.trim(),
+            });
+
+            setData(updatedPackage);
+            setXrayModalOpen(false);
+            setToast("Paket berhasil ditandai gagal X-Ray");
+            await fetchDetail();
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            setSubmittingXray(false);
+        }
+    };
 
     return (
         <div className="min-h-dvh bg-gray-50 px-4 pt-4 pb-28">
@@ -102,27 +172,39 @@ export default function PackageDetailPage() {
 
             {/* PHOTO CARD */}
             <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                <div className="mb-4 flex flex-wrap items-center gap-2">
-                    <StatusBadge
-                        icon={<Package className="w-4 h-4" />}
-                        value={packageName}
-                        tone="violet"
-                    />
-                    <StatusBadge
-                        icon={<Route className="w-4 h-4" />}
-                        value={routeCode}
-                        tone="indigo"
-                    />
-                    <StatusBadge
-                        icon={<ShieldCheck className="w-4 h-4" />}
-                        value={claimStatus}
-                        tone={data.is_claimed ? "green" : "orange"}
-                    />
-                    <StatusBadge
-                        icon={<Flag className="w-4 h-4" />}
-                        value={finishStatus}
-                        tone={data.is_finished ? "green" : "blue"}
-                    />
+                <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <StatusBadge
+                            icon={<Package className="w-4 h-4" />}
+                            value={packageName}
+                            tone="violet"
+                        />
+                        <StatusBadge
+                            icon={<Route className="w-4 h-4" />}
+                            value={routeCode}
+                            tone="indigo"
+                        />
+                        <StatusBadge
+                            icon={<ShieldCheck className="w-4 h-4" />}
+                            value={claimStatus}
+                            tone={data.is_claimed ? "green" : "orange"}
+                        />
+                        <StatusBadge
+                            icon={<Flag className="w-4 h-4" />}
+                            value={finishStatus}
+                            tone={data.is_finished ? "green" : "blue"}
+                        />
+                    </div>
+
+                    {isOriginBranchStaff && (
+                        <button
+                            onClick={openXrayModal}
+                            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 active:scale-[0.98]"
+                        >
+                            <ScanLine className="h-4 w-4" />
+                            Gagal X-Ray
+                        </button>
+                    )}
                 </div>
 
                 {data.photo_url ? (
@@ -249,6 +331,12 @@ export default function PackageDetailPage() {
                     tone="indigo"
                 />
                 <InfoItem
+                    icon={<Truck className="w-4 h-4" />}
+                    label="Via"
+                    value={via}
+                    tone="blue"
+                />
+                <InfoItem
                     icon={<BadgeDollarSign className="w-4 h-4" />}
                     label="Fee"
                     value={fee}
@@ -315,6 +403,124 @@ export default function PackageDetailPage() {
                     />
                 </div>
             )}
+
+            {xrayModalOpen && (
+                <XrayFailedModal
+                    routes={routes}
+                    form={xrayForm}
+                    setForm={setXrayForm}
+                    disabled={xraySubmitDisabled}
+                    loading={submittingXray}
+                    onClose={() => setXrayModalOpen(false)}
+                    onSubmit={submitXrayFailed}
+                />
+            )}
+
+            {toast && (
+                <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-lg">
+                    {toast}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function XrayFailedModal({
+    routes,
+    form,
+    setForm,
+    disabled,
+    loading,
+    onClose,
+    onSubmit,
+}) {
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+            <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-lg">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                    <h2 className="text-sm font-semibold text-gray-900">
+                        Gagal X-Ray
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="flex h-8 w-8 items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+
+                <div className="space-y-3">
+                    <label className="block">
+                        <span className="mb-1.5 block text-sm font-medium text-gray-700">
+                            Kode Rute Baru
+                        </span>
+                        <select
+                            value={form.route_code}
+                            onChange={(event) =>
+                                setForm((current) => ({
+                                    ...current,
+                                    route_code: event.target.value,
+                                }))
+                            }
+                            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        >
+                            <option value="">Pilih kode rute</option>
+                            {routes.map((route) => (
+                                <option
+                                    key={route.id}
+                                    value={route.generated_route_code}
+                                >
+                                    {formatRouteOption(route)}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+
+                    <label className="block">
+                        <span className="mb-1.5 block text-sm font-medium text-gray-700">
+                            Jenis Barang
+                        </span>
+                        <input
+                            value={form.jenis_barang}
+                            onChange={(event) =>
+                                setForm((current) => ({
+                                    ...current,
+                                    jenis_barang: event.target.value,
+                                }))
+                            }
+                            placeholder="Contoh: Elektronik"
+                            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        />
+                    </label>
+
+                    <div className="flex gap-2 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>
+                            Perubahan kode rute akan menghitung ulang berat volume, berat terpakai, dan harga paket.
+                        </span>
+                    </div>
+                </div>
+
+                <div className="mt-5 flex gap-2">
+                    <Button
+                        variant="outline"
+                        fullWidth
+                        onClick={onClose}
+                        disabled={loading}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        fullWidth
+                        onClick={onSubmit}
+                        disabled={disabled}
+                        loading={loading}
+                        loadingText="Menyimpan..."
+                    >
+                        Simpan
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }
@@ -463,4 +669,13 @@ function formatWeight(value) {
     }
 
     return `${value} kg`;
+}
+
+function formatRouteOption(route) {
+    const routeCode = route.generated_route_code || "-";
+    const origin = route.origin_branch || "-";
+    const destination = route.destination_branch || "-";
+    const via = route.via || "-";
+
+    return `${routeCode} - ${origin} -> ${destination} - ${via}`;
 }
