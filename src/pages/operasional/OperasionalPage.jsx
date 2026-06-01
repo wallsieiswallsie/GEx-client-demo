@@ -1,15 +1,23 @@
 // pages/operasional/OperasionalPage.jsx
 import { useNavigate } from "react-router-dom";
-import { PackageCheck, Clock, AlertCircle, Database, Truck } from "lucide-react";
+import { PackageCheck, Clock, AlertCircle, Database, Truck, ScanLine } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
+import { useAuth } from "../../context/useAuth";
 
 export default function OperasionalPage() {
     const navigate = useNavigate();
+    const { user, role } = useAuth();
+    const canAccessXrayFailed =
+        role === "general_manager" ||
+        (role === "branch_staff" && user?.is_origin === true);
 
     const items = [
         { label: "Database Paket", path: "/input", icon: Database, color: "bg-blue-100 text-blue-600" },
         { label: "Belum Packing", path: "/belum-packing", icon: Clock, color: "bg-yellow-100 text-yellow-600" },
         { label: "Paket Bermasalah", path: "/problematic-confirmations", icon: AlertCircle, color: "bg-red-100 text-red-500" },
+        ...(canAccessXrayFailed
+            ? [{ label: "Paket Gagal X-Ray", path: "/xray-failed-packages", icon: ScanLine, color: "bg-rose-100 text-rose-600" }]
+            : []),
         { label: "Kloter", path: "/kloter", icon: Truck, color: "bg-purple-100 text-purple-600" },
     ];
 

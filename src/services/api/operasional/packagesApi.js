@@ -71,13 +71,37 @@ export const deletePackage = async (id) => {
 };
 
 /**
- * Mark package as X-Ray failed
+ * Bulk mark packages as X-Ray failed
  */
-export const markPackageXrayFailed = async (id, payload) => {
-    const res = await apiFetch(`/packages/${id}/xray-failed`, {
+export const bulkMarkPackagesXrayFailed = async (payload) => {
+    const res = await apiFetch("/xray-failed-packages/bulk", {
         method: "POST",
         body: JSON.stringify(payload),
     });
+
+    return res.data;
+};
+
+/**
+ * Get X-Ray failed packages
+ */
+export const getXrayFailedPackages = async ({
+    page = 1,
+    limit = 20,
+    search = "",
+}) => {
+    const params = new URLSearchParams({
+        page,
+        limit,
+        search,
+    });
+
+    const res = await apiFetch(
+        `/xray-failed-packages?${params.toString()}`,
+        {
+            method: "GET",
+        }
+    );
 
     return res.data;
 };

@@ -242,6 +242,12 @@ export default function TrackPackagePage() {
                     <ShieldCheck className="h-4 w-4" />
                     {claimText}
                   </span>
+                  {packageData.is_xray_failed && (
+                    <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+                      <AlertCircle className="h-4 w-4" />
+                      Tidak Lolos X-Ray
+                    </span>
+                  )}
                 </div>
 
                 <h2 className="text-lg font-bold text-gray-900">

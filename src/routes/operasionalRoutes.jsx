@@ -11,6 +11,7 @@ import MispackedPackageDetailPage from "../pages/operasional/MispackedPackageDet
 import UnpackedPackagesPage from "../pages/operasional/UnpackedPackagesPage";
 import MispackedPackagesPage from "../pages/operasional/MispackedPackagesPage";
 import ProblematicConfirmationPage from "../pages/operasional/ProblematicConfirmationPage";
+import XrayFailedPackagesPage from "../pages/operasional/XrayFailedPackagesPage";
 
 export const operasionalRoutes = [
     {
@@ -55,6 +56,10 @@ export const operasionalRoutes = [
             {
                 path: "/problematic-confirmations",
                 element: <ProblematicConfirmationPage />,
+            },
+            {
+                path: "/xray-failed-packages",
+                element: <XrayFailedPackagesPage />,
             },
         ],
     },

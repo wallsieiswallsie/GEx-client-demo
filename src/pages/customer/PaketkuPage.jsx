@@ -196,6 +196,12 @@ export default function PaketkuPage() {
                   {item.receipt?.toUpperCase() || "Nomor Resi Tidak Tersedia"}
                 </div>
 
+                {item.is_xray_failed && (
+                  <div className="mt-2 inline-flex rounded-full border border-red-100 bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700">
+                    Tidak Lolos X-Ray
+                  </div>
+                )}
+
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
                   <Wallet className="h-4 w-4" />
                   {formatFee(item.fee)}

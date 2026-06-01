@@ -84,6 +84,11 @@ export default function CustomerPackageDetailPage() {
                         <Route className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{data.route_code || "-"}</span>
                     </div>
+                    {data.is_xray_failed && (
+                        <div className="mt-3 inline-flex rounded-2xl bg-red-50 px-3.5 py-2 text-xs font-bold text-red-700 shadow-[0_8px_20px_rgba(15,23,42,0.10)]">
+                            Tidak Lolos X-Ray
+                        </div>
+                    )}
 
                     <div className="mt-12">
                         <p className="text-xs font-medium text-white/90">Nama Paket</p>

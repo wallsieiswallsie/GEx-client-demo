@@ -453,15 +453,23 @@ export default function PackagesPage() {
                                     </div>
 
                                     <div className="mt-2 min-w-0">
-                                        <div
-                                            title={item.route_code || "-"}
-                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100 max-w-full min-w-0"
-                                        >
-                                            <Truck className="w-3 h-3 shrink-0" />
+                                        <div className="flex flex-wrap gap-1.5">
+                                            <div
+                                                title={item.route_code || "-"}
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-semibold border border-indigo-100 max-w-full min-w-0"
+                                            >
+                                                <Truck className="w-3 h-3 shrink-0" />
 
-                                            <span className="truncate">
-                                                {item.route_code || "-"}
-                                            </span>
+                                                <span className="truncate">
+                                                    {item.route_code || "-"}
+                                                </span>
+                                            </div>
+
+                                            {item.is_xray_failed && (
+                                                <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-[11px] font-semibold border border-red-100">
+                                                    Gagal X-Ray
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
