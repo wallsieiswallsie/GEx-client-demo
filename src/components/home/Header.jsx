@@ -59,7 +59,10 @@ export default function Header({ onLogout, children, variant = 'default' }) {
     }
 
     return (
-        <header className="flex items-center justify-between gap-3 px-4 pt-5 pb-3 bg-white sticky top-0 z-40 border-b border-gray-50">
+        <header
+            className="relative z-40 flex h-[190px] items-start justify-between gap-3 overflow-hidden bg-cover bg-center bg-no-repeat px-4 pt-8 sm:h-[210px] sm:px-6"
+            style={{ backgroundImage: "url('/images/header_background/home.png')" }}
+        >
             <div className="shrink-0">
                 <GexLogo size={55} />
             </div>
@@ -75,7 +78,7 @@ export default function Header({ onLogout, children, variant = 'default' }) {
                     <button
                         id="btn-logout"
                         onClick={() => setIsLogoutModalOpen(true)}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-transparent text-black transition hover:text-gray-800 active:scale-95"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-[#4d148c] text-white shadow-[0_6px_18px_rgba(77,20,140,0.24)] transition hover:bg-[#411176] active:scale-95"
                         aria-label="Keluar dari akun"
                         title="Logout"
                     >
@@ -85,7 +88,7 @@ export default function Header({ onLogout, children, variant = 'default' }) {
                     <button
                         type="button"
                         onClick={() => navigate('/login')}
-                        className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-[#4d148c] px-3 text-xs font-bold text-white shadow-sm shadow-violet-600/20 transition active:scale-95"
+                        className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-[#4d148c] px-3 text-xs font-bold text-white shadow-[0_6px_18px_rgba(77,20,140,0.24)] transition hover:bg-[#411176] active:scale-95"
                         aria-label="Masuk ke akun"
                     >
                         <LogIn className="h-4 w-4" />
