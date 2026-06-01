@@ -14,8 +14,10 @@ import { relasiRoutes } from "./routes/relasiRoutes";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
+import SEO, { NoIndexSEO } from "./components/SEO";
 import { LoadingState } from "./components/common/Loading";
 import MobileAppLayout from "./layouts/MobileAppLayout";
+import { PUBLIC_SEO } from "./config/seo";
 import { INTERNAL_ROLES } from "./utils/roleAccess";
 
 import FormDaftarPaket from "./pages/FormDaftarPaket";
@@ -92,7 +94,19 @@ export default function App() {
               <Route
                 element={<MobileAppLayout />}
               >
-                <Route path="/lacak" element={<TrackPackagePage />} />
+                <Route
+                  path="/lacak"
+                  element={
+                    <>
+                      <SEO
+                        title={PUBLIC_SEO.tracking.title}
+                        description={PUBLIC_SEO.tracking.description}
+                        canonicalPath={PUBLIC_SEO.tracking.path}
+                      />
+                      <TrackPackagePage />
+                    </>
+                  }
+                />
               </Route>
 
               <Route
@@ -102,18 +116,33 @@ export default function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route path="/daftar-paket" element={<FormDaftarPaket />} />
+                <Route
+                  path="/daftar-paket"
+                  element={
+                    <>
+                      <SEO
+                        title={PUBLIC_SEO.registerPackage.title}
+                        description={PUBLIC_SEO.registerPackage.description}
+                        canonicalPath={PUBLIC_SEO.registerPackage.path}
+                      />
+                      <FormDaftarPaket />
+                    </>
+                  }
+                />
               </Route>
 
               {/* === LEGACY DASHBOARD === */}
               <Route path="/dashboard" element={
-                <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
-                  <div className="min-h-screen flex items-center justify-center bg-gray-100">
-                    <h1 className="text-2xl font-bold text-gray-800">
-                      Tampilan Dashboard Sementara
-                    </h1>
-                  </div>
-                </ProtectedRoute>
+                <>
+                  <NoIndexSEO />
+                  <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
+                    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                      <h1 className="text-2xl font-bold text-gray-800">
+                        Tampilan Dashboard Sementara
+                      </h1>
+                    </div>
+                  </ProtectedRoute>
+                </>
               } />
 
               {/* === REDIRECT === */}

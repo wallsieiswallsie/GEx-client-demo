@@ -1,6 +1,8 @@
 import { lazy } from 'react';
 import MobileAppLayout from '../layouts/MobileAppLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
+import SEO, { NoIndexSEO } from '../components/SEO';
+import { PUBLIC_SEO } from '../config/seo';
 import { INTERNAL_ROLES } from '../utils/roleAccess';
 
 import OperasionalPage from "../pages/operasional/OperasionalPage";
@@ -36,11 +38,24 @@ const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 
 const internalOnly = (element) => (
-  <ProtectedRoute allowedRoles={INTERNAL_ROLES}>{element}</ProtectedRoute>
+  <>
+    <NoIndexSEO />
+    <ProtectedRoute allowedRoles={INTERNAL_ROLES}>{element}</ProtectedRoute>
+  </>
 );
 
 const generalManagerOnly = (element) => (
-  <ProtectedRoute allowedRoles={["general_manager"]}>{element}</ProtectedRoute>
+  <>
+    <NoIndexSEO />
+    <ProtectedRoute allowedRoles={["general_manager"]}>{element}</ProtectedRoute>
+  </>
+);
+
+const withSeo = (seo, element) => (
+  <>
+    <SEO title={seo.title} description={seo.description} canonicalPath={seo.path} />
+    {element}
+  </>
 );
 
 export const homeRoutes = [
@@ -53,11 +68,11 @@ export const homeRoutes = [
     children: [
       {
         path: '/home',
-        element: <HomeContainer />,
+        element: withSeo(PUBLIC_SEO.home, <HomeContainer />),
       },
       {
         path: '/beranda',
-        element: <HomeContainer />,
+        element: withSeo(PUBLIC_SEO.home, <HomeContainer />),
       },
       {
         path: "/operasional",
@@ -137,39 +152,39 @@ export const homeRoutes = [
       },
       {
         path: "/jadwal",
-        element: <CustomerShipSchedulesPage />
+        element: withSeo(PUBLIC_SEO.shipSchedule, <CustomerShipSchedulesPage />)
       },
       {
         path: "/gerai",
-        element: <CustomerBranchesPage />
+        element: withSeo(PUBLIC_SEO.branches, <CustomerBranchesPage />)
       },
       {
         path: "/cek-ongkir",
-        element: <CustomerShippingRatePage />
+        element: withSeo(PUBLIC_SEO.shippingRate, <CustomerShippingRatePage />)
       },
       {
         path: "/kemitraan",
-        element: <CustomerPartnershipPage />
+        element: withSeo(PUBLIC_SEO.partnership, <CustomerPartnershipPage />)
       },
       {
         path: "/konten",
-        element: <CustomerContentPage />
+        element: withSeo(PUBLIC_SEO.content, <CustomerContentPage />)
       },
       {
         path: "/bantuan",
-        element: <HelpPage />
+        element: withSeo(PUBLIC_SEO.help, <HelpPage />)
       },
       {
         path: "/saran-masukan",
-        element: <CustomerFeedbackPage />
+        element: withSeo(PUBLIC_SEO.feedback, <CustomerFeedbackPage />)
       },
       {
         path: "/bantuan/:faqId",
-        element: <HelpDetailPage />
+        element: withSeo(PUBLIC_SEO.helpDetail, <HelpDetailPage />)
       },
       {
         path: "/help/category/:slug",
-        element: <HelpCategoryPage />
+        element: withSeo(PUBLIC_SEO.helpCategory, <HelpCategoryPage />)
       },
       {
         path: "/internal/help",
@@ -185,15 +200,30 @@ export const homeRoutes = [
       },
       {
         path: "/paketku",
-        element: <PaketkuPage />
+        element: (
+          <>
+            <NoIndexSEO />
+            <PaketkuPage />
+          </>
+        )
       },
       {
         path: "/paketku/:id",
-        element: <CustomerPackageDetailPage />
+        element: (
+          <>
+            <NoIndexSEO />
+            <CustomerPackageDetailPage />
+          </>
+        )
       },
       {
         path: "/profil",
-        element: <ProfilePage />
+        element: (
+          <>
+            <NoIndexSEO />
+            <ProfilePage />
+          </>
+        )
       },
     ],
   },

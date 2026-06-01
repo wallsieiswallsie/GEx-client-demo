@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { NoIndexSEO } from "../components/SEO";
 import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import PackagesPage from "../pages/operasional/PackagesPage";
@@ -16,9 +17,12 @@ import XrayFailedPackagesPage from "../pages/operasional/XrayFailedPackagesPage"
 export const operasionalRoutes = [
     {
         element: (
-            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
-                <MobileAppLayout />
-            </ProtectedRoute>
+            <>
+                <NoIndexSEO />
+                <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
+                    <MobileAppLayout />
+                </ProtectedRoute>
+            </>
         ),
         children: [
             {

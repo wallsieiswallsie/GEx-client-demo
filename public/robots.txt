@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /dashboard
+Disallow: /operasional
+Disallow: /logistik
+Disallow: /keuangan
+Disallow: /payment-methods
+Disallow: /cash-settlements
+Disallow: /invoice
+Disallow: /relasi
+Disallow: /konten-customer
+Disallow: /internal
+Disallow: /feedbacks
+Disallow: /ekspedisi
+Disallow: /item-categories
+Disallow: /gudang
+Disallow: /via
+Disallow: /rute
+Disallow: /input
+Disallow: /packages
+Disallow: /belum-packing
+Disallow: /kloter
+Disallow: /mispacked-packages
+Disallow: /problematic-confirmations
+Disallow: /xray-failed-packages
+Disallow: /users-internal
+Disallow: /users-internal-form
+Disallow: /kontak-customer
+Disallow: /paketku
+Disallow: /profil
+
+Sitemap: https://YOUR_DOMAIN/sitemap.xml

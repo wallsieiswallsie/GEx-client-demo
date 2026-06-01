@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { NoIndexSEO } from "../components/SEO";
 import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import EkspedisiPage from "../pages/logistik/EkspedisiPage";
@@ -12,9 +13,12 @@ import ItemCategoriesPage from "../pages/logistik/ItemCategoriesPage";
 export const logistikRoutes = [
     {
         element: (
-            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
-                <MobileAppLayout />
-            </ProtectedRoute>
+            <>
+                <NoIndexSEO />
+                <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
+                    <MobileAppLayout />
+                </ProtectedRoute>
+            </>
         ),
         children: [
             {

@@ -1,5 +1,6 @@
 import ProtectedRoute from "../components/ProtectedRoute";
 import MobileAppLayout from "../layouts/MobileAppLayout";
+import { NoIndexSEO } from "../components/SEO";
 import { INTERNAL_ROLES } from "../utils/roleAccess";
 
 import UsersInternalPage from "../pages/relasi/UsersInternalPage";
@@ -9,9 +10,12 @@ import CustomerPage from "../pages/relasi/CustomerPage";
 export const relasiRoutes = [
     {
         element: (
-            <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
-                <MobileAppLayout />
-            </ProtectedRoute>
+            <>
+                <NoIndexSEO />
+                <ProtectedRoute allowedRoles={INTERNAL_ROLES}>
+                    <MobileAppLayout />
+                </ProtectedRoute>
+            </>
         ),
         children: [
             {
