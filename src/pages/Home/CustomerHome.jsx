@@ -46,10 +46,10 @@ function SearchBar({ onSearch }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Lacak Paket"
-          className="h-10 w-full pl-9 pr-4 bg-gray-100 rounded-xl text-sm text-gray-700
-            placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300
-            shadow-[0_4px_16px_rgba(0,0,0,0.08)] focus:bg-white
-            focus:shadow-[0_6px_20px_rgba(0,0,0,0.10)] transition-all duration-200"
+          className="h-10 w-full pl-9 pr-4 bg-white rounded-xl text-sm text-gray-700
+        placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4f2e78]/30
+          shadow-[0_8px_24px_rgba(79,46,120,0.12)] focus:bg-white
+          focus:shadow-[0_12px_36px_rgba(79,46,120,0.20)] transition-all duration-200"
           aria-label="Lacak nomor resi paket"
         />
       </div>
