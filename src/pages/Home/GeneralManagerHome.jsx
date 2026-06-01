@@ -9,7 +9,7 @@ import {
     FileText,
     Wallet,
     Ship,
-    Headphones
+    MessageSquareText
 } from "lucide-react";
 import Header from "../../components/home/Header";
 
@@ -296,6 +296,7 @@ const FEATURE_GROUPS = [
             { label: "Keuangan", path: "/keuangan", icon: Wallet, color: "bg-lime-100 text-lime-600" },
             { label: "Relasi", path: "/relasi", icon: Users, color: "bg-indigo-100 text-indigo-600" },
             { label: "Konten", path: "/konten-customer", icon: FileText, color: "bg-sky-100 text-sky-600" },
+            { label: "Saran & Masukan", path: "/feedbacks", icon: MessageSquareText, color: "bg-fuchsia-100 text-fuchsia-600" },
         ]
     }
 ];

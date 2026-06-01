@@ -20,6 +20,10 @@ import HelpPage from "../pages/customer/HelpPage";
 import HelpDetailPage from "../pages/customer/HelpDetailPage";
 import HelpCategoryPage from "../pages/customer/HelpCategoryPage";
 import HelpManagementPage from "../pages/internal/HelpManagementPage";
+import CustomerFeedbackPage from "../pages/customer/CustomerFeedbackPage";
+import CustomerFeedbackHistoryPage from "../pages/customer/CustomerFeedbackHistoryPage";
+import FeedbackListPage from "../pages/internal/FeedbackListPage";
+import FeedbackDetailPage from "../pages/internal/FeedbackDetailPage";
 import InvoiceDashboardPage from "../pages/invoices/InvoiceDashboardPage";
 import InvoiceListPage from "../pages/invoices/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoices/CreateInvoicePage";
@@ -34,6 +38,10 @@ const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 
 const internalOnly = (element) => (
   <ProtectedRoute allowedRoles={INTERNAL_ROLES}>{element}</ProtectedRoute>
+);
+
+const generalManagerOnly = (element) => (
+  <ProtectedRoute allowedRoles={["general_manager"]}>{element}</ProtectedRoute>
 );
 
 export const homeRoutes = [
@@ -153,6 +161,18 @@ export const homeRoutes = [
         element: <HelpPage />
       },
       {
+        path: "/saran-masukan",
+        element: <CustomerFeedbackPage />
+      },
+      {
+        path: "/riwayat-masukan",
+        element: <CustomerFeedbackHistoryPage />
+      },
+      {
+        path: "/riwayat-masukan/:id",
+        element: <CustomerFeedbackHistoryPage />
+      },
+      {
         path: "/bantuan/:faqId",
         element: <HelpDetailPage />
       },
@@ -163,6 +183,14 @@ export const homeRoutes = [
       {
         path: "/internal/help",
         element: internalOnly(<HelpManagementPage />)
+      },
+      {
+        path: "/feedbacks",
+        element: generalManagerOnly(<FeedbackListPage />)
+      },
+      {
+        path: "/feedbacks/:id",
+        element: generalManagerOnly(<FeedbackDetailPage />)
       },
       {
         path: "/paketku",

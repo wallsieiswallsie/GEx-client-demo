@@ -8,6 +8,8 @@ const MENU_ITEMS = [
   { id: 'lokasi-gerai', image: '/images/customer_home/lokasi_gerai.png', label: 'Lokasi Gerai', path: '/gerai' },
   { id: 'kemitraan', image: '/images/customer_home/kemitraan.png', label: 'Kemitraan', path: '/kemitraan' },
   { id: 'bantuan', image: '/images/customer_home/bantuan.png', label: 'Bantuan', path: '/bantuan' },
+  { id: 'saran-masukan', image: '/images/customer_home/bantuan.png', label: 'Saran\nMasukan', path: '/saran-masukan' },
+  { id: 'riwayat-masukan', image: '/images/customer_home/lacak_paket.png', label: 'Riwayat\nMasukan', path: '/riwayat-masukan' },
   { id: 'jadwal-kapal', image: '/images/customer_home/jadwal_kapal.png', label: 'Jadwal\nKapal', path: '/jadwal' },
 ];
 
