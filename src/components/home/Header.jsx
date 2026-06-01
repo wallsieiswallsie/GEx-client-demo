@@ -69,7 +69,7 @@ export default function Header({ onLogout, children, variant = 'default' }) {
                 <button
                     id="btn-logout"
                     onClick={() => setIsLogoutModalOpen(true)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-black bg-black text-white shadow-sm transition hover:border-gray-800 hover:bg-gray-800 active:scale-95"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-transparent text-black transition hover:text-gray-800 active:scale-95"
                     aria-label="Keluar dari akun"
                     title="Logout"
                 >

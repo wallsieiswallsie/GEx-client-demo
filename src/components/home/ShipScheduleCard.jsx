@@ -115,7 +115,7 @@ function Card({ schedule }) {
       <div className="relative z-10 mt-3 grid min-w-0 grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
         <DateMetric label="Closing" value={formatDate(schedule.closing_date)} icon={Clock3} />
         <DateMetric label="Berangkat" value={formatDate(schedule.depart_date)} icon={CalendarDays} emphasis />
-        <DateMetric label="Estimasi Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
+        <DateMetric label="Est. Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
       </div>
     </div>
   );
