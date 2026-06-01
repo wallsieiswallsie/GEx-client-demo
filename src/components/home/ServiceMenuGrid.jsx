@@ -7,7 +7,7 @@ const MENU_ITEMS = [
   { id: 'daftar-paket', image: '/images/customer_home/daftarkan_paket.png', label: 'Daftarkan\nPaket', path: '/daftar-paket' },
   { id: 'lokasi-gerai', image: '/images/customer_home/lokasi_gerai.png', label: 'Lokasi Gerai', path: '/gerai' },
   { id: 'kemitraan', image: '/images/customer_home/kemitraan.png', label: 'Kemitraan', path: '/kemitraan' },
-  { id: 'saran-masukan', image: '/images/customer_home/saran_masukan.png', label: 'Saran &\nMasukan', path: '/saran-masukan', imageClass: 'h-[68px] w-[68px] -right-3 -bottom-4' },
+  { id: 'saran-masukan', image: '/images/customer_home/saran_masukan.png', label: 'Saran &\nMasukan', path: '/saran-masukan', imageClass: 'h-[82px] w-[82px] -right-4 -bottom-5' },
   { id: 'jadwal-kapal', image: '/images/customer_home/jadwal_kapal.png', label: 'Jadwal\nKapal', path: '/jadwal' },
   { id: 'bantuan', image: '/images/customer_home/bantuan.png', label: 'Bantuan', path: '/bantuan' },
 ];
