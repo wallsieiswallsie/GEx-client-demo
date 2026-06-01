@@ -196,16 +196,16 @@ export default function CustomerHome() {
             </section>
           )}
 
-          {/* 4. Jadwal Kapal */}
+          {/* 4. Layanan Kami */}
+          <ServiceMenuGrid />
+
+          {/* 5. Jadwal Kapal */}
           <ShipScheduleSection
             schedules={schedules}
             isLoading={schedulesLoading}
             error={schedulesError}
             onViewAll={() => navigate('/jadwal')}
           />
-
-          {/* 5. Layanan Kami */}
-          <ServiceMenuGrid />
 
           {/* 6. Berita */}
           {instagramError ? (
