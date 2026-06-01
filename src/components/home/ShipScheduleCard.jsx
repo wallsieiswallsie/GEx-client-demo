@@ -7,6 +7,7 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('id-ID', {
     day: '2-digit',
     month: 'short',
+    year: 'numeric',
   });
 }
 
@@ -62,11 +63,18 @@ function Card({ schedule }) {
   const viaType = schedule.via_type || (isKapal ? 'Kapal' : 'Pesawat');
 
   return (
-    <div className="box-border w-full max-w-full overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/70 to-blue-50 p-3 text-left shadow-[0_8px_24px_rgba(37,99,235,0.08)] transition duration-200 hover:-translate-y-0.5 active:scale-[0.98]">
-      <div className="flex min-w-0 items-start justify-between gap-2">
+    <div className="relative box-border w-full max-w-full overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/70 to-blue-50 p-3 text-left shadow-[0_8px_24px_rgba(37,99,235,0.08)] transition duration-200 hover:-translate-y-0.5 active:scale-[0.98]">
+      <img
+        src="/images/kapal.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-6 w-24 max-w-[34%] -translate-x-1/2 opacity-10 sm:w-28"
+      />
+
+      <div className="relative z-10 flex min-w-0 items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex min-w-0 items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-semibold text-blue-700 shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-bold text-blue-700 shadow-sm">
               <Icon className="h-3 w-3" />
               {viaType}
             </span>
@@ -84,7 +92,7 @@ function Card({ schedule }) {
         </div>
       </div>
 
-      <div className="box-border max-w-full overflow-hidden rounded-2xl bg-white/85 p-1.5 shadow-[inset_0_0_0_1px_rgba(37,99,235,0.08)]">
+      <div className="relative z-10 box-border max-w-full overflow-hidden rounded-2xl bg-white/85 p-1.5 shadow-[inset_0_0_0_1px_rgba(37,99,235,0.08)]">
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(54px,0.8fr)_minmax(0,1fr)] items-center gap-1.5 text-xs">
           <div className="min-w-0 rounded-xl border border-gray-100 bg-white px-2 py-2 shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
             <p className="text-[10px] font-medium text-gray-400">Asal</p>
@@ -104,10 +112,10 @@ function Card({ schedule }) {
         </div>
       </div>
 
-      <div className="mt-3 grid min-w-0 grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
+      <div className="relative z-10 mt-3 grid min-w-0 grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
         <DateMetric label="Closing" value={formatDate(schedule.closing_date)} icon={Clock3} />
         <DateMetric label="Berangkat" value={formatDate(schedule.depart_date)} icon={CalendarDays} emphasis />
-        <DateMetric label="Est. Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
+        <DateMetric label="Estimasi Tiba" value={formatDate(schedule.estimated_arrival)} icon={MapPin} />
       </div>
     </div>
   );
@@ -129,8 +137,8 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
     <div className="box-border mx-4 max-w-full overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
       <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-sm font-bold tracking-[-0.2px] text-gray-800">Jadwal Kapal</h2>
-          <p className="mt-0.5 text-[11px] text-gray-400">Kloter terdekat untuk pengirimanmu</p>
+          <h2 className="text-sm font-extrabold tracking-[-0.2px] text-gray-950">Jadwal Kapal</h2>
+          <p className="mt-0.5 text-[11px] font-bold text-gray-900">Jadwal kapal terdekat (*Resiko dapat berubah sewaktu-waktu)</p>
         </div>
         <button onClick={onViewAll} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700 active:text-blue-800">
           <span>Lihat Semua</span>
