@@ -219,24 +219,24 @@ export default function PaketkuPage() {
             {filteredItems.map((item) => {
               const status = item.final_status || item.status;
               const dateValue = item.arrived_origin_at || item.claimed_at || item.updated_at;
-              const dateLabel = item.arrived_origin_at ? "Tiba di Gudang" : "Tanggal Status";
+              const dateLabel = item.arrived_origin_at ? "Tiba di Gudang Tangerang" : "Tanggal Status";
 
               return (
                 <div
                   key={item.id}
-                  className="rounded-[28px] border border-gray-100 bg-white px-5 py-5 shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+                  className="rounded-[26px] border border-gray-100 bg-white px-4 py-5 shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
                 >
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
-                        <Route className="h-5 w-5" />
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+                        <Route className="h-4 w-4" />
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="truncate text-base font-bold text-gray-800">
+                        <h3 className="truncate text-sm font-semibold text-gray-800">
                           {item.receipt?.toUpperCase() || "Nomor Resi Tidak Tersedia"}
                         </h3>
-                        <div className="mt-2 flex min-w-0 items-center gap-2 text-xs font-semibold">
+                        <div className="mt-2 flex min-w-0 items-center gap-1.5 text-[11px] font-medium">
                           <span className="shrink-0 text-gray-400">&bull;</span>
                           <span className="truncate text-violet-600">
                             {item.route_code || "Kode Tidak Tersedia"}
@@ -249,29 +249,29 @@ export default function PaketkuPage() {
                       </div>
                     </div>
 
-                    <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pl-11 sm:flex-col sm:items-end sm:pl-0">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${getStatusTone(status)}`}>
-                        <PackageCheck className="h-3.5 w-3.5" />
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold ${getStatusTone(status)}`}>
+                        <PackageCheck className="h-3 w-3" />
                         {getStatusLabel(status)}
                       </span>
 
                       {isXrayFailed(item) && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-600">
-                          <XCircle className="h-3.5 w-3.5" />
+                        <span className="inline-flex items-center gap-1 rounded-full border border-red-100 bg-red-50 px-2 py-1 text-[9px] font-semibold text-red-600">
+                          <XCircle className="h-3 w-3" />
                           Tidak Lolos X-Ray
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-5">
+                  <div className="mt-5 grid grid-cols-2 gap-4">
                     <PackageMetric
-                      icon={<Wallet className="h-5 w-5" />}
+                      icon={<Wallet className="h-4 w-4" />}
                       label="Ongkir"
                       value={formatFee(item.fee)}
                     />
                     <PackageMetric
-                      icon={<Scale className="h-5 w-5" />}
+                      icon={<Scale className="h-4 w-4" />}
                       label="Berat"
                       value={formatWeight(item.used_weight)}
                     />
@@ -280,7 +280,7 @@ export default function PaketkuPage() {
                   <div className="mt-5 border-t border-gray-100 pt-4">
                     <div className="flex items-end justify-between gap-3">
                       <PackageMetric
-                        icon={<CalendarDays className="h-5 w-5" />}
+                        icon={<CalendarDays className="h-4 w-4" />}
                         label={dateLabel}
                         value={formatDate(dateValue)}
                       />
@@ -288,10 +288,10 @@ export default function PaketkuPage() {
                       <button
                         onClick={() => navigate(`/paketku/${item.id}`)}
                         disabled={!item.package_id}
-                        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full px-2 text-sm font-bold text-violet-600 transition active:scale-[0.98] disabled:text-gray-300"
+                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-violet-600 transition active:scale-[0.98] disabled:text-gray-300"
                       >
                         Lihat Detail
-                        <ArrowRight className="h-5 w-5" />
+                        <ArrowRight className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -307,11 +307,11 @@ export default function PaketkuPage() {
 
 function PackageMetric({ icon, label, value }) {
   return (
-    <div className="flex min-w-0 items-start gap-3">
+    <div className="flex min-w-0 items-start gap-2.5">
       <div className="mt-0.5 shrink-0 text-gray-500">{icon}</div>
       <div className="min-w-0">
-        <div className="truncate text-xs font-semibold text-gray-500">{label}</div>
-        <div className="mt-1 truncate text-sm font-bold text-gray-900">{value || "-"}</div>
+        <div className="truncate text-[11px] font-medium text-gray-500">{label}</div>
+        <div className="mt-1 truncate text-[13px] font-semibold text-gray-900">{value || "-"}</div>
       </div>
     </div>
   );
