@@ -27,6 +27,8 @@ import {
   createDisplayedBranch,
   createDisplayedShipSchedule,
   deleteBannerDashboard,
+  deleteDisplayedBranch,
+  deleteDisplayedShipSchedule,
   getBannerDashboard,
   getDisplayedBranches,
   getDisplayedShipSchedules,
@@ -73,6 +75,7 @@ const configs = {
     create: createBannerDashboard,
     update: updateBannerDashboard,
     reorder: reorderBannerDashboard,
+    delete: deleteBannerDashboard,
     fields: [
       ["content_source", "Tipe Konten", "select", "", "", [
         ["image_upload", "Image Upload"],
@@ -105,6 +108,7 @@ const configs = {
     create: createDisplayedShipSchedule,
     update: updateDisplayedShipSchedule,
     reorder: reorderDisplayedShipSchedules,
+    delete: deleteDisplayedShipSchedule,
     fields: [
       ["ship_name", "Nama Kapal", "text"],
       ["closing_date", "Closing Date", "date"],
@@ -132,6 +136,7 @@ const configs = {
     create: createDisplayedBranch,
     update: updateDisplayedBranch,
     reorder: reorderDisplayedBranches,
+    delete: deleteDisplayedBranch,
     fields: [
       ["branch_name", "Nama Gerai", "text"],
       ["address", "Alamat", "textarea"],
@@ -594,11 +599,11 @@ export default function CustomerContentManagementPage() {
   };
 
   const confirmDelete = async () => {
-    if (!deleteTarget || activeSection !== "banner-dashboard") return;
+    if (!deleteTarget || !config.delete) return;
 
     try {
       setDeleting(true);
-      await deleteBannerDashboard(deleteTarget.id);
+      await config.delete(deleteTarget.id);
       if (editingId === deleteTarget.id) resetForm();
       setDeleteTarget(null);
       await fetchData();
@@ -710,7 +715,7 @@ export default function CustomerContentManagementPage() {
                     <button onClick={() => edit(item)} className="rounded-lg p-2 text-blue-600 hover:bg-blue-50">
                       <Pencil className="h-4 w-4" />
                     </button>
-                    {activeSection === "banner-dashboard" && (
+                    {config.delete && (
                       <button
                         onClick={() => setDeleteTarget(item)}
                         className="rounded-lg p-2 text-red-600 hover:bg-red-50"
@@ -734,7 +739,7 @@ export default function CustomerContentManagementPage() {
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-5">
           <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl">
-            <h3 className="text-base font-bold text-gray-900">Hapus Konten Banner?</h3>
+            <h3 className="text-base font-bold text-gray-900">Hapus {config.title}?</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Konten yang sudah dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin menghapus konten ini?
             </p>

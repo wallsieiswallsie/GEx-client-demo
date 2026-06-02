@@ -35,6 +35,8 @@ export const updateDisplayedShipSchedule = (id, payload) =>
   request(`/content/ship-schedules/${id}`, jsonOptions("PATCH", payload));
 export const reorderDisplayedShipSchedules = (items) =>
   request("/content/ship-schedules/reorder", jsonOptions("PATCH", { items }));
+export const deleteDisplayedShipSchedule = (id) =>
+  request(`/content/ship-schedules/${id}`, { method: "DELETE" });
 
 export const getDisplayedBranches = () => request("/content/branches");
 export const createDisplayedBranch = (payload) =>
@@ -43,3 +45,5 @@ export const updateDisplayedBranch = (id, payload) =>
   request(`/content/branches/${id}`, jsonOptions("PATCH", payload));
 export const reorderDisplayedBranches = (items) =>
   request("/content/branches/reorder", jsonOptions("PATCH", { items }));
+export const deleteDisplayedBranch = (id) =>
+  request(`/content/branches/${id}`, { method: "DELETE" });
