@@ -91,7 +91,7 @@ function BannerMedia({ banner, type, title }) {
 
 function BannerSlide({ banner }) {
   const type = normalizeBannerContentType(banner);
-  const title = banner.title || "Info GEx";
+  const title = banner.title;
   const destination = getBannerDestination(banner);
   const openDestination = () => {
     if (destination) window.open(destination, "_blank", "noopener,noreferrer");
