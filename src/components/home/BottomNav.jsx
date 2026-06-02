@@ -28,9 +28,9 @@ export default function BottomNav() {
   });
 
   return (
-    <nav className="sticky bottom-0 left-0 right-0 z-50 rounded-t-[28px] border-t border-white/80 bg-white shadow-[0_-10px_30px_rgba(17,24,39,0.08)]">
+    <nav className="sticky bottom-0 left-0 right-0 z-50 rounded-t-[20px] border-t border-white/80 bg-white shadow-[0_-8px_22px_rgba(17,24,39,0.08)]">
       <div
-        className="grid px-2 pb-2 pt-1"
+        className="grid px-2 pb-1 pt-0.5"
         style={{ gridTemplateColumns: `repeat(${filteredNav.length}, minmax(0, 1fr))` }}
       >
         {filteredNav.map((item) => {
@@ -42,14 +42,14 @@ export default function BottomNav() {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`relative flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl py-2 transition-colors
+              className={`relative flex min-h-[54px] flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 transition-colors
                 ${isActive ? 'text-[#7B2FF7]' : 'text-gray-400 hover:text-gray-500'}`}
             >
               {isActive && (
-                <span className="absolute top-0 h-1 w-7 rounded-full bg-[#7B2FF7]" aria-hidden="true" />
+                <span className="absolute top-0 h-0.5 w-6 rounded-full bg-[#7B2FF7]" aria-hidden="true" />
               )}
-              <Icon className="h-6 w-6" strokeWidth={isActive ? 2.4 : 2} />
-              <span className="text-[10px] font-extrabold">{item.label}</span>
+              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.4 : 2} />
+              <span className="text-[9px] font-extrabold">{item.label}</span>
             </button>
           );
         })}

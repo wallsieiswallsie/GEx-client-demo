@@ -15,10 +15,10 @@ import {
 
 import {
   createClaimedPackage,
+  getAvailableRouteCodes,
   getMyClaimedPackages,
   submitProblematicClaimRequest,
 } from "../services/api/claimedPackages";
-import { getAllShipmentRoutes } from "../services/api/logistik/shipmentRouteApi";
 import { ButtonLoading } from "../components/common/Loading";
 
 export default function FormDaftarPaket() {
@@ -52,7 +52,7 @@ export default function FormDaftarPaket() {
 
   const fetchRoutes = async () => {
     try {
-      const data = await getAllShipmentRoutes();
+      const data = await getAvailableRouteCodes();
       setRouteOptions(data || []);
     } catch (err) {
       console.error(err);

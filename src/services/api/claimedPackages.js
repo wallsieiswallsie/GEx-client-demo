@@ -90,6 +90,14 @@ export const getPendingProblematicClaims = async () => {
   return res.data;
 };
 
+export const getAvailableRouteCodes = async () => {
+  const res = await apiFetch("/claimed-packages/available-route-codes", {
+    method: "GET",
+  });
+
+  return res.data;
+};
+
 export const submitProblematicClaimRequest = async (claimId, payload) => {
   const res = await apiFetch(`/claimed-packages/${claimId}/problematic-request`, {
     method: "PATCH",
