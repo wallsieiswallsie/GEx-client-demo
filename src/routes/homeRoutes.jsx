@@ -21,6 +21,7 @@ import CustomerContentPage from "../pages/customer/CustomerContentPage";
 import HelpPage from "../pages/customer/HelpPage";
 import HelpDetailPage from "../pages/customer/HelpDetailPage";
 import HelpCategoryPage from "../pages/customer/HelpCategoryPage";
+import HelpPopularPage from "../pages/customer/HelpPopularPage";
 import HelpManagementPage from "../pages/internal/HelpManagementPage";
 import CustomerFeedbackPage from "../pages/customer/CustomerFeedbackPage";
 import FeedbackListPage from "../pages/internal/FeedbackListPage";
@@ -180,6 +181,10 @@ export const homeRoutes = [
       {
         path: "/bantuan",
         element: customerOnly(withSeo(PUBLIC_SEO.help, <HelpPage />))
+      },
+      {
+        path: "/bantuan/populer",
+        element: customerOnly(withSeo(PUBLIC_SEO.help, <HelpPopularPage />))
       },
       {
         path: "/saran-masukan",

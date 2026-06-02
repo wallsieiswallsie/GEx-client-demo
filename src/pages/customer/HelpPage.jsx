@@ -171,7 +171,7 @@ export default function HelpPage() {
   const safePopularFaqs = Array.isArray(popularFaqs) ? popularFaqs.filter(Boolean) : [];
   const safeSettings = settings && typeof settings === "object" ? settings : {};
   const headerSubtitle = safeSettings?.header_subtitle || "Temukan jawaban atau solusi dari pertanyaanmu di sini.";
-  const visibleFaqs = showAll || search || selectedCategory ? safeFaqs : safePopularFaqs;
+  const visibleFaqs = showAll || search || selectedCategory ? safeFaqs : safePopularFaqs.slice(0, 3);
   const showingSearchResult = showAll || search || selectedCategory;
 
   const supportUrl = useMemo(() => {
@@ -285,13 +285,15 @@ export default function HelpPage() {
             <h2 className="text-base font-bold leading-tight text-slate-950">
               {showingSearchResult ? "Hasil Pencarian" : "Pertanyaan Paling Sering Dicari"}
             </h2>
-            <button
-              type="button"
-              onClick={() => setShowAll(true)}
-              className="shrink-0 text-xs font-semibold text-violet-700"
-            >
-              Lihat semua
-            </button>
+            {!showingSearchResult && (
+              <button
+                type="button"
+                onClick={() => navigate("/bantuan/populer")}
+                className="shrink-0 text-xs font-semibold text-violet-700"
+              >
+                Lihat semua
+              </button>
+            )}
           </div>
 
           {loading || searching ? (
