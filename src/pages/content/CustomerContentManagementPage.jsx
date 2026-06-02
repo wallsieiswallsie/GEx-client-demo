@@ -732,8 +732,8 @@ export default function CustomerContentManagementPage() {
       </div>
 
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-end bg-black/40 px-4 py-5 sm:items-center sm:justify-center">
-          <div className="w-full rounded-2xl bg-white p-5 shadow-xl sm:max-w-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-5">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl">
             <h3 className="text-base font-bold text-gray-900">Hapus Konten Banner?</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">
               Konten yang sudah dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin menghapus konten ini?

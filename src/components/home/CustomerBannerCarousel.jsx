@@ -102,9 +102,6 @@ function BannerSlide({ banner }) {
       <BannerMedia banner={banner} type={type} title={title} />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
       <div className="absolute bottom-3 left-3 right-3">
-        <span className="mb-1 inline-block rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900">
-          Terbaru
-        </span>
         <p className="line-clamp-1 text-sm font-bold leading-tight text-white drop-shadow-md">{title}</p>
         {banner.description && (
           <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-white/85 drop-shadow-md">
