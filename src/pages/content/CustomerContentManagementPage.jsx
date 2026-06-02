@@ -13,6 +13,9 @@ import {
   Ship,
   Sparkles,
   Play,
+  Trash2,
+  Upload,
+  X,
   Video,
 } from "lucide-react";
 import SubPageHeader from "../../components/layout/SubPageHeader";
@@ -23,6 +26,7 @@ import {
   createBannerDashboard,
   createDisplayedBranch,
   createDisplayedShipSchedule,
+  deleteBannerDashboard,
   getBannerDashboard,
   getDisplayedBranches,
   getDisplayedShipSchedules,
@@ -32,6 +36,7 @@ import {
   updateBannerDashboard,
   updateDisplayedBranch,
   updateDisplayedShipSchedule,
+  uploadBannerDashboardContent,
 } from "../../services/api/content/contentApi";
 import {
   getBannerYoutubeThumbnail,
@@ -51,11 +56,16 @@ const configs = {
   "banner-dashboard": {
     title: "Banner Dashboard",
     emptyForm: {
+      content_source: "youtube",
       content_type: "youtube",
       content_url: "",
       redirect_url: "",
+      link_url: "",
       title: "",
       description: "",
+      mime_type: "",
+      file_name: "",
+      file_size: null,
       is_active: true,
       order_number: 0,
     },
@@ -64,13 +74,15 @@ const configs = {
     update: updateBannerDashboard,
     reorder: reorderBannerDashboard,
     fields: [
-      ["content_type", "Tipe Konten", "select", "", "", [
+      ["content_source", "Tipe Konten", "select", "", "", [
+        ["image_upload", "Image Upload"],
+        ["video_upload", "Video Upload"],
+        ["image_url", "Image URL"],
+        ["video_url", "Video URL"],
         ["youtube", "YouTube"],
-        ["video", "Video URL"],
-        ["image", "Image URL"],
       ]],
       ["content_url", "URL Konten", "url", "https://youtu.be/xxxxx", "Masukkan URL sesuai tipe konten"],
-      ["redirect_url", "URL Tujuan", "url", "https://example.com", "Opsional. Jika kosong, banner membuka URL konten."],
+      ["link_url", "URL Tujuan", "url", "https://example.com", "Opsional. Jika kosong, banner tidak bisa diklik."],
       ["title", "Judul", "text"],
       ["description", "Deskripsi", "textarea"],
       ["is_active", "Aktif", "checkbox"],
@@ -139,6 +151,55 @@ const canAccessSection = (role, section) => {
 };
 
 const CONTENT_CUSTOMER_PATH = "/konten-customer";
+const BANNER_IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const BANNER_VIDEO_MIME_TYPES = ["video/mp4", "video/webm"];
+const BANNER_ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "mp4", "webm"];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+
+const getFileExtension = (fileName = "") => fileName.split(".").pop()?.toLowerCase() || "";
+
+const getSourceType = (form) => {
+  const source = form.content_source;
+  if (source) return source;
+  const type = normalizeBannerContentType(form);
+  if (type === "image") return form.file_name ? "image_upload" : "image_url";
+  if (type === "video") return form.file_name ? "video_upload" : "video_url";
+  return "youtube";
+};
+
+const getContentTypeFromSource = (source) => {
+  if (source === "image_upload" || source === "image_url") return "image";
+  if (source === "video_upload" || source === "video_url") return "video";
+  return "youtube";
+};
+
+const isUploadSource = (source) => source === "image_upload" || source === "video_upload";
+
+const validateBannerFile = (file, source) => {
+  if (!file) return "";
+
+  const extension = getFileExtension(file.name);
+  if (!BANNER_ALLOWED_EXTENSIONS.includes(extension)) {
+    return "Format file tidak didukung. Gunakan jpg, jpeg, png, webp, mp4, atau webm.";
+  }
+
+  if (source === "image_upload") {
+    if (!BANNER_IMAGE_MIME_TYPES.includes(file.type) || !["jpg", "jpeg", "png", "webp"].includes(extension)) {
+      return "Image harus berupa jpg, jpeg, png, atau webp.";
+    }
+    if (file.size > MAX_IMAGE_SIZE) return "Ukuran image maksimal 5MB.";
+  }
+
+  if (source === "video_upload") {
+    if (!BANNER_VIDEO_MIME_TYPES.includes(file.type) || !["mp4", "webm"].includes(extension)) {
+      return "Video harus berupa mp4 atau webm.";
+    }
+    if (file.size > MAX_VIDEO_SIZE) return "Ukuran video maksimal 50MB.";
+  }
+
+  return "";
+};
 
 const toDateInput = (value) => (value ? String(value).slice(0, 10) : "");
 
@@ -206,17 +267,55 @@ function Field({ field, form, setForm }) {
   );
 }
 
-function BannerPreview({ form }) {
+function BannerFileInput({ source, file, error, onSelect, onClear }) {
+  if (!isUploadSource(source)) return null;
+
+  return (
+    <div className="rounded-xl border border-dashed bg-white p-3">
+      <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg bg-gray-50 px-4 py-5 text-center text-sm text-gray-600 hover:bg-gray-100">
+        <Upload className="mb-2 h-5 w-5 text-blue-600" />
+        <span className="font-semibold text-gray-800">{file ? file.name : "Pilih file banner"}</span>
+        <span className="mt-1 text-xs text-gray-500">
+          {source === "image_upload" ? "jpg, jpeg, png, webp maksimal 5MB" : "mp4 atau webm maksimal 50MB"}
+        </span>
+        <input
+          type="file"
+          accept={source === "image_upload" ? ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" : ".mp4,.webm,video/mp4,video/webm"}
+          onChange={(e) => onSelect(e.target.files?.[0] || null)}
+          className="hidden"
+        />
+      </label>
+      {file && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100"
+        >
+          <X className="h-3.5 w-3.5" />
+          Hapus pilihan file
+        </button>
+      )}
+      {error && <p className="mt-2 text-xs font-medium text-red-600">{error}</p>}
+    </div>
+  );
+}
+
+function BannerPreview({ form, previewUrl, previewType }) {
   const [mediaError, setMediaError] = useState(false);
 
   useEffect(() => {
     setMediaError(false);
-  }, [form.content_url, form.content_type]);
+  }, [form.content_url, form.content_type, previewUrl, previewType]);
 
   if (!("content_url" in form)) return null;
 
-  const type = normalizeBannerContentType(form);
-  const thumbnail = getBannerYoutubeThumbnail(form);
+  const previewBanner = {
+    ...form,
+    content_url: previewUrl || form.content_url,
+    content_type: previewType || form.content_type,
+  };
+  const type = normalizeBannerContentType(previewBanner);
+  const thumbnail = getBannerYoutubeThumbnail(previewBanner);
   const canPreviewYoutube = type === "youtube" && thumbnail && !mediaError;
 
   return (
@@ -235,9 +334,9 @@ function BannerPreview({ form }) {
             </div>
           </div>
         </div>
-      ) : type === "video" && form.content_url && !mediaError ? (
+      ) : type === "video" && previewBanner.content_url && !mediaError ? (
         <video
-          src={form.content_url}
+          src={previewBanner.content_url}
           className="h-32 w-full bg-black object-cover"
           muted
           playsInline
@@ -245,14 +344,14 @@ function BannerPreview({ form }) {
           preload="metadata"
           onError={() => setMediaError(true)}
         />
-      ) : type === "image" && form.content_url && !mediaError ? (
+      ) : type === "image" && previewBanner.content_url && !mediaError ? (
         <img
-          src={form.content_url}
+          src={previewBanner.content_url}
           alt={form.title || "Preview gambar banner"}
           className="h-32 w-full object-cover"
           onError={() => setMediaError(true)}
         />
-      ) : form.content_url ? (
+      ) : previewBanner.content_url ? (
         <div className="flex h-32 flex-col items-center justify-center bg-gray-200 px-4 text-center text-sm text-gray-500">
           {type === "video" ? <Video className="mb-2 h-6 w-6" /> : <ImageIcon className="mb-2 h-6 w-6" />}
           Preview konten tidak tersedia
@@ -317,6 +416,12 @@ export default function CustomerContentManagementPage() {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [bannerFile, setBannerFile] = useState(null);
+  const [bannerFileError, setBannerFileError] = useState("");
+  const [bannerPreviewUrl, setBannerPreviewUrl] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const orderedItems = useMemo(() => items || [], [items]);
   const accessibleSections = useMemo(
@@ -328,8 +433,22 @@ export default function CustomerContentManagementPage() {
     if (!config) return;
     setForm(config.emptyForm);
     setEditingId(null);
+    setBannerFile(null);
+    setBannerFileError("");
     fetchData();
   }, [activeSection]);
+
+  useEffect(() => {
+    if (!bannerFile) {
+      setBannerPreviewUrl("");
+      return undefined;
+    }
+
+    const url = URL.createObjectURL(bannerFile);
+    setBannerPreviewUrl(url);
+
+    return () => URL.revokeObjectURL(url);
+  }, [bannerFile]);
 
   if (!["general_manager", "super_admin", "branch_manager"].includes(role)) {
     return <Navigate to="/home" replace />;
@@ -381,6 +500,15 @@ export default function CustomerContentManagementPage() {
   const resetForm = () => {
     setEditingId(null);
     setForm(config.emptyForm);
+    setBannerFile(null);
+    setBannerFileError("");
+  };
+
+  const handleBannerFileSelect = (file) => {
+    const source = getSourceType(form);
+    const error = validateBannerFile(file, source);
+    setBannerFileError(error);
+    setBannerFile(error && file ? null : file);
   };
 
   const submit = async () => {
@@ -388,8 +516,21 @@ export default function CustomerContentManagementPage() {
       setSaving(true);
       const payload = { ...form };
       if (activeSection === "banner-dashboard") {
-        const contentType = normalizeBannerContentType(payload);
+        const source = getSourceType(payload);
+        const contentType = getContentTypeFromSource(source);
         payload.content_type = contentType;
+        payload.redirect_url = payload.link_url || payload.redirect_url || null;
+
+        if (isUploadSource(source)) {
+          if (bannerFileError) throw new Error(bannerFileError);
+          if (bannerFile) {
+            setUploading(true);
+            const uploaded = await uploadBannerDashboardContent(bannerFile);
+            Object.assign(payload, uploaded);
+          } else if (!payload.content_url) {
+            throw new Error("Pilih file banner terlebih dahulu");
+          }
+        }
 
         if (!isValidBannerUrlForType(contentType, payload.content_url)) {
           throw new Error(
@@ -415,6 +556,7 @@ export default function CustomerContentManagementPage() {
     } catch (err) {
       alert(err.message);
     } finally {
+      setUploading(false);
       setSaving(false);
     }
   };
@@ -423,7 +565,11 @@ export default function CustomerContentManagementPage() {
     setEditingId(item.id);
     const nextForm = { ...config.emptyForm, ...item };
     if (activeSection === "banner-dashboard") {
+      nextForm.link_url = item.link_url || item.redirect_url || "";
       nextForm.content_type = normalizeBannerContentType(nextForm);
+      nextForm.content_source = getSourceType({ ...item, content_source: "" });
+      setBannerFile(null);
+      setBannerFileError("");
     }
     setForm(nextForm);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -447,6 +593,22 @@ export default function CustomerContentManagementPage() {
     }
   };
 
+  const confirmDelete = async () => {
+    if (!deleteTarget || activeSection !== "banner-dashboard") return;
+
+    try {
+      setDeleting(true);
+      await deleteBannerDashboard(deleteTarget.id);
+      if (editingId === deleteTarget.id) resetForm();
+      setDeleteTarget(null);
+      await fetchData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-gray-50 p-4">
       <SubPageHeader title={config.title} subtitle="Create dan update konten customer" />
@@ -459,17 +621,57 @@ export default function CustomerContentManagementPage() {
           </div>
 
           <div className="space-y-3">
-            {config.fields.map((field) => (
-              <Field key={field[0]} field={field} form={form} setForm={setForm} />
-            ))}
-            <BannerPreview form={form} />
+            {config.fields.map((field) => {
+              const source = getSourceType(form);
+              if (activeSection === "banner-dashboard" && field[0] === "content_url" && isUploadSource(source)) {
+                return null;
+              }
+
+              return (
+                <Field
+                  key={field[0]}
+                  field={field}
+                  form={form}
+                  setForm={(nextForm) => {
+                    if (activeSection === "banner-dashboard" && field[0] === "content_source") {
+                      setBannerFile(null);
+                      setBannerFileError("");
+                      setForm({
+                        ...nextForm,
+                        content_type: getContentTypeFromSource(nextForm.content_source),
+                      });
+                      return;
+                    }
+
+                    setForm(nextForm);
+                  }}
+                />
+              );
+            })}
+            {activeSection === "banner-dashboard" && (
+              <BannerFileInput
+                source={getSourceType(form)}
+                file={bannerFile}
+                error={bannerFileError}
+                onSelect={handleBannerFileSelect}
+                onClear={() => {
+                  setBannerFile(null);
+                  setBannerFileError("");
+                }}
+              />
+            )}
+            <BannerPreview
+              form={form}
+              previewUrl={bannerPreviewUrl}
+              previewType={bannerFile ? getContentTypeFromSource(getSourceType(form)) : ""}
+            />
             <button
               onClick={submit}
-              disabled={saving}
+              disabled={saving || uploading}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-60"
             >
               <Save className="h-4 w-4" />
-              {saving ? "Menyimpan..." : "Simpan"}
+              {uploading ? "Mengupload..." : saving ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
         </section>
@@ -508,6 +710,14 @@ export default function CustomerContentManagementPage() {
                     <button onClick={() => edit(item)} className="rounded-lg p-2 text-blue-600 hover:bg-blue-50">
                       <Pencil className="h-4 w-4" />
                     </button>
+                    {activeSection === "banner-dashboard" && (
+                      <button
+                        onClick={() => setDeleteTarget(item)}
+                        className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
                 {activeSection === "branches" && item.whatsapp_url && (
@@ -520,6 +730,35 @@ export default function CustomerContentManagementPage() {
           )}
         </section>
       </div>
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-end bg-black/40 px-4 py-5 sm:items-center sm:justify-center">
+          <div className="w-full rounded-2xl bg-white p-5 shadow-xl sm:max-w-sm">
+            <h3 className="text-base font-bold text-gray-900">Hapus Konten Banner?</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Konten yang sudah dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin menghapus konten ini?
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="flex-1 rounded-xl border px-4 py-2.5 text-sm font-semibold text-gray-700 disabled:opacity-60"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                disabled={deleting}
+                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+              >
+                {deleting ? "Menghapus..." : "Hapus Permanen"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function normalizeBannerContentType(banner) {
 }
 
 export function getBannerDestination(banner) {
-  return banner?.redirect_url || banner?.content_url || "";
+  return banner?.link_url || banner?.redirect_url || "";
 }
 
 export function getBannerYoutubeThumbnail(banner) {

@@ -16,6 +16,17 @@ export const updateBannerDashboard = (id, payload) =>
   request(`/content/banner-dashboard/${id}`, jsonOptions("PATCH", payload));
 export const reorderBannerDashboard = (items) =>
   request("/content/banner-dashboard/reorder", jsonOptions("PATCH", { items }));
+export const uploadBannerDashboardContent = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return request("/content/banner-dashboard/upload", {
+    method: "POST",
+    body: formData,
+  });
+};
+export const deleteBannerDashboard = (id) =>
+  request(`/content/banner-dashboard/${id}`, { method: "DELETE" });
 
 export const getDisplayedShipSchedules = () => request("/content/ship-schedules");
 export const createDisplayedShipSchedule = (payload) =>
