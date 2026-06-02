@@ -212,11 +212,10 @@ export default function HelpPage() {
           </div>
 
           <div className="mt-7 max-w-[240px]">
-            <p className="text-base font-medium text-white/90">Halo,</p>
+            <p className="text-base font-medium text-white/90">Halo, SOGEx!</p>
             <h2 className="mt-1 text-xl font-bold leading-tight">
               {safeSettings?.header_title || "Ada yang bisa GEx bantu?"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-white/85">{headerSubtitle}</p>
           </div>
         </div>
       </section>
