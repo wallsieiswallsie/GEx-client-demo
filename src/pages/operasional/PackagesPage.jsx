@@ -402,12 +402,7 @@ export default function PackagesPage() {
                                 )
                             }
                             className="relative bg-white rounded-2xl shadow-sm p-3 hover:shadow-md active:scale-[0.98] transition cursor-pointer overflow-hidden"
-                        >
-                            {item.is_xray_failed && (
-                                <div className="absolute right-3 top-3 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
-                                    Gagal X-Ray
-                                </div>
-                            )}
+                            >
                             <div className="flex justify-between gap-3">
 
                                 {/* LEFT */}
