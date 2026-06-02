@@ -14,6 +14,7 @@ export const getInvoices = async ({
   month = "",
   via_code = "",
   batch_id = "",
+  branch_code = "",
 } = {}) => {
   const params = new URLSearchParams({
     page,
@@ -25,6 +26,10 @@ export const getInvoices = async ({
     via_code,
     batch_id,
   });
+
+  if (branch_code) {
+    params.set("branch_code", branch_code);
+  }
 
   const res = await apiFetch(`/invoices?${params.toString()}`, {
     method: "GET",

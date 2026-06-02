@@ -37,6 +37,8 @@ function emptyFilters() {
         via: null,
         batch_id: "",
         batch: null,
+        branch_code: "",
+        branch: null,
     };
 }
 
@@ -52,6 +54,7 @@ export default function InvoiceListPage() {
     const [appliedFilter, setAppliedFilter] = useState(emptyFilters());
     const [filterOpen, setFilterOpen] = useState(false);
     const [branchMissing, setBranchMissing] = useState(false);
+    const isGeneralManager = role === "general_manager";
 
     const fetchData = async ({ currentPage = 1, reset = false } = {}) => {
         try {
@@ -64,6 +67,7 @@ export default function InvoiceListPage() {
                 month: appliedFilter.month,
                 via_code: appliedFilter.via_code,
                 batch_id: appliedFilter.batch_id,
+                branch_code: isGeneralManager ? appliedFilter.branch_code : "",
             });
 
             if (reset) {
@@ -124,6 +128,15 @@ export default function InvoiceListPage() {
                 ...prev,
                 batch_id: "",
                 batch: null,
+            })),
+        },
+        isGeneralManager && appliedFilter.branch_code && {
+            key: "branch",
+            label: appliedFilter.branch?.branch_code || appliedFilter.branch_code,
+            onRemove: () => setAppliedFilter((prev) => ({
+                ...prev,
+                branch_code: "",
+                branch: null,
             })),
         },
     ].filter(Boolean);
@@ -309,6 +322,7 @@ export default function InvoiceListPage() {
                 <FilterInvoiceSheet
                     open={filterOpen}
                     value={appliedFilter}
+                    isGeneralManager={isGeneralManager}
                     onClose={() => setFilterOpen(false)}
                     onApply={applyFilters}
                     onReset={resetFilters}

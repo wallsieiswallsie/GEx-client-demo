@@ -11,6 +11,7 @@ import {
 
 import { LoadingState } from "../../components/common/Loading";
 import { getShipmentBatches } from "../../services/api/invoiceApi";
+import { getAllBranches } from "../../services/api/logistik/branchApi";
 import { getAllVia } from "../../services/api/logistik/viaApi";
 
 const BATCH_LIMIT = 20;
@@ -61,6 +62,7 @@ function getViaIcon(code) {
 export default function FilterInvoiceSheet({
     open,
     value,
+    isGeneralManager = false,
     onClose,
     onApply,
     onReset,
@@ -76,11 +78,17 @@ export default function FilterInvoiceSheet({
     const [batchTotal, setBatchTotal] = useState(0);
     const [batchPage, setBatchPage] = useState(1);
     const [loadingBatch, setLoadingBatch] = useState(false);
+    const [branches, setBranches] = useState([]);
+    const [loadingBranch, setLoadingBranch] = useState(false);
 
     const hasChanges = (
         draft?.month !== value?.month ||
         draft?.via_code !== value?.via_code ||
-        String(draft?.batch_id || "") !== String(value?.batch_id || "")
+        String(draft?.batch_id || "") !== String(value?.batch_id || "") ||
+        (
+            isGeneralManager &&
+            String(draft?.branch_code || "") !== String(value?.branch_code || "")
+        )
     );
 
     useEffect(() => {
@@ -156,6 +164,26 @@ export default function FilterInvoiceSheet({
     }, [open]);
 
     useEffect(() => {
+        if (!open || !isGeneralManager) {
+            return;
+        }
+
+        const fetchBranches = async () => {
+            try {
+                setLoadingBranch(true);
+                const result = await getAllBranches();
+                setBranches(result || []);
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                setLoadingBranch(false);
+            }
+        };
+
+        fetchBranches();
+    }, [open, isGeneralManager]);
+
+    useEffect(() => {
         const delay = setTimeout(() => {
             setDebouncedBatchSearch(batchSearch.trim());
         }, 350);
@@ -210,6 +238,14 @@ export default function FilterInvoiceSheet({
     const selectedVia = vias.find((item) => item.code === draft.via_code);
     const selectedBatch = draft.batch;
 
+    const selectBranch = (branch) => {
+        setDraft((prev) => ({
+            ...prev,
+            branch_code: prev.branch_code === branch.branch_code ? "" : branch.branch_code,
+            branch: prev.branch_code === branch.branch_code ? null : branch,
+        }));
+    };
+
     const selectMonth = (month) => {
         setDraft((prev) => ({
             ...prev,
@@ -249,6 +285,8 @@ export default function FilterInvoiceSheet({
             via: null,
             batch_id: "",
             batch: null,
+            branch_code: "",
+            branch: null,
         });
         setBatchSearch("");
         onReset();
@@ -305,6 +343,52 @@ export default function FilterInvoiceSheet({
                             ))}
                         </div>
                     </section>
+
+                    {isGeneralManager && (
+                        <section>
+                            <div className="mb-2 text-xs font-semibold uppercase text-gray-500">
+                                CABANG
+                            </div>
+
+                            {loadingBranch ? (
+                                <LoadingState variant="section" text="Memuat cabang..." />
+                            ) : (
+                                <div className="grid grid-cols-2 gap-2">
+                                    {branches.map((branch) => {
+                                        const active = draft.branch_code === branch.branch_code;
+
+                                        return (
+                                            <button
+                                                type="button"
+                                                key={branch.id}
+                                                onClick={() => selectBranch(branch)}
+                                                className={`rounded-xl border px-3 py-2 text-left ${
+                                                    active
+                                                        ? "border-violet-600 bg-violet-50 text-violet-700"
+                                                        : "border-gray-200 bg-white text-gray-700"
+                                                }`}
+                                            >
+                                                <div className="truncate text-sm font-semibold">
+                                                    {branch.branch_code}
+                                                </div>
+                                                {branch.city && (
+                                                    <div className="mt-1 truncate text-xs text-gray-500">
+                                                        {branch.city}
+                                                    </div>
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {!loadingBranch && branches.length === 0 && (
+                                <div className="rounded-xl border border-dashed py-5 text-center text-sm text-gray-400">
+                                    Belum ada data cabang
+                                </div>
+                            )}
+                        </section>
+                    )}
 
                     <section>
                         <div className="mb-2 text-xs font-semibold uppercase text-gray-500">
