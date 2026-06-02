@@ -29,6 +29,10 @@ const statusClass = {
     CLOSED: "bg-amber-50 text-amber-700 border-amber-100",
 };
 
+function formatRupiah(value) {
+    return `Rp ${Number(value || 0).toLocaleString("id-ID")}`;
+}
+
 export default function BatchSackPage() {
     const navigate = useNavigate();
     const { user, role } = useAuth();
@@ -42,6 +46,7 @@ export default function BatchSackPage() {
     const canCreateBatch =
         hasAllowedRole(role, ["general_manager", "super_admin"]) ||
         (hasAllowedRole(role, ["branch_staff", "branch_manager"]) && user?.is_origin === true);
+    const canViewBatchValue = role === "general_manager";
 
     const [form, setForm] = useState({
         ship_name: "",
@@ -236,6 +241,17 @@ export default function BatchSackPage() {
                                     </div>
                                 </div>
                             </div>
+
+                            {canViewBatchValue && (
+                                <div className="mt-2 rounded-lg bg-emerald-50 px-2 py-1.5">
+                                    <div className="text-[10px] text-emerald-600">
+                                        Value
+                                    </div>
+                                    <div className="text-xs font-semibold text-emerald-800">
+                                        {formatRupiah(item.total_value)}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex items-center justify-between mt-3">
                                 <div className="flex items-center gap-1 text-[11px] text-gray-500">
