@@ -150,7 +150,7 @@ export default function CustomerHome() {
   };
 
   return (
-    <div className="flex flex-col min-h-dvh bg-gradient-to-b from-white via-[#f8f4ff] to-[#f1ebff]">
+    <div className="flex flex-col min-h-dvh bg-gradient-to-b from-white via-[#f8f4ff] to-[#f1ebff] lg:-mt-24">
       {/* === HEADER === */}
       <Header
         initial={
@@ -204,16 +204,18 @@ export default function CustomerHome() {
             </section>
           )}
 
-          {/* 4. Layanan Kami */}
-          <ServiceMenuGrid />
+          <div className="space-y-5 lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 lg:space-y-0">
+            {/* 4. Layanan Kami */}
+            <ServiceMenuGrid />
 
-          {/* 5. Jadwal Kapal */}
-          <ShipScheduleSection
-            schedules={schedules}
-            isLoading={schedulesLoading}
-            error={schedulesError}
-            onViewAll={() => navigate('/jadwal')}
-          />
+            {/* 5. Jadwal Kapal */}
+            <ShipScheduleSection
+              schedules={schedules}
+              isLoading={schedulesLoading}
+              error={schedulesError}
+              onViewAll={() => navigate('/jadwal')}
+            />
+          </div>
 
           {/* 6. Berita */}
           {instagramError ? (

@@ -58,7 +58,7 @@ export default function BottomNav() {
       </nav>
 
       <nav
-        className="hidden fixed left-1/2 top-4 z-50 -translate-x-1/2 items-center gap-2 rounded-full border border-white/50 bg-white/80 px-4 py-2 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl lg:flex"
+        className="hidden fixed left-1/2 top-5 z-50 -translate-x-1/2 items-center gap-2 rounded-full border border-white/50 bg-white/80 px-4 py-2 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl lg:flex"
         aria-label="Navigasi utama desktop"
       >
         {filteredNav.map((item) => {

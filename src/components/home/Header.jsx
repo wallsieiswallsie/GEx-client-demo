@@ -60,7 +60,7 @@ export default function Header({ onLogout, children, variant = 'default' }) {
 
     return (
         <header
-            className="sticky top-0 z-50 flex h-[104px] items-start justify-between gap-3 overflow-hidden bg-cover bg-bottom bg-no-repeat px-4 pt-7 sm:h-[112px] sm:px-6 lg:static lg:h-[132px] lg:rounded-[28px] lg:px-8 lg:pt-9"
+            className="sticky top-0 z-50 flex h-[104px] items-start justify-between gap-3 overflow-hidden bg-cover bg-bottom bg-no-repeat px-4 pt-7 sm:h-[112px] sm:px-6 lg:static lg:h-[220px] lg:rounded-[28px] lg:px-8 lg:pt-24"
             style={{ backgroundImage: "url('/images/header_background/home.png')" }}
         >
             <div className="shrink-0">

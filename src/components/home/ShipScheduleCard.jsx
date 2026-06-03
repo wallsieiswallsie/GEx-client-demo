@@ -158,9 +158,9 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
         </div>
       ) : (
         <>
-          <div className="box-border flex w-full max-w-full gap-3 overflow-x-auto pb-1 scrollbar-hide lg:grid lg:grid-cols-2 lg:overflow-visible xl:grid-cols-3" onScroll={handleScroll}>
+          <div className="box-border flex w-full max-w-full gap-3 overflow-x-auto pb-1 scrollbar-hide" onScroll={handleScroll}>
             {displayedSchedules.map((s) => (
-              <div key={s.id} data-schedule-card className="box-border min-w-full max-w-full lg:min-w-0">
+              <div key={s.id} data-schedule-card className="box-border min-w-full max-w-full">
                 <Card schedule={s} />
               </div>
             ))}

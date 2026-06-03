@@ -41,7 +41,7 @@ function BannerMedia({ banner, type, title }) {
         <img
           src={thumbnail}
           alt={title}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover lg:object-contain"
           loading="eager"
           onError={() => setMediaError(true)}
         />
@@ -63,7 +63,7 @@ function BannerMedia({ banner, type, title }) {
       <>
         <video
           src={banner.content_url}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover lg:object-contain"
           muted
           playsInline
           preload="metadata"
@@ -82,7 +82,7 @@ function BannerMedia({ banner, type, title }) {
     <img
       src={banner.content_url}
       alt={title}
-      className="h-full w-full object-cover"
+      className="h-full w-full object-cover lg:object-contain"
       loading="eager"
       onError={() => setMediaError(true)}
     />
@@ -113,7 +113,7 @@ function BannerSlide({ banner }) {
   );
 
   const className =
-    "group relative block h-[180px] w-full overflow-hidden rounded-2xl bg-gray-100 text-left shadow-[0_8px_24px_rgba(0,0,0,0.05)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+    "group relative block h-[180px] w-full overflow-hidden rounded-2xl bg-gray-100 text-left shadow-[0_8px_24px_rgba(0,0,0,0.05)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 lg:h-auto lg:aspect-[398/180]";
 
   if (!destination) {
     return <div className={className}>{content}</div>;
