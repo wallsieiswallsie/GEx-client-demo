@@ -20,9 +20,15 @@ export default function RegisterPage() {
   const { login } = useAuth();
 
   const ADMIN_WHATSAPP = import.meta.env.VITE_ADMIN_WA || "6281234567890"; // Ganti default dengan no sebenarnya
+  const isUsernameValid = /^[A-Za-z]{4,}$/.test(formData.username);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isUsernameValid) {
+      setError('Username minimal 4 karakter dan hanya boleh huruf tanpa spasi.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -81,7 +87,8 @@ export default function RegisterPage() {
   };
 
   const handleChange = (e, field) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    const value = field === 'username' ? e.target.value.toLowerCase() : e.target.value;
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const inputAccentClasses = {
@@ -153,7 +160,9 @@ export default function RegisterPage() {
                 label="Username"
                 value={formData.username}
                 onChange={(e) => handleChange(e, 'username')}
-                placeholder="Cth: budi123"
+                placeholder="Cth: budi"
+                minLength={4}
+                pattern="[A-Za-z]+"
                 icon={User}
                 required
                 {...inputAccentClasses}
