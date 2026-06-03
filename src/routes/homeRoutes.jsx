@@ -164,7 +164,7 @@ export const homeRoutes = [
       },
       {
         path: "/gerai",
-        element: customerOnly(withSeo(PUBLIC_SEO.branches, <CustomerBranchesPage />))
+        element: withSeo(PUBLIC_SEO.branches, <CustomerBranchesPage />)
       },
       {
         path: "/cek-ongkir",
@@ -172,19 +172,19 @@ export const homeRoutes = [
       },
       {
         path: "/kemitraan",
-        element: customerOnly(withSeo(PUBLIC_SEO.partnership, <CustomerPartnershipPage />))
+        element: withSeo(PUBLIC_SEO.partnership, <CustomerPartnershipPage />)
       },
       {
         path: "/konten",
-        element: customerOnly(withSeo(PUBLIC_SEO.content, <CustomerContentPage />))
+        element: withSeo(PUBLIC_SEO.content, <CustomerContentPage />)
       },
       {
         path: "/bantuan",
-        element: customerOnly(withSeo(PUBLIC_SEO.help, <HelpPage />))
+        element: withSeo(PUBLIC_SEO.help, <HelpPage />)
       },
       {
         path: "/bantuan/populer",
-        element: customerOnly(withSeo(PUBLIC_SEO.help, <HelpPopularPage />))
+        element: withSeo(PUBLIC_SEO.help, <HelpPopularPage />)
       },
       {
         path: "/saran-masukan",
@@ -192,11 +192,11 @@ export const homeRoutes = [
       },
       {
         path: "/bantuan/:faqId",
-        element: customerOnly(withSeo(PUBLIC_SEO.helpDetail, <HelpDetailPage />))
+        element: withSeo(PUBLIC_SEO.helpDetail, <HelpDetailPage />)
       },
       {
         path: "/help/category/:slug",
-        element: customerOnly(withSeo(PUBLIC_SEO.helpCategory, <HelpCategoryPage />))
+        element: withSeo(PUBLIC_SEO.helpCategory, <HelpCategoryPage />)
       },
       {
         path: "/internal/help",

@@ -251,75 +251,77 @@ export default function HelpPage() {
           <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">{error}</div>
         )}
 
-        <section>
-          <h2 className="text-base font-bold text-slate-950">Kategori Pertanyaan</h2>
-          <p className="mt-1 text-xs text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
-          <div className="mt-3 grid grid-cols-4 gap-2 lg:grid-cols-8 lg:gap-3">
-            {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
-              const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
-              const color = categoryColors[index % categoryColors.length];
-              return (
-                <button
-                  key={loading ? index : category?.id || category?.slug || index}
-                  type="button"
-                  disabled={loading}
-                  onClick={() => {
-                    if (category?.slug) navigate(`/help/category/${category.slug}`);
-                  }}
-                  className="min-h-[78px] rounded-2xl border border-slate-100 bg-white px-1.5 py-2 text-center shadow-sm transition hover:-translate-y-0.5 disabled:cursor-default"
-                >
-                  <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-xl ${color.bg} ${color.text}`}>
-                    <Icon className="h-4.5 w-4.5" />
-                  </span>
-                  <span className="mt-1.5 line-clamp-2 block text-[10px] font-semibold leading-tight text-slate-700">
-                    {loading ? "Memuat" : category?.name || "Kategori"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section>
-          <div className="mb-3 flex items-center justify-between gap-4">
-            <h2 className="text-base font-bold leading-tight text-slate-950">
-              {showingSearchResult ? "Hasil Pencarian" : "Pertanyaan Paling Sering Dicari"}
-            </h2>
-            {!showingSearchResult && (
-              <button
-                type="button"
-                onClick={() => navigate("/bantuan/populer")}
-                className="shrink-0 text-xs font-semibold text-violet-700"
-              >
-                Lihat semua
-              </button>
-            )}
-          </div>
-
-          {loading || searching ? (
-            <div className="space-y-2.5">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="h-20 animate-pulse rounded-2xl bg-white shadow-sm" />
-              ))}
+        <div className="space-y-5 lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-6 lg:space-y-0">
+          <section>
+            <h2 className="text-base font-bold text-slate-950">Kategori Pertanyaan</h2>
+            <p className="mt-1 text-xs text-slate-500">Cari pertanyaanmu berdasarkan kategori berikut ini</p>
+            <div className="mt-3 grid grid-cols-4 gap-2 lg:gap-3">
+              {(loading ? Array.from({ length: 8 }) : safeCategories).map((category, index) => {
+                const Icon = loading ? Grid2X2 : iconMap[category?.icon] || fallbackIcons[index % fallbackIcons.length] || Grid2X2;
+                const color = categoryColors[index % categoryColors.length];
+                return (
+                  <button
+                    key={loading ? index : category?.id || category?.slug || index}
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      if (category?.slug) navigate(`/help/category/${category.slug}`);
+                    }}
+                    className="min-h-[78px] rounded-2xl border border-slate-100 bg-white px-1.5 py-2 text-center shadow-sm transition hover:-translate-y-0.5 disabled:cursor-default"
+                  >
+                    <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-xl ${color.bg} ${color.text}`}>
+                      <Icon className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="mt-1.5 line-clamp-2 block text-[10px] font-semibold leading-tight text-slate-700">
+                      {loading ? "Memuat" : category?.name || "Kategori"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
-          ) : visibleFaqs.length > 0 ? (
-            <FaqList items={visibleFaqs} onOpen={(id) => navigate(`/bantuan/${id}`)} />
-          ) : showingSearchResult ? (
-            <EmptyState
-              title="Pertanyaan tidak ditemukan."
-              text="Coba gunakan kata kunci lain atau pilih kategori yang paling mendekati."
-              action="Reset Pencarian"
-              onAction={clearSearch}
-            />
-          ) : (
-            <EmptyState
-              title="Belum ada pertanyaan yang sering dicari."
-              text="Coba cari pertanyaanmu atau pilih kategori untuk menemukan jawaban."
-              action="Mulai Cari"
-              onAction={() => setShowAll(true)}
-            />
-          )}
-        </section>
+          </section>
+
+          <section>
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <h2 className="text-base font-bold leading-tight text-slate-950">
+                {showingSearchResult ? "Hasil Pencarian" : "Pertanyaan Paling Sering Dicari"}
+              </h2>
+              {!showingSearchResult && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/bantuan/populer")}
+                  className="shrink-0 text-xs font-semibold text-violet-700"
+                >
+                  Lihat semua
+                </button>
+              )}
+            </div>
+
+            {loading || searching ? (
+              <div className="space-y-2.5">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="h-20 animate-pulse rounded-2xl bg-white shadow-sm" />
+                ))}
+              </div>
+            ) : visibleFaqs.length > 0 ? (
+              <FaqList items={visibleFaqs} onOpen={(id) => navigate(`/bantuan/${id}`)} />
+            ) : showingSearchResult ? (
+              <EmptyState
+                title="Pertanyaan tidak ditemukan."
+                text="Coba gunakan kata kunci lain atau pilih kategori yang paling mendekati."
+                action="Reset Pencarian"
+                onAction={clearSearch}
+              />
+            ) : (
+              <EmptyState
+                title="Belum ada pertanyaan yang sering dicari."
+                text="Coba cari pertanyaanmu atau pilih kategori untuk menemukan jawaban."
+                action="Mulai Cari"
+                onAction={() => setShowAll(true)}
+              />
+            )}
+          </section>
+        </div>
 
         <HelpSupportCard supportUrl={supportUrl} />
       </main>

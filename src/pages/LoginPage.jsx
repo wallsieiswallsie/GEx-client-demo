@@ -75,31 +75,31 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[24rem] overflow-hidden rounded-[2rem] bg-slate-50 text-slate-950 shadow-2xl shadow-violet-950/10">
+    <div className="mx-auto w-full max-w-[24rem] overflow-hidden rounded-[2rem] bg-slate-50 text-slate-950 shadow-2xl shadow-violet-950/10 lg:grid lg:max-w-5xl lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,1.05fr)] lg:rounded-[2.25rem]">
 
       {/* HEADER */}
       <div
-        className="relative min-h-[17rem] overflow-hidden bg-cover bg-center bg-no-repeat px-7 pb-20 pt-10 text-white sm:px-8"
+        className="relative min-h-[17rem] overflow-hidden bg-cover bg-center bg-no-repeat px-7 pb-20 pt-10 text-white sm:px-8 lg:flex lg:min-h-[640px] lg:items-center lg:px-10 lg:pb-10 lg:pt-10"
         style={{ backgroundImage: "url('/images/header_background/login.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-violet-950/85 via-violet-800/65 to-indigo-950/45" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent" />
-        <div className="relative mx-auto flex max-w-xs flex-col items-center text-center">
+        <div className="relative mx-auto flex max-w-xs flex-col items-center text-center lg:max-w-sm">
           <img
             src="/images/logo_gex.png"
             alt="GEx"
             className="mb-5 h-16 w-auto drop-shadow-[0_12px_24px_rgba(49,10,101,0.55)]"
           />
-          <h1 className="text-[1.9rem] font-black leading-tight tracking-normal text-white drop-shadow-sm">
+          <h1 className="text-[1.9rem] font-black leading-tight tracking-normal text-white drop-shadow-sm lg:text-4xl">
             Selamat datang kembali
           </h1>
-          <p className="mt-3 max-w-[17rem] text-sm font-medium leading-6 text-white/85">
+          <p className="mt-3 max-w-[17rem] text-sm font-medium leading-6 text-white/85 lg:max-w-xs lg:text-base lg:leading-7">
             Login untuk melanjutkan pengalaman pengiriman terbaik bersama GEx.
           </p>
         </div>
       </div>
 
-      <div className="relative z-10 -mt-14 px-4 pb-5">
+      <div className="relative z-10 -mt-14 px-4 pb-5 lg:mt-0 lg:flex lg:flex-col lg:justify-center lg:px-8 lg:py-8">
         <div className="animate-[fadeIn_0.35s_ease-out] rounded-[1.75rem] border border-white/80 bg-white p-6 shadow-2xl shadow-violet-950/10 sm:p-7">
           <div className="mb-6 flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-violet-100 text-violet-700 shadow-inner shadow-white">
