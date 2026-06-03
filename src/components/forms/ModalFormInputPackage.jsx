@@ -74,6 +74,19 @@ function ModalFormInputPackage({
         }));
     };
 
+    const handleDecimalChange = (e) => {
+        const { name, value } = e.target;
+        const sanitizedValue = value
+            .replace(/,/g, ".")
+            .replace(/[^0-9.]/g, "")
+            .replace(/(\..*)\./g, "$1");
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: sanitizedValue,
+        }));
+    };
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
 
@@ -336,12 +349,14 @@ function ModalFormInputPackage({
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        pattern="[0-9]*[.]?[0-9]*"
                         name="real_weight"
                         value={
                             form.real_weight
                         }
-                        onChange={handleChange}
+                        onChange={handleDecimalChange}
                         className="w-full mt-1 px-4 py-2 border rounded-lg"
                     />
                 </div>
@@ -355,30 +370,39 @@ function ModalFormInputPackage({
 
                     <div className="grid grid-cols-3 gap-2">
                         <input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.]?[0-9]*"
                             name="length"
                             value={form.length}
                             onChange={
-                                handleChange
+                                handleDecimalChange
                             }
                             placeholder="Panjang"
                             className="border p-2 rounded-lg"
                         />
 
                         <input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.]?[0-9]*"
                             name="width"
                             value={form.width}
                             onChange={
-                                handleChange
+                                handleDecimalChange
                             }
                             placeholder="Lebar"
                             className="border p-2 rounded-lg"
                         />
 
                         <input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.]?[0-9]*"
                             name="height"
                             value={form.height}
                             onChange={
-                                handleChange
+                                handleDecimalChange
                             }
                             placeholder="Tinggi"
                             className="border p-2 rounded-lg"
