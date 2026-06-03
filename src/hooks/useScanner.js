@@ -49,9 +49,9 @@ export const useScanner = ({
         );
 
         const codeReader =
-            new BrowserMultiFormatReader();
+            new BrowserMultiFormatReader(hints);
 
-        codeReader.hints = hints;
+        codeReader.setHints?.(hints);
 
         codeReaderRef.current = codeReader;
 
