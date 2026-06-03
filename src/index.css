@@ -23,6 +23,23 @@
 }
 
 @layer utilities {
+  @media (min-width: 1024px) {
+    .gex-desktop-nav-content > * {
+      padding-top: 6rem;
+    }
+
+    .gex-desktop-nav-content > *:has(> header:first-child),
+    .gex-desktop-nav-content > *:has(> section:first-child) {
+      padding-top: 0;
+    }
+
+    .gex-desktop-nav-content > * > header:first-child,
+    .gex-desktop-nav-content > * > section:first-child {
+      min-height: 11.5rem;
+      padding-top: 6rem !important;
+    }
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;

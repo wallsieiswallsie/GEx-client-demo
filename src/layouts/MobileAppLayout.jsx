@@ -11,7 +11,7 @@ export default function MobileAppLayout() {
   return (
     <div className="h-dvh bg-gray-100 flex justify-center overflow-hidden lg:bg-slate-100">
       <div className="relative w-full max-w-[430px] bg-white flex flex-col h-dvh overflow-hidden lg:max-w-7xl lg:bg-transparent">
-        <div className="flex-1 overflow-y-auto scrollbar-hide lg:pt-24">
+        <div className="gex-desktop-nav-content flex-1 overflow-y-auto scrollbar-hide">
           <Outlet />
         </div>
 
