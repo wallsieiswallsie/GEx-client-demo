@@ -72,7 +72,7 @@ export default function HelpCategoryPage() {
         });
         const nextFaqs = Array.isArray(data) ? data.filter(Boolean) : [];
         setFaqs(nextFaqs);
-        setOpenId((current) => current || nextFaqs[0]?.id || null);
+        setOpenId((current) => (nextFaqs.some((faq) => faq?.id === current) ? current : null));
       } catch {
         setFaqs([]);
         setError("Bantuan belum dapat dimuat. Silakan coba lagi.");
@@ -177,13 +177,13 @@ export default function HelpCategoryPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
+            <div className="space-y-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-3 lg:space-y-0">
               {faqs.map((faq, index) => {
                 const isOpen = openId === faq?.id;
                 return (
                   <article
                     key={faq?.id || index}
-                    className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
+                    className="self-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
                   >
                     <button
                       type="button"

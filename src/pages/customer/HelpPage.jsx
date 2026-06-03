@@ -4,6 +4,8 @@ import {
   AlertTriangle,
   ArrowLeft,
   Calculator,
+  ChevronDown,
+  ChevronUp,
   CreditCard,
   Grid2X2,
   MapPin,
@@ -68,35 +70,56 @@ function EmptyState({ title, text, action, onAction }) {
   );
 }
 
-function FaqList({ items, onOpen }) {
+function FaqList({ items }) {
   const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+  const [openId, setOpenId] = useState(null);
+  const itemSignature = safeItems.map((faq, index) => faq?.id || index).join("|");
+
+  useEffect(() => {
+    setOpenId(null);
+  }, [itemSignature]);
 
   return (
     <div className="space-y-2.5">
-      {safeItems.map((faq, index) => (
-        <button
-          key={faq?.id || index}
-          type="button"
-          onClick={() => {
-            if (faq?.id) onOpen(faq.id);
-          }}
-          className="w-full rounded-2xl border border-slate-100 bg-white p-3.5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow"
-        >
-          <div className="flex items-start gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
-              <PackageSearch className="h-4.5 w-4.5" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold leading-snug text-slate-900">
-                {faq?.question || "Pertanyaan bantuan"}
+      {safeItems.map((faq, index) => {
+        const key = faq?.id || index;
+        const isOpen = openId === key;
+
+        return (
+          <article
+            key={key}
+            className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow"
+          >
+            <button
+              type="button"
+              onClick={() => setOpenId(isOpen ? null : key)}
+              className="flex w-full items-start gap-2.5 p-3.5 text-left"
+              aria-expanded={isOpen}
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
+                <PackageSearch className="h-4.5 w-4.5" />
               </span>
-              <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-slate-500">
-                {faq?.answer || ""}
+              <span className="min-w-0 flex-1 pt-0.5">
+                <span className="block text-sm font-semibold leading-snug text-slate-900">
+                  {faq?.question || "Pertanyaan bantuan"}
+                </span>
               </span>
-            </span>
-          </div>
-        </button>
-      ))}
+              {isOpen ? (
+                <ChevronUp className="mt-0.5 h-5 w-5 shrink-0 text-violet-700" />
+              ) : (
+                <ChevronDown className="mt-0.5 h-5 w-5 shrink-0 text-violet-700" />
+              )}
+            </button>
+            {isOpen && (
+              <div className="px-3.5 pb-3.5 pl-[58px]">
+                <p className="whitespace-pre-line text-xs leading-relaxed text-slate-500">
+                  {faq?.answer || ""}
+                </p>
+              </div>
+            )}
+          </article>
+        );
+      })}
     </div>
   );
 }
@@ -304,7 +327,7 @@ export default function HelpPage() {
                 ))}
               </div>
             ) : visibleFaqs.length > 0 ? (
-              <FaqList items={visibleFaqs} onOpen={(id) => navigate(`/bantuan/${id}`)} />
+              <FaqList items={visibleFaqs} />
             ) : showingSearchResult ? (
               <EmptyState
                 title="Pertanyaan tidak ditemukan."
