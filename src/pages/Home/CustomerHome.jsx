@@ -150,7 +150,7 @@ export default function CustomerHome() {
   };
 
   return (
-    <div className="flex flex-col min-h-dvh bg-gradient-to-b from-white via-[#f8f4ff] to-[#f1ebff]">
+    <div className="gex-home-desktop-bg flex flex-col min-h-dvh bg-gradient-to-b from-white via-[#f8f4ff] to-[#f1ebff]">
       {/* === HEADER === */}
       <Header
         initial={
