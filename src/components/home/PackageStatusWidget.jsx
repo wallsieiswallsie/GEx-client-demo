@@ -108,7 +108,7 @@ export default function PackageStatusWidget({ summary, isLoading }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl mx-4 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border border-gray-100">
+      <div className="bg-white rounded-2xl mx-4 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border border-gray-100 lg:mx-0 lg:p-6">
         <div className="flex justify-between mb-3">
           <SkeletonText width="120px" />
           <SkeletonText width="60px" />
@@ -125,7 +125,7 @@ export default function PackageStatusWidget({ summary, isLoading }) {
   if (!summary) return null;
 
   return (
-    <div className="bg-white rounded-2xl mx-4 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border border-gray-100">
+    <div className="bg-white rounded-2xl mx-4 p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border border-gray-100 lg:mx-0 lg:p-6">
       <div className="flex justify-between mb-3">
         <h2 className="text-sm font-bold tracking-[-0.2px] text-gray-800">Status Paketmu</h2>
         <button
@@ -137,7 +137,7 @@ export default function PackageStatusWidget({ summary, isLoading }) {
         </button>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible xl:grid-cols-8">
         {STATUS_ORDER.map((key) => (
           <StatusChip
             key={key}

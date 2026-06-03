@@ -155,7 +155,7 @@ export default function TrackPackagePage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50 p-4 pb-28">
+    <div className="min-h-dvh bg-gray-50 p-4 pb-28 lg:px-6 lg:pb-10">
       <SubPageHeader
         title="Lacak Paket"
         subtitle="Cari status terbaru berdasarkan nomor resi"
@@ -229,7 +229,7 @@ export default function TrackPackagePage() {
         )}
 
         {!loading && !error && result?.found && packageData && (
-          <div className="space-y-4">
+          <div className="space-y-4 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-4 lg:space-y-0">
             <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
               {packageData.is_xray_failed && (
                 <span className="absolute right-3 top-3 z-10 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
@@ -255,7 +255,7 @@ export default function TrackPackagePage() {
                   {packageData.receipt}
                 </p>
 
-                <div className="mt-4 grid grid-cols-1 gap-3">
+                <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
                   <Info icon={<Truck className="h-4 w-4" />} label="Ekspedisi" value={packageData.expedition} />
                   <Info icon={<Route className="h-4 w-4" />} label="Route Code" value={packageData.route_code} />
                   <Info icon={<Scale className="h-4 w-4" />} label="Berat Digunakan" value={formatWeight(packageData.used_weight)} />

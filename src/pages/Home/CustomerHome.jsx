@@ -167,8 +167,8 @@ export default function CustomerHome() {
       </Header>
 
       {/* === SCROLLABLE CONTENT === */}
-      <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide" aria-label="Konten utama homepage">
-        <div className="flex flex-col gap-5 pt-2">
+      <main className="flex-1 overflow-y-auto pb-20 scrollbar-hide lg:pb-10" aria-label="Konten utama homepage">
+        <div className="flex flex-col gap-5 pt-2 lg:gap-6 lg:px-6">
           {/* 2. Promo Banner */}
           <CustomerBannerCarousel banners={banners} isLoading={bannerLoading} error={bannerError} />
 
@@ -181,7 +181,7 @@ export default function CustomerHome() {
           )}
 
           {pendingProblematic.length > 0 && (
-            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+            <section className="mx-4 rounded-2xl border bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] lg:mx-0">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                   <AlertCircle className="h-5 w-5" />

@@ -134,7 +134,7 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
   };
 
   return (
-    <div className="box-border mx-4 max-w-full overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+    <div className="box-border mx-4 max-w-full overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.05)] lg:mx-0 lg:p-6">
       <div className="mb-4 flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-sm font-extrabold tracking-[-0.2px] text-gray-950">Jadwal Kapal</h2>
@@ -158,9 +158,9 @@ export default function ShipScheduleSection({ schedules, isLoading, error, onVie
         </div>
       ) : (
         <>
-          <div className="box-border flex w-full max-w-full gap-3 overflow-x-auto pb-1 scrollbar-hide" onScroll={handleScroll}>
+          <div className="box-border flex w-full max-w-full gap-3 overflow-x-auto pb-1 scrollbar-hide lg:grid lg:grid-cols-2 lg:overflow-visible xl:grid-cols-3" onScroll={handleScroll}>
             {displayedSchedules.map((s) => (
-              <div key={s.id} data-schedule-card className="box-border min-w-full max-w-full">
+              <div key={s.id} data-schedule-card className="box-border min-w-full max-w-full lg:min-w-0">
                 <Card schedule={s} />
               </div>
             ))}

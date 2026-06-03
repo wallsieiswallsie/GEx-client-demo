@@ -28,7 +28,7 @@ export default function CustomerContentPage() {
   }, []);
 
   return (
-    <div className="min-h-dvh bg-gray-50 p-4">
+    <div className="min-h-dvh bg-gray-50 p-4 lg:px-6 lg:pb-10">
       <div className="mb-5">
         <SubPageHeader title="Konten" />
       </div>

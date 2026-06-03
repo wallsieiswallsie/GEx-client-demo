@@ -149,9 +149,9 @@ export default function CustomerBranchesPage() {
   const nearestFallback = locationMessage || "Gunakan lokasi Anda untuk melihat gerai terdekat";
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900 lg:px-6">
       <section
-        className="relative overflow-hidden px-6 pb-14 pt-8 text-white"
+        className="relative overflow-hidden px-6 pb-14 pt-8 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/lokasi_gerai.png')",
           backgroundSize: "cover",
@@ -179,7 +179,7 @@ export default function CustomerBranchesPage() {
         </div>
       </section>
 
-      <main className="relative -mt-8 space-y-5 px-4">
+      <main className="relative -mt-8 space-y-5 px-4 lg:px-6">
         <div className="rounded-[24px] border border-white bg-white p-3 shadow-[0_14px_40px_rgba(15,23,42,0.12)]">
           <label className="flex h-14 items-center gap-3 rounded-2xl bg-white px-3">
             <Search className="h-5 w-5 shrink-0 text-violet-700" />
@@ -245,7 +245,7 @@ export default function CustomerBranchesPage() {
               {filteredItems.length === 0 ? (
                 <EmptyState hasQuery={Boolean(query.trim())} />
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0 xl:grid-cols-3">
                   {filteredItems.map((item) => (
                     <BranchCard key={item.id || `${item.branch_name}-${item.order_number}`} item={item} />
                   ))}

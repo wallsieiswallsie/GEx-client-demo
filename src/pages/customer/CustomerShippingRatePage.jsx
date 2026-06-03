@@ -174,9 +174,9 @@ export default function CustomerShippingRatePage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900 lg:px-6">
       <section
-        className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
+        className="relative overflow-hidden px-6 pb-16 pt-8 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/cek_ongkir.png')",
           backgroundSize: "cover",
@@ -204,7 +204,7 @@ export default function CustomerShippingRatePage() {
         </div>
       </section>
 
-      <main className="relative -mt-10 space-y-5 px-4">
+      <main className="relative -mt-10 space-y-5 px-4 lg:mx-auto lg:max-w-5xl lg:px-6">
         <form
           onSubmit={handleSubmit}
           className="rounded-[28px] border border-white bg-white p-5 shadow-[0_14px_40px_rgba(15,23,42,0.12)]"
@@ -221,7 +221,7 @@ export default function CustomerShippingRatePage() {
             </div>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-5 lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0">
             <SelectField
               label="Gudang Asal"
               icon={MapPin}
@@ -246,7 +246,7 @@ export default function CustomerShippingRatePage() {
               onChange={(value) => updateField("destination_branch", value)}
             />
 
-            <div className="border-t border-dashed border-slate-200 pt-5">
+            <div className="border-t border-dashed border-slate-200 pt-5 lg:border-t-0 lg:pt-0">
               <NumberField
                 label="Berat Aktual (Kg)"
                 icon={Weight}
@@ -285,7 +285,7 @@ export default function CustomerShippingRatePage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-3 rounded-2xl bg-violet-50 p-4">
+            <div className="flex items-center justify-between gap-3 rounded-2xl bg-violet-50 p-4 lg:col-span-2">
               <div className="flex min-w-0 items-start gap-3">
                 <Info className="mt-0.5 h-6 w-6 shrink-0 text-violet-700" />
                 <div>
@@ -303,7 +303,7 @@ export default function CustomerShippingRatePage() {
             </div>
 
             {serverError && (
-              <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600 lg:col-span-2">
                 {serverError}
               </p>
             )}
@@ -311,14 +311,14 @@ export default function CustomerShippingRatePage() {
             <button
               type="submit"
               disabled={!isFormComplete || checking}
-              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-red-600 px-5 text-base font-bold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-red-600 px-5 text-base font-bold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none lg:col-span-2"
             >
               {checking ? "Menghitung..." : "Cek Tarif Sekarang"}
               {!checking && <ArrowRight className="h-6 w-6" />}
             </button>
 
             {hasChecked && Object.keys(errors).length > 0 && (
-              <p className="text-center text-xs font-medium text-red-500">
+              <p className="text-center text-xs font-medium text-red-500 lg:col-span-2">
                 Lengkapi data paket dengan benar sebelum mengecek tarif.
               </p>
             )}
@@ -361,7 +361,7 @@ export default function CustomerShippingRatePage() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
                 {results.map((item) => (
                   <RateResultCard key={item.route_code} item={item} />
                 ))}

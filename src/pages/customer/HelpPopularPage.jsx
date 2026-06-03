@@ -54,9 +54,9 @@ export default function HelpPopularPage() {
   }, [settings]);
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-32 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-32 text-slate-900 lg:px-6 lg:pb-10">
       <section
-        className="relative overflow-hidden px-6 pb-12 pt-7 text-white"
+        className="relative overflow-hidden px-6 pb-12 pt-7 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/bantuan.png')",
           backgroundSize: "cover",
@@ -84,7 +84,7 @@ export default function HelpPopularPage() {
         </div>
       </section>
 
-      <main className="relative -mt-8 space-y-5 px-4">
+      <main className="relative -mt-8 space-y-5 px-4 lg:mx-auto lg:max-w-6xl lg:px-6">
         <div className="rounded-[24px] border border-white bg-white p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.10)]">
           <label className="relative block">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-violet-700" />
@@ -120,7 +120,7 @@ export default function HelpPopularPage() {
 
         <section>
           {loading ? (
-            <div className="space-y-2.5">
+            <div className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
               {[1, 2, 3, 4].map((item) => (
                 <div key={item} className="h-16 animate-pulse rounded-2xl bg-white shadow-sm" />
               ))}
@@ -136,7 +136,7 @@ export default function HelpPopularPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
               {filteredFaqs.map((faq, index) => {
                 const key = faq?.id || index;
                 const isOpen = openId === key;

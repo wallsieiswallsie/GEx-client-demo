@@ -103,10 +103,10 @@ export default function ProfilePage() {
   ).toUpperCase();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[#F6F7FB]">
+    <div className="flex min-h-dvh flex-col bg-[#F6F7FB] lg:px-6">
       <Header onLogout={handleConfirmLogout} variant="profile" />
 
-      <main className="relative z-10 -mt-[60px] flex-1 space-y-5 overflow-y-auto px-4 pb-8 scrollbar-hide">
+      <main className="relative z-10 -mt-[60px] flex-1 space-y-5 overflow-y-auto px-4 pb-8 scrollbar-hide lg:mx-auto lg:grid lg:w-full lg:max-w-5xl lg:grid-cols-2 lg:gap-5 lg:space-y-0 lg:px-6">
         {loading ? (
           <div className="rounded-[24px] bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
             <LoadingState variant="section" text="Memuat profil..." />

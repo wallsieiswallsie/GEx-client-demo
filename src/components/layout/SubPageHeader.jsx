@@ -5,7 +5,7 @@ export default function SubPageHeader({ title, subtitle, rightAction }) {
     const navigate = useNavigate();
 
     return (
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 lg:mb-6">
 
             {/* LEFT: BACK + TITLE */}
             <div className="flex items-center gap-3">
@@ -17,12 +17,12 @@ export default function SubPageHeader({ title, subtitle, rightAction }) {
                 </button>
 
                 <div>
-                    <h1 className="text-lg font-semibold text-gray-800">
+                    <h1 className="text-lg font-semibold text-gray-800 lg:text-2xl">
                         {title}
                     </h1>
 
                     {subtitle && (
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-1 text-xs text-gray-500 lg:text-sm">
                             {subtitle}
                         </p>
                     )}

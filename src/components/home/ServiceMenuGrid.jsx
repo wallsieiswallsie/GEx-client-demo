@@ -36,9 +36,9 @@ export default function ServiceMenuGrid() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100">
-      <h2 className="text-sm font-bold text-gray-800 mb-4">Layanan Kami</h2>
-      <div className="grid grid-cols-4 gap-x-4 gap-y-6">
+    <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100 lg:mx-0 lg:p-6">
+      <h2 className="text-sm font-bold text-gray-800 mb-4 lg:text-base">Layanan Kami</h2>
+      <div className="grid grid-cols-4 gap-x-4 gap-y-6 lg:grid-cols-8 lg:gap-x-5">
         {MENU_ITEMS.map((item) => (
           <MenuItem key={item.id} item={item} onClick={navigate} />
         ))}

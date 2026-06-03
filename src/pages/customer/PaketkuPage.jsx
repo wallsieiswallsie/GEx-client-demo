@@ -137,7 +137,7 @@ export default function PaketkuPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50 p-4 pb-28">
+    <div className="min-h-dvh bg-gray-50 p-4 pb-28 lg:px-6 lg:pb-10">
       <SubPageHeader title="Paketku" />
 
       <div className="relative mt-4">
@@ -162,7 +162,7 @@ export default function PaketkuPage() {
         )}
       </div>
 
-      <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-hide lg:grid lg:grid-cols-5 lg:overflow-visible xl:grid-cols-9">
         {STATUS_TABS.map((tab) => {
           const Icon = tab.icon;
           const active = activeStatus === tab.key;
@@ -171,7 +171,7 @@ export default function PaketkuPage() {
             <button
               key={tab.key}
               onClick={() => setActiveStatus(tab.key)}
-              className={`flex-shrink-0 flex min-w-[110px] flex-col justify-between rounded-xl p-3 text-left transition active:scale-[0.98] ${
+              className={`flex-shrink-0 flex min-w-[110px] flex-col justify-between rounded-xl p-3 text-left transition active:scale-[0.98] lg:min-w-0 ${
                 active ? "bg-violet-600 text-white shadow-md" : "bg-gray-100 text-gray-500"
               }`}
             >
@@ -215,7 +215,7 @@ export default function PaketkuPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0 xl:grid-cols-3">
             {filteredItems.map((item) => {
               const status = item.final_status || item.status;
               const dateValue = item.arrived_origin_at || item.claimed_at || item.updated_at;

@@ -144,9 +144,9 @@ export default function FormDaftarPaket() {
   const pendingPackages = visiblePackages.filter((pkg) => !pkg.is_confirmed);
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-8 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-8 text-slate-900 lg:px-6">
       <section
-        className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
+        className="relative overflow-hidden px-6 pb-16 pt-8 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/daftarkan_paket.png')",
           backgroundSize: "cover",
@@ -174,7 +174,7 @@ export default function FormDaftarPaket() {
         </div>
       </section>
 
-      <main className="relative -mt-10 space-y-5 px-4">
+      <main className="relative -mt-10 space-y-5 px-4 lg:mx-auto lg:max-w-5xl lg:px-6">
         <div className="rounded-[28px] border border-white bg-white p-5 shadow-[0_14px_40px_rgba(15,23,42,0.12)]">
           <div className="mb-6 flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-50 text-violet-700">
@@ -198,7 +198,7 @@ export default function FormDaftarPaket() {
             </div>
           )}
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             {fields.map((field, index) => (
               <div key={index} className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
@@ -327,7 +327,7 @@ export default function FormDaftarPaket() {
         )}
 
         {pendingPackages.length > 0 && (
-          <section className="space-y-4">
+          <section className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             <h2 className="text-lg font-bold text-slate-900">
               Paket Menunggu
             </h2>

@@ -6,13 +6,13 @@ export default function NewsBanner({ banners, isLoading }) {
   const data = banners || [];
 
   return (
-    <div className="mx-4 pb-2">
+    <div className="mx-4 pb-2 lg:mx-0">
       <div className="flex justify-between mb-3">
         <h2 className="text-sm font-bold">Berita</h2>
       </div>
 
       {isLoading ? (
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible xl:grid-cols-6">
           <div className="min-w-[132px]">
             <SkeletonCard height="176px" rounded="rounded-2xl" />
           </div>
@@ -25,12 +25,12 @@ export default function NewsBanner({ banners, isLoading }) {
           Belum ada konten terbaru
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible xl:grid-cols-6">
           {data.map((item) => (
             <button
               key={item.id}
               onClick={() => window.open(item.instagram_url, "_blank")}
-              className="relative aspect-[3/4] min-w-[132px] overflow-hidden rounded-2xl bg-gray-200 text-left shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
+              className="relative aspect-[3/4] min-w-[132px] overflow-hidden rounded-2xl bg-gray-200 text-left shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 lg:min-w-0"
             >
               {item.thumbnail_url ? (
                 <img

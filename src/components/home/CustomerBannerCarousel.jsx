@@ -187,7 +187,7 @@ export default function CustomerBannerCarousel({ banners, isLoading, error }) {
 
   if (isLoading) {
     return (
-      <div className="mx-4">
+      <div className="mx-4 lg:mx-0">
         <SkeletonCard height="180px" rounded="rounded-2xl" />
       </div>
     );
@@ -195,14 +195,14 @@ export default function CustomerBannerCarousel({ banners, isLoading, error }) {
 
   if (activeBanners.length === 0) {
     return (
-      <div className={`mx-4 rounded-2xl border bg-white p-5 text-center text-sm shadow-[0_8px_24px_rgba(0,0,0,0.05)] ${error ? "text-red-500" : "text-gray-400"}`}>
+      <div className={`mx-4 rounded-2xl border bg-white p-5 text-center text-sm shadow-[0_8px_24px_rgba(0,0,0,0.05)] lg:mx-0 ${error ? "text-red-500" : "text-gray-400"}`}>
         {error ? "Banner belum dapat dimuat" : "Belum ada banner aktif"}
       </div>
     );
   }
 
   return (
-    <section className="mx-4" aria-label="Banner promo">
+    <section className="mx-4 lg:mx-0" aria-label="Banner promo">
       <div
         ref={viewportRef}
         className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-2xl scrollbar-hide"

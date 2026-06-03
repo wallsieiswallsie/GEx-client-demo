@@ -109,7 +109,7 @@ export default function CustomerFeedbackPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center bg-gray-50 px-6 pb-24 text-center">
+      <div className="flex min-h-dvh flex-col items-center justify-center bg-gray-50 px-6 pb-24 text-center lg:pb-10">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
           <CheckCircle2 className="h-11 w-11" />
         </div>
@@ -129,9 +129,9 @@ export default function CustomerFeedbackPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-28 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-28 text-slate-900 lg:px-6 lg:pb-10">
       <section
-        className="relative overflow-hidden px-6 pb-16 pt-8 text-white"
+        className="relative overflow-hidden px-6 pb-16 pt-8 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/saran.png')",
           backgroundSize: "cover",
@@ -161,12 +161,12 @@ export default function CustomerFeedbackPage() {
         </div>
       </section>
 
-      <main className="relative -mt-10 px-4">
-        <form onSubmit={submit} className="space-y-5">
+      <main className="relative -mt-10 px-4 lg:mx-auto lg:max-w-5xl lg:px-6">
+        <form onSubmit={submit} className="space-y-5 lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0">
           <section className="rounded-[24px] border border-white bg-white p-5 shadow-[0_14px_36px_rgba(15,23,42,0.10)]">
             <h2 className="text-lg font-black text-slate-950">1. Pilih topik</h2>
             <p className="mt-1 text-sm text-slate-500">Pilih topik yang sesuai dengan saran atau masukan Anda.</p>
-            <div className="mt-4 grid grid-cols-4 gap-2">
+            <div className="mt-4 grid grid-cols-4 gap-2 lg:grid-cols-4">
               {feedbackCategories.map((category) => {
                 const Icon = icons[category] || Sparkles;
                 const active = form.category === category;
@@ -194,7 +194,7 @@ export default function CustomerFeedbackPage() {
             </div>
           </section>
 
-          <section className="rounded-[24px] border border-white bg-white p-5 shadow-sm">
+          <section className="rounded-[24px] border border-white bg-white p-5 shadow-sm lg:row-span-2">
             <h2 className="text-lg font-black text-slate-950">2. Saran / Masukan</h2>
             <p className="mt-1 text-sm text-slate-500">Semua masukan Anda sangat berharga bagi kami.</p>
             <label className="mt-4 block">

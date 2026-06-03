@@ -41,8 +41,8 @@ export default function HelpDetailPage() {
     : "";
 
   return (
-    <div className="min-h-dvh bg-slate-50 pb-6 text-slate-900">
-      <section className="bg-gradient-to-br from-[#2b057c] via-[#4f12c8] to-[#1f7af7] px-5 pb-12 pt-7 text-white">
+    <div className="min-h-dvh bg-slate-50 pb-6 text-slate-900 lg:px-6">
+      <section className="bg-gradient-to-br from-[#2b057c] via-[#4f12c8] to-[#1f7af7] px-5 pb-12 pt-7 text-white lg:rounded-[32px] lg:px-8">
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -59,9 +59,9 @@ export default function HelpDetailPage() {
         </div>
       </section>
 
-      <main className="-mt-6 space-y-4 px-4">
+      <main className="-mt-6 space-y-4 px-4 lg:mx-auto lg:max-w-5xl lg:px-6">
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             <div className="h-40 animate-pulse rounded-[24px] bg-white shadow-sm" />
             <div className="h-28 animate-pulse rounded-[24px] bg-white shadow-sm" />
           </div>
@@ -71,7 +71,7 @@ export default function HelpDetailPage() {
             <p className="mt-2 text-sm text-slate-500">{error}</p>
           </div>
         ) : (
-          <>
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-4">
             <article className="rounded-[24px] border border-slate-100 bg-white p-5 shadow-sm">
               {safeFaq?.category_name && (
                 <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">
@@ -110,7 +110,7 @@ export default function HelpDetailPage() {
                 Hubungi CS
               </button>
             </section>
-          </>
+          </div>
         )}
       </main>
     </div>

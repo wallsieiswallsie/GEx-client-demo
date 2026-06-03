@@ -26,9 +26,9 @@ export default function CustomerPartnershipPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900">
+    <div className="min-h-dvh bg-gray-50 pb-6 text-slate-900 lg:px-6">
       <section
-        className="relative h-[280px] overflow-hidden rounded-b-[34px] px-6 pt-8 text-white"
+        className="relative h-[280px] overflow-hidden rounded-b-[34px] px-6 pt-8 text-white lg:rounded-[32px] lg:px-8"
         style={{
           backgroundImage: "url('/images/header_background/kemitraan.png')",
           backgroundSize: "cover",
@@ -60,7 +60,7 @@ export default function CustomerPartnershipPage() {
         </div>
       </section>
 
-      <main className="relative -mt-20 space-y-5 px-4">
+      <main className="relative -mt-20 space-y-5 px-4 lg:mx-auto lg:max-w-5xl lg:px-6">
         <section className="rounded-[30px] border border-white bg-white px-5 pb-6 pt-7 text-center shadow-[0_16px_42px_rgba(88,28,135,0.16)]">
           <img
             src="/images/kemitraan-coming-soon.png"
@@ -100,7 +100,7 @@ export default function CustomerPartnershipPage() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="space-y-3 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
           {benefits.map((benefit) => {
             const Icon = benefit.icon;
 

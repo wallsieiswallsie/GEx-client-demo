@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Package, PlayCircle, User, Database, FileText, Wallet } from 'lucide-react';
+import { Home, Package, User, Database, FileText, Wallet } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import { canAccessInvoice } from '../../utils/invoiceAccess';
 import { canAccessFinance } from '../../utils/financeAccess';
@@ -28,10 +28,38 @@ export default function BottomNav() {
   });
 
   return (
-    <nav className="sticky bottom-0 left-0 right-0 z-50 rounded-t-[20px] border-t border-white/80 bg-white shadow-[0_-8px_22px_rgba(17,24,39,0.08)]">
-      <div
-        className="grid px-2 pb-1 pt-0.5"
-        style={{ gridTemplateColumns: `repeat(${filteredNav.length}, minmax(0, 1fr))` }}
+    <>
+      <nav className="sticky bottom-0 left-0 right-0 z-50 rounded-t-[20px] border-t border-white/80 bg-white shadow-[0_-8px_22px_rgba(17,24,39,0.08)] lg:hidden">
+        <div
+          className="grid px-2 pb-1 pt-0.5"
+          style={{ gridTemplateColumns: `repeat(${filteredNav.length}, minmax(0, 1fr))` }}
+        >
+          {filteredNav.map((item) => {
+            const isActive =
+              pathname === item.path || pathname.startsWith(item.path + '/');
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                className={`relative flex min-h-[54px] flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 transition-colors
+                  ${isActive ? 'text-[#7B2FF7]' : 'text-gray-400 hover:text-gray-500'}`}
+              >
+                {isActive && (
+                  <span className="absolute top-0 h-0.5 w-6 rounded-full bg-[#7B2FF7]" aria-hidden="true" />
+                )}
+                <Icon className="h-5 w-5" strokeWidth={isActive ? 2.4 : 2} />
+                <span className="text-[9px] font-extrabold">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <nav
+        className="hidden fixed left-1/2 top-4 z-50 -translate-x-1/2 items-center gap-2 rounded-full border border-white/50 bg-white/80 px-4 py-2 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl lg:flex"
+        aria-label="Navigasi utama desktop"
       >
         {filteredNav.map((item) => {
           const isActive =
@@ -42,18 +70,18 @@ export default function BottomNav() {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`relative flex min-h-[54px] flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 transition-colors
-                ${isActive ? 'text-[#7B2FF7]' : 'text-gray-400 hover:text-gray-500'}`}
+              className={`group inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm font-bold transition duration-200 hover:scale-[1.02] hover:bg-[#4d148c]/10 ${
+                isActive
+                  ? 'bg-[#4d148c] text-white shadow-md shadow-[#4d148c]/25'
+                  : 'text-slate-600 hover:text-[#4d148c]'
+              }`}
             >
-              {isActive && (
-                <span className="absolute top-0 h-0.5 w-6 rounded-full bg-[#7B2FF7]" aria-hidden="true" />
-              )}
-              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.4 : 2} />
-              <span className="text-[9px] font-extrabold">{item.label}</span>
+              <Icon className="h-[18px] w-[18px]" strokeWidth={isActive ? 2.6 : 2.2} />
+              <span>{item.label}</span>
             </button>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

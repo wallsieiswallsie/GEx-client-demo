@@ -58,7 +58,7 @@ export default function CustomerPackageDetailPage() {
 
     if (!data) {
         return (
-            <div className="min-h-dvh bg-gray-50 p-4">
+            <div className="min-h-dvh bg-gray-50 p-4 lg:px-6">
                 <SubPageHeader title="Detail Paket" />
                 <div className="mt-8 rounded-2xl bg-white p-6 text-center text-sm text-gray-500">
                     Paket tidak ditemukan
@@ -68,9 +68,10 @@ export default function CustomerPackageDetailPage() {
     }
 
     return (
-        <div className="min-h-dvh bg-[#f8f7fb] px-4 pb-28 pt-4">
+        <div className="min-h-dvh bg-[#f8f7fb] px-4 pb-28 pt-4 lg:px-6 lg:pb-10">
             <SubPageHeader title="Detail Paket" />
 
+            <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:gap-5">
             <section
                 className="relative mt-5 overflow-hidden rounded-[24px] bg-[#4f2e78] px-5 py-8 text-white shadow-[0_12px_26px_rgba(79,46,120,0.16)]"
                 style={{
@@ -99,7 +100,7 @@ export default function CustomerPackageDetailPage() {
                 </div>
             </section>
 
-            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white px-3 py-6 shadow-[0_8px_22px_rgba(15,23,42,0.06)]">
+            <section className="mt-5 rounded-[22px] border border-gray-100 bg-white px-3 py-6 shadow-[0_8px_22px_rgba(15,23,42,0.06)] lg:row-span-2">
                 <h2 className="px-1 text-[20px] font-semibold text-gray-950">Progres Pengiriman</h2>
                 <ProgressSteps status={data.final_status} />
             </section>
@@ -116,6 +117,7 @@ export default function CustomerPackageDetailPage() {
                     <Info icon={<Wallet className="h-5 w-5" />} label="Tarif" value={formatFee(data.fee)} isLast />
                 </div>
             </section>
+            </div>
         </div>
     );
 }
