@@ -54,14 +54,14 @@ const CUSTOMER_STEPS = [
 ];
 
 const GENERAL_MANAGER_STEPS = [
-  ["gm-operational-summary", "Ringkasan Operasional", "Bagian ini menampilkan performa operasional secara keseluruhan."],
-  ["gm-total-package", "Total Paket", "Pantau volume paket yang sedang diproses dalam operasional GEx."],
-  ["gm-total-invoice", "Total Invoice", "Lihat gambaran invoice yang terbentuk dari aktivitas pengiriman."],
-  ["gm-total-batch", "Total Batch", "Pantau batch kapal atau pesawat yang sedang berjalan."],
-  ["gm-shipping-value", "Nilai Pengiriman", "Bagian ini membantu melihat nilai bisnis dari pengiriman aktif."],
+  ["gm-operational-summary", "Ringkasan Jumlah User", "Bagian ini menampilkan jumlah user yang terdaftar."],
+  ["gm-total-package", "Total Customer Terdaftar", "Pantau jumlah customer yang telah mendaftar."],
+  ["gm-total-invoice", "Total Non-Customer", "Lihat jumlah user non-customer yang terdaftar."],
+  ["gm-total-batch", "Batch Kapal Terdekat", "Pantau batch kapal atau pesawat yang sedang berjalan."],
+  ["gm-shipping-value", "Paket belum dipacking", "Bagian ini membantu melihat paket yang belum dipacking."],
   ["gm-menu-operational", "Menu Operasional", "Masuk ke modul operasional untuk melihat paket, packing, batch, dan status pengiriman."],
   ["gm-menu-finance", "Menu Keuangan", "Gunakan menu ini untuk memantau pembayaran dan arus kas."],
-  ["gm-menu-report", "Menu Laporan", "Buka laporan untuk melihat rekap performa dan evaluasi bisnis."],
+  ["gm-menu-report", "Saran & Masukan", "Menampung saran dan masukan dari customer."],
 ].map(([target, title, content]) => ({
   target: `[data-tour='${target}']`,
   title,
