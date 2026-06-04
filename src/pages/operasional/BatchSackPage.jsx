@@ -137,7 +137,21 @@ export default function BatchSackPage() {
     return (
         <div className="min-h-dvh bg-gray-50 p-4">
             <div className="mb-5">
-                <SubPageHeader title="Kloter & Karung" />
+                <SubPageHeader
+                    title="Kloter & Karung"
+                    rightAction={
+                        canCreateBatch && (
+                            <FloatingActionButton
+                                onClick={openCreate}
+                                ariaLabel="Tambah batch"
+                                title="Tambah batch"
+                                className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                            >
+                                <Plus />
+                            </FloatingActionButton>
+                        )
+                    }
+                />
             </div>
 
             <div className="flex gap-2 mb-4">
@@ -280,6 +294,7 @@ export default function BatchSackPage() {
                     onClick={openCreate}
                     ariaLabel="Tambah batch"
                     title="Tambah batch"
+                    className="md:hidden"
                 >
                     <Plus />
                 </FloatingActionButton>

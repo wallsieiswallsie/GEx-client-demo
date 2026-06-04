@@ -96,6 +96,18 @@ export default function UsersInternalPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Users Internal"
+                    rightAction={
+                        isGeneralManagerRole(role) && (
+                            <FloatingActionButton
+                                onClick={() => navigate("/users-internal-form")}
+                                ariaLabel="Tambah user internal"
+                                title="Tambah user internal"
+                                className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                            >
+                                <Plus />
+                            </FloatingActionButton>
+                        )
+                    }
                 />
             </div>
 
@@ -257,6 +269,7 @@ export default function UsersInternalPage() {
                 onClick={() => navigate("/users-internal-form")}
                 ariaLabel="Tambah user internal"
                 title="Tambah user internal"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>

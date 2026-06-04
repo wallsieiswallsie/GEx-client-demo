@@ -92,6 +92,16 @@ export default function CustomerPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Pelanggan"
+                    rightAction={
+                        <FloatingActionButton
+                            onClick={() => navigate("/users-internal-form")}
+                            ariaLabel="Tambah pelanggan"
+                            title="Tambah pelanggan"
+                            className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                        >
+                            <Plus />
+                        </FloatingActionButton>
+                    }
                 />
             </div>
 
@@ -231,6 +241,7 @@ export default function CustomerPage() {
                 onClick={() => navigate("/users-internal-form")}
                 ariaLabel="Tambah pelanggan"
                 title="Tambah pelanggan"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>

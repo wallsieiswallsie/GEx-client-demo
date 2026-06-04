@@ -193,7 +193,21 @@ function SettlementsListPage() {
   return (
     <div className="min-h-dvh bg-gray-50 p-4">
       <div className="mb-5">
-        <SubPageHeader title={title} />
+        <SubPageHeader
+          title={title}
+          rightAction={
+            isStaff && !approvalOnly && !branchMissing && (
+              <FloatingActionButton
+                onClick={() => navigate("/cash-settlements/new")}
+                ariaLabel="Buat setoran tunai"
+                title="Buat setoran tunai"
+                className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+              >
+                <Plus />
+              </FloatingActionButton>
+            )
+          }
+        />
         {!isGeneralManagerRole(role) && user?.branch_code && (
           <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
             Cabang {user.branch_code}
@@ -308,6 +322,7 @@ function SettlementsListPage() {
           onClick={() => navigate("/cash-settlements/new")}
           ariaLabel="Buat setoran tunai"
           title="Buat setoran tunai"
+          className="md:hidden"
         >
           <Plus />
         </FloatingActionButton>

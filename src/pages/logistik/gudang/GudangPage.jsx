@@ -72,6 +72,16 @@ export default function GudangPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Gudang"
+                    rightAction={
+                        <FloatingActionButton
+                            onClick={() => navigate("/gudang/create")}
+                            ariaLabel="Tambah gudang"
+                            title="Tambah gudang"
+                            className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                        >
+                            <Plus />
+                        </FloatingActionButton>
+                    }
                 />
             </div>
 
@@ -194,6 +204,7 @@ export default function GudangPage() {
                 onClick={() => navigate("/gudang/create")}
                 ariaLabel="Tambah gudang"
                 title="Tambah gudang"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>

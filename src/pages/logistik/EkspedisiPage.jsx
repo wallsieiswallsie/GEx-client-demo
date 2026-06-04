@@ -109,6 +109,16 @@ export default function EkspedisiPage() {
             <div className="mb-5">
                 <SubPageHeader
                     title="Ekspedisi"
+                    rightAction={
+                        <FloatingActionButton
+                            onClick={openCreate}
+                            ariaLabel="Tambah ekspedisi"
+                            title="Tambah ekspedisi"
+                            className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                        >
+                            <Plus />
+                        </FloatingActionButton>
+                    }
                 />
             </div>
 
@@ -185,6 +195,7 @@ export default function EkspedisiPage() {
                 onClick={openCreate}
                 ariaLabel="Tambah ekspedisi"
                 title="Tambah ekspedisi"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>

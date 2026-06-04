@@ -357,7 +357,21 @@ export default function PackagesPage() {
 
             {/* HEADER */}
             <div className="mb-5">
-                <SubPageHeader title="Packages" />
+                <SubPageHeader
+                    title="Packages"
+                    rightAction={
+                        canCreatePackage && (
+                            <FloatingActionButton
+                                onClick={openCreate}
+                                ariaLabel="Tambah package"
+                                title="Tambah package"
+                                className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                            >
+                                <Plus />
+                            </FloatingActionButton>
+                        )
+                    }
+                />
             </div>
 
             {/* SEARCH */}
@@ -523,6 +537,7 @@ export default function PackagesPage() {
                     onClick={openCreate}
                     ariaLabel="Tambah package"
                     title="Tambah package"
+                    className="md:hidden"
                 >
                     <Plus />
                 </FloatingActionButton>

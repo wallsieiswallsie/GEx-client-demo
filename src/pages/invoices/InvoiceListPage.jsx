@@ -174,7 +174,21 @@ export default function InvoiceListPage() {
         <InvoiceAccessDenied>
             <div id={LIST_TOP_ID} className="min-h-dvh bg-gray-50 p-4">
                 <div className="mb-5">
-                    <SubPageHeader title="Daftar Invoice" />
+                    <SubPageHeader
+                        title="Daftar Invoice"
+                        rightAction={
+                            !branchMissing && (
+                                <FloatingActionButton
+                                    onClick={() => navigate("/invoice/create")}
+                                    ariaLabel="Buat invoice"
+                                    title="Buat invoice"
+                                    className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                                >
+                                    <Plus />
+                                </FloatingActionButton>
+                            )
+                        }
+                    />
                     {role !== "general_manager" && user?.branch_code && (
                         <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                             Cabang {user.branch_code}
@@ -315,6 +329,7 @@ export default function InvoiceListPage() {
                     onClick={() => navigate("/invoice/create")}
                     ariaLabel="Buat invoice"
                     title="Buat invoice"
+                    className="md:hidden"
                 >
                     <Plus />
                 </FloatingActionButton>

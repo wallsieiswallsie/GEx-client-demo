@@ -143,7 +143,19 @@ export default function PaymentMethodPage() {
   return (
     <div className="min-h-dvh bg-gray-50 p-4">
       <div className="mb-5">
-        <SubPageHeader title="Payment Method" />
+        <SubPageHeader
+          title="Payment Method"
+          rightAction={
+            <FloatingActionButton
+              onClick={openCreate}
+              ariaLabel="Tambah payment method"
+              title="Tambah payment method"
+              className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+            >
+              <Plus />
+            </FloatingActionButton>
+          }
+        />
       </div>
 
       <div className="relative mb-5">
@@ -237,6 +249,7 @@ export default function PaymentMethodPage() {
         onClick={openCreate}
         ariaLabel="Tambah payment method"
         title="Tambah payment method"
+        className="md:hidden"
       >
         <Plus />
       </FloatingActionButton>

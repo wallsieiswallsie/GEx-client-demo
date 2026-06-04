@@ -251,7 +251,19 @@ export default function ShipmentRoutePage() {
         <div className="min-h-dvh bg-gray-50 p-4">
 
             <div className="mb-5">
-                <SubPageHeader title="Rute & Ongkir" />
+                <SubPageHeader
+                    title="Rute & Ongkir"
+                    rightAction={
+                        <FloatingActionButton
+                            onClick={openCreate}
+                            ariaLabel="Tambah rute"
+                            title="Tambah rute"
+                            className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                        >
+                            <Plus />
+                        </FloatingActionButton>
+                    }
+                />
             </div>
 
             {/* SEARCH */}
@@ -312,6 +324,7 @@ export default function ShipmentRoutePage() {
                 onClick={openCreate}
                 ariaLabel="Tambah rute"
                 title="Tambah rute"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>

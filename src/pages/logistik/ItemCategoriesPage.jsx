@@ -130,7 +130,19 @@ export default function ItemCategoriesPage() {
         <div className="min-h-dvh bg-gray-50 p-4">
 
             <div className="mb-5">
-                <SubPageHeader title="Item Categories" />
+                <SubPageHeader
+                    title="Item Categories"
+                    rightAction={
+                        <FloatingActionButton
+                            onClick={openCreate}
+                            ariaLabel="Tambah item"
+                            title="Tambah item"
+                            className="hidden md:flex md:static md:h-11 md:w-11 md:shrink-0"
+                        >
+                            <Plus />
+                        </FloatingActionButton>
+                    }
+                />
             </div>
 
             {/* SEARCH */}
@@ -213,6 +225,7 @@ export default function ItemCategoriesPage() {
                 onClick={openCreate}
                 ariaLabel="Tambah item"
                 title="Tambah item"
+                className="md:hidden"
             >
                 <Plus />
             </FloatingActionButton>
