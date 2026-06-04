@@ -3,11 +3,13 @@ import {
   ACCESS_TOKEN_KEY,
   API_URL,
   AUTH_USER_KEY,
+  DEMO_ACCESS_TOKEN,
   REFRESH_TOKEN_KEY,
   clearStoredAuth,
   refreshAccessToken,
 } from '../services/api/apiClient';
 import { AuthContext } from './useAuth';
+import { useDemo } from '../demo/useDemo';
 
 /**
  * Decode JWT payload tanpa library eksternal.
@@ -49,6 +51,7 @@ function getStoredUser(token) {
 }
 
 export const AuthProvider = ({ children }) => {
+  const { isDemoMode, demoUser } = useDemo();
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -65,6 +68,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    if (isDemoMode) {
+      setUser(demoUser);
+      setRole(demoUser?.role || null);
+      setIsAuthenticated(Boolean(demoUser));
+      setIsLoading(false);
+      return;
+    }
+
     const checkAuthStatus = async () => {
       try {
         const legacyToken = localStorage.getItem('auth_token');
@@ -96,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuthStatus();
-  }, []);
+  }, [demoUser, isDemoMode]);
 
   /**
    * Login: simpan token + data user ke localStorage.
@@ -118,6 +129,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    if (isDemoMode) {
+      setUser(demoUser);
+      setRole(demoUser?.role || null);
+      setIsAuthenticated(Boolean(demoUser));
+      return;
+    }
+
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
     if (refreshToken) {
@@ -141,7 +159,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   /** Helper: ambil token langsung untuk dipakai di fetch/axios */
-  const getToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+  const getToken = () => (
+    isDemoMode && demoUser
+      ? DEMO_ACCESS_TOKEN
+      : localStorage.getItem(ACCESS_TOKEN_KEY)
+  );
 
   return (
     <AuthContext.Provider

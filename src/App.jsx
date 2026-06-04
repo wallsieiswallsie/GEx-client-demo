@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // Providers
 import { AuthProvider } from "./context/AuthContext";
 import { ErrorsProvider } from "./context/ErrorsContext";
+import { DemoProvider } from "./demo/DemoProvider";
+import DemoExperience from "./demo/DemoExperience";
 
 // Modular Routes
 import { authRoutes } from "./routes/authRoutes";
@@ -26,11 +28,13 @@ import GuestRestrictionPage from "./pages/GuestRestrictionPage";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ErrorsProvider>
-        <BrowserRouter>
-          <Suspense fallback={<LoadingState text="Menyiapkan Aplikasi..." />}>
-            <Routes>
+    <DemoProvider>
+      <AuthProvider>
+        <ErrorsProvider>
+          <BrowserRouter>
+            <Suspense fallback={<LoadingState text="Menyiapkan Aplikasi..." />}>
+              <DemoExperience>
+                <Routes>
 
               {/* === PUBLIC AUTH ROUTES === */}
               {authRoutes.map((route, index) => (
@@ -169,10 +173,12 @@ export default function App() {
                 }
               />
 
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </ErrorsProvider>
-    </AuthProvider>
+                </Routes>
+              </DemoExperience>
+            </Suspense>
+          </BrowserRouter>
+        </ErrorsProvider>
+      </AuthProvider>
+    </DemoProvider>
   );
 }

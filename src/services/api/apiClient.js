@@ -2,6 +2,8 @@ export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export const ACCESS_TOKEN_KEY = "accessToken";
 export const REFRESH_TOKEN_KEY = "refreshToken";
 export const AUTH_USER_KEY = "auth_user";
+export const DEMO_ACCESS_TOKEN = "gex-demo-access-token";
+const DEMO_MODE = String(import.meta.env.VITE_DEMO_MODE || "").toLowerCase() === "true";
 
 let isRefreshing = false;
 let refreshPromise = null;
@@ -60,7 +62,12 @@ export const refreshAccessToken = async () => {
 
 export const apiFetch = async (path, options = {}) => {
   const url = path.startsWith("http") ? path : `${API_URL}${path}`;
-  let token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const demoState = DEMO_MODE
+    ? JSON.parse(localStorage.getItem("gex-demo-state") || "{}")
+    : {};
+  let token = DEMO_MODE && demoState.selectedRole
+    ? DEMO_ACCESS_TOKEN
+    : localStorage.getItem(ACCESS_TOKEN_KEY);
 
   const makeRequest = async (accessToken) => {
     const isFormData =
@@ -74,6 +81,7 @@ export const apiFetch = async (path, options = {}) => {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(DEMO_MODE && demoState.selectedRole ? { "X-Demo-Role": demoState.selectedRole } : {}),
     };
 
     const res = await fetch(url, { ...options, headers });
@@ -84,7 +92,7 @@ export const apiFetch = async (path, options = {}) => {
 
   let { res, data } = await makeRequest(token);
 
-  if (res.status === 401 && path !== "/refresh" && path !== "/logout") {
+  if (!DEMO_MODE && res.status === 401 && path !== "/refresh" && path !== "/logout") {
     try {
       const { accessToken: newAccessToken } = await refreshAccessToken();
 
