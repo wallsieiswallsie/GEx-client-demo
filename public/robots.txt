@@ -44,4 +44,4 @@ Disallow: /bantuan
 Disallow: /help/category
 Disallow: /saran-masukan
 
-Sitemap: https://gex-client-2-production.up.railway.app/sitemap.xml
+Sitemap: https://gex-client-demo-production.up.railway.app/sitemap.xml

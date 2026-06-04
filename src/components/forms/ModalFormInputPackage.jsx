@@ -22,6 +22,7 @@ import {
 import ScannerModal from "../modals/ScannerModal";
 
 function ModalFormInputPackage({
+    dataTour,
     form,
     setForm,
     preview,
@@ -133,7 +134,7 @@ function ModalFormInputPackage({
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4">
+        <div data-tour={dataTour} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4">
 
             <div className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-5 shadow-xl scrollbar-hide">
 

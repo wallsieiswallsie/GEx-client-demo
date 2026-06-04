@@ -152,7 +152,7 @@ export default function XrayFailedPackagesPage() {
     }
 
     return (
-        <div className="min-h-dvh bg-gray-50 p-4 pb-28">
+        <div data-tour="origin-xray-failed" className="min-h-dvh bg-gray-50 p-4 pb-28">
             <SubPageHeader title="Paket Gagal X-Ray" />
 
             {toast && (

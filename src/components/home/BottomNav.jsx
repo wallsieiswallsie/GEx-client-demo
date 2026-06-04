@@ -32,7 +32,7 @@ export default function BottomNav() {
 
   return (
     <>
-      <nav className={`sticky bottom-0 left-0 right-0 z-50 rounded-t-[20px] border-t border-white/80 bg-white shadow-[0_-8px_22px_rgba(17,24,39,0.08)] ${forceMobile ? '' : 'lg:hidden'}`}>
+      <nav data-tour="bottom-navigation" className={`sticky bottom-0 left-0 right-0 z-50 rounded-t-[20px] border-t border-white/80 bg-white shadow-[0_-8px_22px_rgba(17,24,39,0.08)] ${forceMobile ? '' : 'lg:hidden'}`}>
         <div
           className="grid px-2 pb-1 pt-0.5"
           style={{ gridTemplateColumns: `repeat(${filteredNav.length}, minmax(0, 1fr))` }}
@@ -61,6 +61,7 @@ export default function BottomNav() {
       </nav>
 
       <nav
+        data-tour="desktop-navigation"
         className={`${forceMobile ? 'hidden' : 'hidden lg:flex'} fixed left-1/2 top-5 z-50 -translate-x-1/2 items-center gap-2 rounded-full border border-white/50 bg-white/80 px-4 py-2 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl`}
         aria-label="Navigasi utama desktop"
       >

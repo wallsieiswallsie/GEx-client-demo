@@ -143,7 +143,8 @@ export default function FormDaftarPaket() {
   const visiblePackages = packages.filter((pkg) => pkg.final_status !== "tidak_valid");
   const pendingPackages = visiblePackages.filter((pkg) => !pkg.is_confirmed);
 
-  return (
+    return (
+        <div data-tour="package-registration-form">
     <div className="min-h-dvh bg-gray-50 pb-8 text-slate-900 lg:px-6">
       <section
         className="relative overflow-hidden px-6 pb-16 pt-8 text-white lg:rounded-[32px] lg:px-8"
@@ -414,5 +415,6 @@ export default function FormDaftarPaket() {
         )}
       </main>
     </div>
+        </div>
   );
 }

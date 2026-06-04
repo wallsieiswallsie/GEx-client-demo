@@ -6,9 +6,11 @@ export default function FloatingActionButton({
   className = '',
   ariaLabel = 'Tambah',
   title = 'Tambah',
+  dataTour,
 }) {
   return (
     <button
+      data-tour={dataTour}
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}

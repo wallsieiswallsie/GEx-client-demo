@@ -15,6 +15,7 @@ const MENU_ITEMS = [
 function MenuItem({ item, onClick }) {
   return (
     <button
+      data-tour={`customer-menu-${item.id}`}
       onClick={() => onClick(item.path)}
       className="group flex w-full flex-col items-center gap-2 rounded-2xl transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
@@ -36,7 +37,7 @@ export default function ServiceMenuGrid() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100 lg:mx-0 lg:p-6">
+    <div data-tour="customer-service-menu" className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100 lg:mx-0 lg:p-6">
       <h2 className="text-sm font-bold text-gray-800 mb-4 lg:text-base">Layanan Kami</h2>
       <div className="grid grid-cols-4 gap-x-4 gap-y-6 lg:gap-x-5">
         {MENU_ITEMS.map((item) => (

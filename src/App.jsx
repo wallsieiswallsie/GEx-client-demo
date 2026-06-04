@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ErrorsProvider } from "./context/ErrorsContext";
 import { DemoProvider } from "./demo/DemoProvider";
 import DemoExperience from "./demo/DemoExperience";
+import { TourProvider } from "./tour/TourProvider";
 
 // Modular Routes
 import { authRoutes } from "./routes/authRoutes";
@@ -34,6 +35,7 @@ export default function App() {
           <BrowserRouter>
             <Suspense fallback={<LoadingState text="Menyiapkan Aplikasi..." />}>
               <DemoExperience>
+                <TourProvider>
                 <Routes>
 
               {/* === PUBLIC AUTH ROUTES === */}
@@ -174,6 +176,7 @@ export default function App() {
               />
 
                 </Routes>
+                </TourProvider>
               </DemoExperience>
             </Suspense>
           </BrowserRouter>

@@ -112,27 +112,31 @@ export default function GeneralManagerHome() {
                     {/* =========================
                         Insight User
                     ========================= */}
-                    <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
+                    <section data-tour="gm-operational-summary" className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                         <Section title="Insight User" />
 
                         <div className="grid grid-cols-2 gap-3">
-                            <InsightItem
-                                icon={Users}
-                                label="Customer"
-                                value={userInsight?.customer || 0}
-                            />
-                            <InsightItem
-                                icon={UserX}
-                                label="Non Customer"
-                                value={userInsight?.non_customer || 0}
-                            />
+                            <div data-tour="gm-total-package">
+                                <InsightItem
+                                    icon={Users}
+                                    label="Customer"
+                                    value={userInsight?.customer || 0}
+                                />
+                            </div>
+                            <div data-tour="gm-total-invoice">
+                                <InsightItem
+                                    icon={UserX}
+                                    label="Non Customer"
+                                    value={userInsight?.non_customer || 0}
+                                />
+                            </div>
                         </div>
                     </section>
 
                     {/* =========================
                         Kloter Terdekat
                      ========================= */}
-                    <section className="mx-4">
+                    <section data-tour="gm-total-batch" className="mx-4">
                         <Section
                             title="Kloter Pengiriman Terdekat"
                             action="Lihat Lainnya"
@@ -196,7 +200,7 @@ export default function GeneralManagerHome() {
                         Belum Dipacking
                     ========================= */}
                     {unpackedPackages && (
-                        <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
+                        <section data-tour="gm-shipping-value" className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                             <Section
                                 title={`Belum Packing (${unpackedPackages.count || 0})`}
                                 action="Lihat Lainnya"
@@ -261,6 +265,7 @@ export default function GeneralManagerHome() {
                                     {group.items.map((f) => (
                                         <button
                                             key={f.label}
+                                            data-tour={getGeneralManagerTourTarget(f.label)}
                                             onClick={() => navigate(f.path)}
                                             className="flex flex-col items-center text-center"
                                         >
@@ -300,3 +305,13 @@ const FEATURE_GROUPS = [
         ]
     }
 ];
+
+function getGeneralManagerTourTarget(label) {
+    const map = {
+        Operasional: "gm-menu-operational",
+        Keuangan: "gm-menu-finance",
+        "Saran & Masukan": "gm-menu-report",
+    };
+
+    return map[label] || undefined;
+}

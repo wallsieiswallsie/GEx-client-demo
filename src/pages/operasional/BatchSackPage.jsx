@@ -142,6 +142,7 @@ export default function BatchSackPage() {
                     rightAction={
                         canCreateBatch && (
                             <FloatingActionButton
+                                dataTour="origin-batch-create"
                                 onClick={openCreate}
                                 ariaLabel="Tambah batch"
                                 title="Tambah batch"
@@ -200,7 +201,7 @@ export default function BatchSackPage() {
                 )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div data-tour="origin-batch-create" className="grid grid-cols-2 gap-3">
                 {loading ? (
                     <LoadingState variant="list" rows={4} />
                 ) : (
@@ -291,6 +292,7 @@ export default function BatchSackPage() {
 
             {canCreateBatch && (
                 <FloatingActionButton
+                    dataTour="origin-batch-create"
                     onClick={openCreate}
                     ariaLabel="Tambah batch"
                     title="Tambah batch"

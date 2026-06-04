@@ -362,6 +362,7 @@ export default function PackagesPage() {
                     rightAction={
                         canCreatePackage && (
                             <FloatingActionButton
+                                dataTour="origin-input-package"
                                 onClick={openCreate}
                                 ariaLabel="Tambah package"
                                 title="Tambah package"
@@ -402,7 +403,7 @@ export default function PackagesPage() {
             </div>
 
             {/* LIST */}
-            <div className="grid grid-cols-2 gap-3">
+            <div data-tour="origin-package-list" className="grid grid-cols-2 gap-3">
                 {loading &&
                     data.length === 0 ? (
                     <LoadingState variant="list" rows={4} />
@@ -534,6 +535,7 @@ export default function PackagesPage() {
             {/* FLOAT BUTTON */}
             {canCreatePackage && (
                 <FloatingActionButton
+                    dataTour="origin-input-package"
                     onClick={openCreate}
                     ariaLabel="Tambah package"
                     title="Tambah package"
@@ -546,6 +548,7 @@ export default function PackagesPage() {
             {/* MODAL */}
             {isOpen && (
                 <ModalFormInputPackage
+                    dataTour="package-modal"
                     form={form}
                     setForm={setForm}
                     preview={preview}

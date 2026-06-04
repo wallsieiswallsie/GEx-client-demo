@@ -57,15 +57,17 @@ export default function GeneralManagerHome() {
         <div className="flex flex-col min-h-dvh bg-gray-50">
 
             {/* HEADER */}
-            <Header
-                initial={
-                    (user?.name?.[0] ||
-                        user?.username?.[0] ||
-                        "U"
-                    ).toUpperCase()
-                }
-                onLogout={handleLogout}
-            />
+            <div data-tour="bm-branch-filter">
+                <Header
+                    initial={
+                        (user?.name?.[0] ||
+                            user?.username?.[0] ||
+                            "U"
+                        ).toUpperCase()
+                    }
+                    onLogout={handleLogout}
+                />
+            </div>
 
             {/* CONTENT */}
             <main className="flex-1 overflow-y-auto pb-24 scrollbar-hide">
@@ -107,7 +109,7 @@ export default function GeneralManagerHome() {
                     {/* =========================
                         Kloter Terdekat
                      ========================= */}
-                    <section className="mx-4">
+                    <section data-tour="bm-batch-monitoring" className="mx-4">
                         <Section
                             title="Kloter Pengiriman Terdekat"
                             action="Lihat Lainnya"
@@ -163,7 +165,7 @@ export default function GeneralManagerHome() {
                         Belum Dipacking
                     ========================= */}
                     {unpackedPackages && (
-                        <section className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
+                        <section data-tour="bm-package-monitoring" className="bg-white mx-4 p-4 rounded-2xl shadow-sm">
                             <Section
                                 title={`Belum Packing (${unpackedPackages.count || 0})`}
                                 action="Lihat Lainnya"
@@ -212,7 +214,7 @@ export default function GeneralManagerHome() {
                     {/* =========================
                         FITUR
                     ========================= */}
-                    <section className="mx-4">
+                    <section data-tour="bm-branch-report" className="mx-4">
                         <Section title="Fitur" />
 
                         {FEATURE_GROUPS.map((group) => (
@@ -228,6 +230,7 @@ export default function GeneralManagerHome() {
                                     {group.items.map((f) => (
                                         <button
                                             key={f.label}
+                                            data-tour={f.label === "Operasional" ? "bm-shipment-monitoring" : undefined}
                                             onClick={() => navigate(f.path)}
                                             className="flex flex-col items-center text-center"
                                         >

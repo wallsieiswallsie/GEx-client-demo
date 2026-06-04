@@ -34,6 +34,7 @@ import UploadInvoicePaymentPage from "../pages/invoices/UploadInvoicePaymentPage
 import UploadInvoiceReceiptPage from "../pages/invoices/UploadInvoiceReceiptPage";
 import PaymentMethodPage from "../pages/keuangan/PaymentMethodPage";
 import CashSettlementsPage from "../pages/keuangan/CashSettlementsPage";
+import BusinessFlowPage from "../pages/BusinessFlowPage";
 
 const HomeContainer = lazy(() => import('../pages/Home/HomeContainer'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
@@ -181,6 +182,15 @@ export const homeRoutes = [
       {
         path: "/bantuan",
         element: withSeo(PUBLIC_SEO.help, <HelpPage />)
+      },
+      {
+        path: "/bagaimana-gex-bekerja",
+        element: (
+          <>
+            <NoIndexSEO />
+            <BusinessFlowPage />
+          </>
+        )
       },
       {
         path: "/bantuan/populer",

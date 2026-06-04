@@ -113,7 +113,7 @@ export default function UnpackedPackagesPage() {
     };
 
     return (
-        <div className="min-h-dvh bg-gray-50 p-4">
+        <div data-tour="origin-packing-process" className="min-h-dvh bg-gray-50 p-4">
             <div className="mb-5">
                 <SubPageHeader title="Belum Packing" />
             </div>
