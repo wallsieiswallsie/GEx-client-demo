@@ -72,16 +72,6 @@
     display: none;
   }
 
-  .gex-demo-mobile-frame .gex-desktop-nav-content > * {
-    padding-top: 0 !important;
-  }
-
-  .gex-demo-mobile-frame .gex-desktop-nav-content > * > header:first-child,
-  .gex-demo-mobile-frame .gex-desktop-nav-content > * > section:first-child {
-    min-height: initial;
-    padding-top: initial !important;
-  }
-
   .gex-tour-highlight {
     position: relative;
     z-index: 1005 !important;

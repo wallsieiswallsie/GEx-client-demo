@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import {
   BookOpen,
   ChevronDown,
-  Monitor,
   RotateCcw,
-  Smartphone,
   Users,
   X,
 } from "lucide-react";
@@ -15,9 +13,6 @@ import { useDemo } from "./useDemo";
 export default function DemoFloatingPanel({ onRoleChange }) {
   const {
     selectedRole,
-    renderViewport,
-    isDeviceMobile,
-    selectViewport,
     resetIntro,
   } = useDemo();
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +46,7 @@ export default function DemoFloatingPanel({ onRoleChange }) {
               <div>
                 <h2 className="text-base font-black text-slate-950">Demo Control</h2>
                 <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Ganti role, viewport, atau buka ulang intro.
+                  Ganti role atau buka ulang intro.
                 </p>
               </div>
               <button
@@ -85,23 +80,6 @@ export default function DemoFloatingPanel({ onRoleChange }) {
               ))}
             </div>
 
-            {!isDeviceMobile && (
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <ViewportButton
-                  active={renderViewport === "desktop"}
-                  icon={Monitor}
-                  label="Desktop"
-                  onClick={() => selectViewport("desktop")}
-                />
-                <ViewportButton
-                  active={renderViewport === "mobile"}
-                  icon={Smartphone}
-                  label="Mobile"
-                  onClick={() => selectViewport("mobile")}
-                />
-              </div>
-            )}
-
             <div className="mt-5 rounded-lg bg-slate-100 p-3">
               <div className="flex items-center gap-2 text-sm font-black text-slate-950">
                 <BookOpen className="h-4 w-4" />
@@ -132,24 +110,5 @@ export default function DemoFloatingPanel({ onRoleChange }) {
         </div>
       )}
     </>
-  );
-}
-
-function ViewportButton({ active, icon, label, onClick }) {
-  const ViewportIcon = icon;
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg text-xs font-black ${
-        active
-          ? "bg-[#4d148c] text-white"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-      }`}
-    >
-      <ViewportIcon className="h-4 w-4" />
-      {label}
-    </button>
   );
 }
